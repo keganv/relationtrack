@@ -1,0 +1,174 @@
+.admin {
+    background-color: var(--white);
+    margin: 0;
+    min-height: 100vh;
+    padding: 0;
+    width: 100%;
+    aside.main {
+        background-color: var(--dark-blue);
+        min-height: 100vh;
+        position: fixed;
+        width: 210px;
+        .logo {
+            margin: 1rem;
+            width: calc(100% - 2rem);
+        }
+        #menu-icon { display: none; }
+        #user-menu {
+            color: var(--white);
+            .profile-image {
+                align-items: center;
+                background-color: var(--blue);
+                border: 2px solid var(--white);
+                box-sizing: content-box;
+                border-radius: 100px;
+                color: var(--white);
+                display: flex;
+                font-size: 2rem;
+                height: 60px;
+                justify-content: center;
+                margin: auto;
+                overflow: hidden;
+                position: relative;
+                width: 60px;
+                > img {
+                    width: 100%;
+                }
+                #edit-profile-image {
+                    align-items: center;
+                    background: rgba(0,0,0,.75);
+                    border-radius: 100px;
+                    color: var(--white);
+                    display: flex;
+                    font-size: 1rem;
+                    height: 100%;
+                    justify-content: center;
+                    opacity: 0;
+                    position: absolute;
+                    text-align: center;
+                    text-decoration: none;
+                    width: 100%;
+                }
+                &:hover {
+                    #edit-profile-image { opacity: 1; transition: opacity ease-in-out 250ms; }
+                }
+            }
+            .username { text-align: center; }
+        }
+        nav.main {
+            font-size: .75rem;
+            ul {
+                li {
+                    margin: .5rem 1rem 0;
+                    a {
+                        color: var(--white);
+                        display: block;
+                        padding: .5rem 1rem;
+                        &:hover, &.active {
+                            background-color: var(--light-blue);
+                            text-decoration: none;
+                        }
+                        i { margin-right: 5px; }
+                    }
+                    button {
+                        display: block;
+                        font-size: .75rem;
+                        padding: .5rem 1rem;
+                        text-align: left;
+                        width: 100%;
+                        transition: none;
+                        &:hover {
+                            background-color: var(--light-blue);
+                            text-decoration: none;
+                        }
+                        i { margin-right: 5px; }
+                    }
+                }
+            }
+        }
+    }
+    main {
+        flex: 1;
+        margin-left: 210px;
+        padding: 1rem 1.5rem;
+        position: relative;
+    }
+    header {
+        h1, h2, h3, h4 {
+            color: var(--dark-gray);
+            font-size: 1.5rem;
+            padding-bottom: .25rem;
+        }
+    }
+}
+
+/***** SCREEN RESPONSIVE *****/
+@media screen and (max-width: 700px) {
+    .admin {
+        aside.main {
+            display: flex;
+            height: 50px;
+            min-height: auto;
+            justify-content: space-between;
+            position: fixed;
+            width: 100%;
+            z-index: 99;
+            .logo {
+                height: 20px;
+                margin: 15px 0 0 1.5rem;
+                width: auto;
+            }
+            #menu-icon {
+                color: var(--white);
+                cursor: pointer;
+                display: block;
+                position: fixed;
+                right: 1.5rem;
+                top: 15px;
+            }
+            #user-menu {
+                background: var(--dark-blue);
+                display: block;
+                height: 0;
+                overflow: hidden;
+                position: absolute;
+                width: 100%;
+                top: 50px;
+                transition: height ease-in-out .5s;
+                &.active {
+                    height: 285px;
+                    visibility: visible;
+                }
+                nav.main {
+                    ul {
+                        li {
+                            margin: 0.5rem 1rem 0;
+                            &:last-child { margin: 0; }
+                            a { padding: .5rem; }
+                        }
+                    }
+                }
+            }
+            form { display: none; }
+        }
+        main {
+            margin: 0;
+            padding: calc(50px + 1rem) 1.5rem;
+            width: 100%;
+            header {
+                h1, h2, h3, h4 {
+                    font-size: 1rem;
+                    padding-bottom: .25rem;
+                }
+            }
+        }
+        .hide-sm {
+            display: none;
+        }
+        button.small,
+        .button.small {
+            height: 1.5rem;
+        }
+    }
+}
+

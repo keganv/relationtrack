@@ -1,0 +1,164 @@
+form {
+    background-color: var(--white);
+    fieldset {
+        @extend .pn, .mn;
+        border: 0;
+        outline: none;
+    }
+    .form-row {
+        margin-top: 1rem;
+        &:first-of-type {
+            margin-top: 0;
+        }
+        label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 100;
+        }
+        input:not([type='checkbox']):not([type='range']),
+        select,
+        textarea {
+            appearance: none;
+            border: 1px solid var(--border-color);
+            display: block;
+            outline: none;
+            padding: .5rem;
+            width: 100%;
+        }
+        textarea {
+            max-width: fit-content;
+            min-height: 7rem;
+            min-width: 100%;
+            resize: vertical;
+        }
+        select {
+            background-image:
+                linear-gradient(45deg, transparent 50%, $dark-gray 50%),
+                linear-gradient(135deg, $dark-gray 50%, transparent 50%);
+            background-position:
+                calc(100% - calc(7px + .5rem)) calc(1em + 2px),
+                calc(100% - .5rem) calc(1em + 2px);
+            background-size: 7px 7px, 7px 7px;
+            background-repeat: no-repeat;
+        }
+        .error {
+            color: $red;
+            font-size: .75rem;
+        }
+    }
+    &.transparent { background: none; }
+}
+
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    width: 100%;
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        margin-top: -6px;
+        background-color: $blue;
+        border-radius: 0;
+        height: 32px;
+        width: 32px;
+    }
+    &::-moz-range-thumb {
+        -moz-appearance: none;
+        appearance: none;
+        background-color: $dark-blue;
+        border: 0;
+        border-radius: $border-radius;
+        cursor: pointer;
+        height: 20px;
+        width: 20px;
+    }
+    &:focus {
+        outline: none;
+        &::-webkit-slider-thumb {
+            background-color: $darker-blue;
+        }
+        &::-moz-range-thumb {
+            background-color: $darker-blue;
+        }
+    }
+    &::-webkit-slider-runnable-track {
+        background-color: $washed-blue;
+        border-radius: 0;
+        height: 20px;
+        width: 100%;
+    }
+    &::-moz-range-track {
+        background-color: $washed-blue;
+        border-radius: 0;
+        height: 20px;
+        width: 100%;
+    }
+}
+
+/***** BUTTONS *****/
+button,
+.button {
+    border: 0;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: .5rem 2rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    &:hover {
+        box-shadow: inset 0 0 500px rgba(0, 0, 0, .25);
+        text-decoration: none;
+        transition: box-shadow 250ms ease-in-out;
+    }
+    &.blue,
+    &.primary {
+        background: var(--blue);
+        color: var(--white);
+        &.transparent {
+            background: rgba(0, 115, 188, .75);
+        }
+    }
+    &.red {
+        background: var(--red);
+        color: var(--white);
+        &.transparent {
+            background: rgba(250, 56, 56, .75);
+        }
+    }
+    &.white {
+        background: var(--white);
+        color: var(--black);
+        &.transparent {
+            background: rgba(250, 250, 250, .75);
+        }
+    }
+    &.yellow {
+        background: var(--yellow);
+        color: var(--white);
+        &.transparent {
+            background: rgba(250, 176, 0, .75);
+        }
+    }
+    &.text {
+        background: none;
+        color: inherit;
+        display: inline;
+        padding: 0;
+        text-transform: unset;
+        &:hover {
+            box-shadow: none;
+            text-decoration: underline;
+        }
+        &.blue { color: var(--blue); }
+    }
+    &.transparent {
+        background: rgba(0, 0, 0, .5);
+        color: var(--white);
+    }
+    &.small {
+        font-size: 0.75rem;
+        height: 2rem;
+        padding: 0 1rem;
+    }
+}

@@ -1,0 +1,48 @@
+#primary-image-container {
+    align-items: end;
+    display: flex;
+    justify-content: center;
+    margin-bottom: .5rem;
+    position: relative;
+    width: 100%;
+    > img { cursor: pointer; display: block; width: 100%; }
+    #primary-image-button {
+        display: block;
+        padding: 0;
+        margin: 0 0 .5rem;
+        opacity: .5;
+        position: absolute;
+        width: 32px;
+        right: .5rem;
+        transition: all ease-in-out .25s;
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+}
+
+.image-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15%, 1fr)); /* Responsive grid */
+    gap: .5rem;
+    li {
+        align-items: center;
+        aspect-ratio: 1/1;
+        justify-items: center;
+        overflow: hidden;
+        width: 100%;
+        &:first-of-type { margin-left: 0; }
+        img {
+            cursor: pointer;
+        }
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .image-list.profile-images-list {
+        border-bottom: 1px solid $border-color;
+        margin-bottom: .5rem;
+        padding-bottom: .5rem;
+    }
+}

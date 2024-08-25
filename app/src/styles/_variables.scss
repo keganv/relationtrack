@@ -1,0 +1,52 @@
+:root {
+    --black: #222;
+    --blue: #0073bc;
+    --dark-blue: #005993;
+    --dark-gray: #555;
+    --gray: #999;
+    --light-blue: #007FCE;
+    --light-gray: #aaa;
+    --red: #ff3838;
+    --white: #fff;
+    --yellow: #fbb000;
+    --border-color: #bbb;
+    --border-radius: 10px;
+    --lighter-blue: lighten(#007FCE, 10%);
+    --darker-blue: #00497A;
+    --washed-blue: lighten(desaturate(var(--light-blue), 50%), 50%);
+    --background-gray: #f7f7f7;
+    --lighter-gray: #ddd;
+    --green: #5f5;
+    --error: lighten(desaturate(var($red), 20%), 20%);
+    --success: lighten(desaturate(var($green), 20%), 20%);
+    --warning: lighten(desaturate(var($yellow), 20%), 20%);
+}
+$border-color: #bbb;
+$border-radius: 10px;
+$black: #000;
+$blue: #0073bc;
+$light-blue: #007FCE;
+$lighter-blue: lighten(#007FCE, 10%);
+$dark-blue: #005993;
+$darker-blue: darken(#005993, 10%);
+$washed-blue: lighten(desaturate($light-blue, 50%), 50%);
+$background-gray: #f7f7f7;
+$light-gray: #aaa;
+$lighter-gray: #ddd;
+$gray: #999;
+$green: #5f5;
+$dark-gray: #555;
+$white: #fff;
+$red: #ff3838;
+$error: lighten(desaturate($red, 20%), 20%);
+$success: lighten(desaturate($green, 20%), 20%);
+$yellow: #fbb000;
+$warning: lighten(desaturate($yellow, 20%), 20%);
+@mixin box-shadow { box-shadow: rgba(0, 0, 0, .25) 0 10px 10px 5px; }
+@mixin hover-darken {
+    box-shadow: inset 0 0 500px rgba(0, 0, 0, .25);
+    text-decoration: none;
+    transition: box-shadow 250ms ease-in-out;
+}
+@mixin highlight-inset { box-shadow: rgba(250, 250, 250, .5) 0 1px 1px; }
+@mixin shadow-inset { box-shadow: rgba(0, 0, 0, .5) 0 -1px 1px; }
