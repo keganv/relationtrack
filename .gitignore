@@ -18,14 +18,14 @@ api/*.idea
 api/*.vscode
 
 # Logs
-api/logs
-api/*.log
-api/npm-debug.log*
-api/yarn-debug.log*
-api/yarn-error.log*
-api/pnpm-debug.log*
-api/lerna-debug.log*
-api/.editorconfig
+app/logs
+app/*.log
+app/npm-debug.log*
+app/yarn-debug.log*
+app/yarn-error.log*
+app/pnpm-debug.log*
+app/lerna-debug.log*
+app/.editorconfig
 
 app/node_modules
 app/dist
