@@ -1,4 +1,4 @@
-interface API_File {
+export default interface API_File {
   created_at: string,
   extension: string,
   id: number,

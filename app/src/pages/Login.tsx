@@ -18,18 +18,18 @@ export default function Login() {
       <div className="form-row">
         <label htmlFor="email">Email<span className="required">*</span></label>
         <input id="email" name="email" type="email" autoComplete="email"
-          className={`${errors.email && 'error'}`} value={email}
+          className={`${errors?.email && 'error'}`} value={email}
           onChange={e => setEmail(e.target.value)}
         />
-        {errors.email && <span className="error">{errors.email[0]}</span>}
+        {errors?.email && <span className="error">{errors?.email[0]}</span>}
       </div>
       <div className="form-row">
         <label htmlFor="password">Password<span className="required">*</span></label>
         <input id="password" name="password" type="password" autoComplete="current-password"
-               className={`${errors.password && 'error'}`} required
+               className={`${errors?.password && 'error'}`} required
                value={password} onChange={e => setPassword(e.target.value)}
         />
-        {errors.password && <span className="error">{errors.password[0]}</span>}
+        {errors?.password && <span className="error">{errors?.password[0]}</span>}
       </div>
       <div className="flex wrap align-middle justify-between margin-top">
         <button type="submit" className="button primary col-12-sm" disabled={loading}>

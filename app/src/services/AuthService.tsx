@@ -60,7 +60,7 @@ type NewPasswordParams = {
 export interface AuthContextValues {
     csrf: () => Promise<AxiosResponse<unknown>>,
     errors: Errors,
-    user: User | null | unknown,
+    user: User | null,
     login: (data: LoginParams) => Promise<void>,
     register: (data: RegisterParams) => Promise<void>,
     logout: () => Promise<void>,

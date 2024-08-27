@@ -1,4 +1,4 @@
-import {Relationship} from '../../../models/Relationship.tsx';
+import Relationship from '../../../models/Relationship';
 
 type RelationshipDetailsProps = { relationship: Relationship; }
 export default function RelationshipDetails({relationship}: RelationshipDetailsProps) {

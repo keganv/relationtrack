@@ -8,6 +8,7 @@ import Spinner from '../../components/ui/Spinner';
 import {useLocation} from 'react-router-dom';
 import RelationshipDetails from './components/RelationshipDetails';
 import ActionItems from '../../components/ui/ActionItems.tsx';
+import API_File from '../../models/API_File';
 
 export default function RelationshipView() {
   const apiUrl = `${import.meta.env.VITE_BACKEND_URL_LOCAL}/api/`;
