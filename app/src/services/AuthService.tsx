@@ -1,81 +1,12 @@
-import { ReactNode, createContext, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
 import axios from '../lib/axios';
+import { AuthContext } from '../contexts/AuthContext';
 
 type AuthProviderProps = {
     children: ReactNode;
 }
-
-export type ProfileImage = {
-    created_at: string,
-    extension: string,
-    id: number,
-    name: string,
-    path: string,
-    relationship_id: number | null,
-    size: number
-    updated_at: string,
-    user_id: string
-}
-
-export type User = {
-    name?: string,
-    username?: string,
-    email?: string,
-    created_at?: string,
-    id?: string,
-    updated_at?: string,
-    email_verified_at?: string,
-    profile_image?: ProfileImage
-}
-
-type Errors = {
-    name?: string[];
-    email?: string[];
-    password?: string[];
-    username?: string[];
-    password_confirmation?: string[];
-    terms?: string[];
-}
-
-type LoginParams = { email: string, password: string }
-
-type RegisterParams = {
-    name: string;
-    email: string;
-    password: string;
-    password_confirmation: string;
-    username: string;
-    terms: string;
-}
-
-type NewPasswordParams = {
-    email: string | null;
-    token: string | undefined;
-    password: string;
-    password_confirmation: string;
-}
-
-export interface AuthContextValues {
-    csrf: () => Promise<AxiosResponse<unknown>>,
-    errors: Errors,
-    user: User | null,
-    login: (data: LoginParams) => Promise<void>,
-    register: (data: RegisterParams) => Promise<void>,
-    logout: () => Promise<void>,
-    loading: boolean,
-    status: string | null,
-    setStatus: React.Dispatch<React.SetStateAction<string | null>>,
-    statusError: string | null,
-    setStatusError: React.Dispatch<React.SetStateAction<string | null>>,
-    sendPasswordResetLink: (data: { email: string }) => Promise<void>,
-    newPassword: (data: NewPasswordParams) => Promise<void>,
-    sendEmailVerificationLink: () => Promise<void>,
-    setProfileImage: (image: File) => Promise<void>,
-}
-
-export const AuthContext = createContext<AuthContextValues>({} as AuthContextValues)
 
 export function AuthProvider({ children }: AuthProviderProps) {
     const sessionUser = sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user') ?? '') : null;
@@ -216,7 +147,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
     }
 
-    const setProfileImage = async (image: File) => {
+    const setApiFile = async (image: File) => {
         setStatus(null);
         try {
             const formData = new FormData();
@@ -238,7 +169,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return (
       <AuthContext.Provider value={{
         csrf, errors, user, login, register, logout, loading, status, setStatus, statusError, setStatusError,
-        sendPasswordResetLink, newPassword, sendEmailVerificationLink, setProfileImage
+        sendPasswordResetLink, newPassword, sendEmailVerificationLink, setApiFile
       }}>
           {children}
       </AuthContext.Provider>

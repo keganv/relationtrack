@@ -1,7 +1,7 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import '@testing-library/jest-dom'; // for additional matchers
-import App from './App';
+import App from '../App';
 
 describe('App', () => {
     beforeEach(() => {

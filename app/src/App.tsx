@@ -5,7 +5,7 @@ import AuthLayout from './components/layouts/AuthLayout'
 import GuestLayout from './components/layouts/GuestLayout'
 import ForgotPassword from './pages/ForgotPassword'
 import Dashboard from './pages/Dashboard';
-import Home from './pages/Home'
+import Home from './pages/static/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import ResetPassword from './pages/ResetPassword'

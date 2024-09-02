@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.bg-main-blue { background-color: #0073bc }
+.bg-main-dark-blue { background-color: #005993 }
+.bg-main-light-blue  { background-color: #007FCE; }
+.bg-washed-blue { background-color: #7FCEFF; }
+
+/***** ANGLED BACKGROUNDS STRIPES *****/
+.striped-right {
+  background-image: repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(250, 250, 250, 0.05) 5px, rgba(250, 250, 250, 0.05) 20px);
+  background-position: center 50%;
+  background-repeat: repeat-y;
+  background-size: 150% 150%;
+}
+.striped-left {
+  background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(250, 250, 250, 0.05) 5px, rgba(250, 250, 250, 0.05) 20px);
+  background-position: center 50%;
+  background-repeat: repeat-y;
+  background-size: 150% 150%;
+}
+
+/***** ANGLED BACKGROUNDS *****/
+.angle-left {
+  clip-path: polygon(0% 0, 100% 10%, 100% 100%, 0% 100%);
+  padding: .5rem .5rem .5rem !important;
+}
+.angle-right {
+  clip-path: polygon(0% 10%, 0% 100%, 100% 100%, 100% 0%);
+  padding: .5rem .5rem .5rem !important;
+}
+.angle-bottom-left {
+  clip-path: polygon(0% 0%, 0% 100%, 100% 90%, 100% 0%);
+  padding: .5rem .5rem .5rem !important;
+}
+.angle-bottom-right {
+  clip-path: polygon(0% 0%, 0% 90%, 100% 100%, 100% 0%);
+  padding: .5rem .5rem .5rem !important;
+}
+
+/***** HEADINGS *****/
+.heading {
+  display: block;
+  font-size: calc(1vw + 1.5rem);
+  font-weight: bold;
+  letter-spacing: -2px;
+  line-height: 1;
+  &.text-center {
+    text-align: center;
+  }
+}
+
+/***** CARDS *****/
+@layer base {
+  .card {
+    display: flex;
+    flex-flow: row wrap;
+    font-weight: 100;
+    line-height: 1.25;
+    position: relative;
+    transition: all ease-in-out .25s;
+  }
+  .reveal {
+    background: var(--white);
+    bottom: 0;
+    color: var(--black);
+    display: flex;
+    font-size: max(calc(.5vw + .5rem), .75rem);
+    margin: 0;
+    opacity: 0;
+    padding: 0 10px;
+    position: absolute;
+    z-index: 110;
+  }
+  .card:hover {
+    @apply bg-main-dark-blue;
+  }
+  .card header {
+    font-family: 'Amatic SC', serif;
+    font-size: 2rem;
+    font-weight: bold;
+    position: absolute;
+    top: 0;
+    z-index: 100;
+  }
+}
+
+
+
+

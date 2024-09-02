@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from 'react';
-import Relationship from '../../models/Relationship';
-import ActionItem from '../../models/ActionItem.tsx';
+import Relationship from '../../types/Relationship.ts';
+import ActionItem from '../../types/ActionItem.ts';
 import SortableTable from './SortableTable';
 
 type ActionItemRow = { id: number, action: string, complete: boolean, updated_at: string }

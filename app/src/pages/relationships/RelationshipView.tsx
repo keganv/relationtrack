@@ -1,14 +1,14 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import Modal from 'react-modal';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
-import {FormDataModel} from '../../services/RelationshipService';
+import {FormDataModel} from '../../services/RelationshipService.tsx';
 import RelationshipForm from './components/RelationshipForm';
 import useRelationshipContext from '../../hooks/useRelationshipContext';
 import Spinner from '../../components/ui/Spinner';
 import {useLocation} from 'react-router-dom';
 import RelationshipDetails from './components/RelationshipDetails';
 import ActionItems from '../../components/ui/ActionItems.tsx';
-import API_File from '../../models/API_File';
+import API_File from '../../types/ApiFile.ts';
 
 export default function RelationshipView() {
   const apiUrl = `${import.meta.env.VITE_BACKEND_URL_LOCAL}/api/`;

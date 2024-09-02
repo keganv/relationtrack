@@ -1,4 +1,4 @@
-import Relationship from '../../../models/Relationship';
+import Relationship from '../../../types/Relationship';
 
 type RelationshipDetailsProps = { relationship: Relationship; }
 export default function RelationshipDetails({relationship}: RelationshipDetailsProps) {

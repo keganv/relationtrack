@@ -1,7 +1,7 @@
 import {Link} from 'react-router-dom';
-import useAuthContext from '../hooks/useAuthContext';
+import useAuthContext from '../../hooks/useAuthContext';
 import {FormEvent, useEffect} from 'react';
-import Footer from '../components/ui/Footer';
+import Footer from '../../components/ui/Footer';
 
 export default function Home() {
   const { logout, user } = useAuthContext();
@@ -12,8 +12,8 @@ export default function Home() {
   }
 
   useEffect(()=>{
-    const images = ['/images/banner-couple.jpg', '/images/banner-swing.jpg'];
-    const banner = document.getElementById('banner-image');
+    const images: string[] = ['/images/banner-couple.jpg', '/images/banner-swing.jpg'];
+    const banner: HTMLElement | null = document.getElementById('banner-image');
     if (banner) {
       banner.style.backgroundImage = `url('${images[Math.floor(Math.random() * images.length)]}')`;
     }
@@ -21,14 +21,43 @@ export default function Home() {
 
   return (
     <>
-      <header className="main flex row align-middle" role="banner">
+      <header className="fixed bg-main-dark-blue top-0 left-0 right-0 z-50 px-2 md:px-0" role="banner">
+        <div className="container mx-auto flex flex-row justify-between items-center h-[55px]">
+          <Link to={'/'}>
+            <img src="/images/logo-sm.png" alt="Relation Track" className="h-[35px]" />
+          </Link>
+          <nav role="navigation" className="main text-white">
+            {user &&
+                <ul className="flex flex-row text-xs md:text-base">
+                  <li className="mr-4">
+                    <Link to={'/dashboard'}>Dashboard</Link>
+                  </li>
+                  <li>
+                    <a type="submit" className="cursor-pointer" onClick={handleLogout}>
+                      <i className="fa-solid fa-right-from-bracket"></i> Log Out
+                    </a>
+                  </li>
+                </ul>}
+            {!user &&
+                <ul>
+                  <li>
+                    <Link to={'/register'}>Register</Link>
+                  </li>
+                  <li>
+                    <Link to={'/login'}>Log In</Link>
+                  </li>
+                </ul>}
+          </nav>
+        </div>
+      </header>
+      <header className="flex row align-middle" role="banner">
         <Link to={'/'} className="logo">
           <img src="/images/logo-sm.png" alt="Relation Track"/>
         </Link>
-        <nav role="navigation" className="main">
+        <nav role="navigation" className="text-white">
           {user &&
-            <ul>
-                <li className="mr">
+            <ul className="flex flex-row text-white">
+                <li className="mr-1 text-white">
                   <Link to={'/dashboard'}>Dashboard</Link>
                 </li>
                 <li>
@@ -55,7 +84,7 @@ export default function Home() {
             <div className="banner-text margin-top"><em>Your Relationships!</em></div>
             <nav className="actions flex row wrap justify-center align-middle">
               {user && <>
-                <Link to={'dashboard'} className="button red transparent margin-right">Dashboard</Link>
+                <Link to={'dashboard'} className="button red transparent margin-right text-xs">Dashboard</Link>
                 <button type="submit" className="button white transparent">
                   <i className="fa-solid fa-right-from-bracket"></i> Log Out
                 </button>

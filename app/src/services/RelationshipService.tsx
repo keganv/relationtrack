@@ -2,7 +2,7 @@ import {ReactNode, createContext, useState, useEffect, useCallback} from 'react'
 import {AxiosError} from 'axios';
 import {useNavigate} from 'react-router-dom';
 import useAuthContext from '../hooks/useAuthContext';
-import Relationship from '../models/Relationship';
+import Relationship from '../types/Relationship';
 import axios from '../lib/axios';
 
 export interface RelationshipContextValues {

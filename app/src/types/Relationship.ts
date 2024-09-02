@@ -1,5 +1,5 @@
-import ActionItem from './ActionItem.tsx';
-import API_File from './API_File.tsx';
+import ActionItem from './ActionItem.ts';
+import ApiFile from './ApiFile.ts';
 
 export default interface Relationship {
   action_items?: ActionItem[];
@@ -9,7 +9,7 @@ export default interface Relationship {
   health: number|string;
   id?: string;
   images?: File[]|object[]|Blob[];
-  files?: API_File[];
+  files?: ApiFile[];
   name: string;
   primary_image?: { id: number, path: string } | null;
   title: string;
