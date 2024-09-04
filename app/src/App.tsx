@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
 import AuthLayout from './components/layouts/AuthLayout'
 import GuestLayout from './components/layouts/GuestLayout'
@@ -17,7 +17,9 @@ import RelationshipView from './pages/relationships/RelationshipView';
 import RelationshipOutlet from './pages/relationships/RelationshipOutlet';
 
 export default function App() {
-  const { status, statusError } = useAuthContext();
+  const { status, statusError, user } = useAuthContext();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     if (status) {
@@ -30,6 +32,13 @@ export default function App() {
       toast.error(statusError);
     }
   }, [statusError]);
+
+  useEffect(() => {
+    // Redirect if the user is not logged in and they are not on the login or register pages
+    if (!user && !['/login', '/register', '/forgot-password', '/password-reset/:token'].includes(location.pathname)) {
+      navigate('/', { replace: true });
+    }
+  }, [user, location.pathname, navigate]);
 
   return <>
     <Routes>

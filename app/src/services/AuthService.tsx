@@ -16,7 +16,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [status, setStatus] = useState<string|null>(null)
     const [statusError, setStatusError] = useState<string|null>(null)
     const navigate = useNavigate();
-    const csrf = () => axios.get('/sanctum/csrf-cookie')
+    const csrf = () => axios.get('/sanctum/csrf-cookie');
 
     const getUser = async () => {
         const { data } = await axios.get('/api/user')
@@ -35,12 +35,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             navigate('/dashboard');
             setStatus('Successfully Logged In!')
         } catch (e) {
-            if (typeof e === 'object' && e !== null && 'response' in e) {
-                console.warn((e as { response: { data: unknown } }).response.data)
-                setErrors((e as { response: { data: { errors: [] } } }).response.data.errors)
-            } else {
-                console.warn(e)
-            }
+            handleError(e);
         } finally {
             setTimeout(() => setLoading(false), 1000);
         }
@@ -54,12 +49,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             await axios.post('/register', data)
             await getUser()
         } catch (e) {
-            if (typeof e === 'object' && e !== null && 'response' in e) {
-                console.warn((e as { response: { data: unknown } }).response.data)
-                setErrors((e as { response: { data: { errors: [] } } }).response.data.errors)
-            } else {
-                console.warn(e)
-            }
+            handleError(e);
         } finally {
             setTimeout(() => setLoading(false), 2000)
         }
@@ -74,17 +64,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
             const response = await axios.post('/forgot-password', data)
             setStatus(response.data?.status)
         } catch (e) {
-            if (typeof e === 'object' && e !== null && 'response' in e) {
-                console.warn((e as { response: { data: unknown } }).response.data)
-                setErrors((e as { response: { data: { errors: [] } } }).response.data.errors)
-            } else {
-                console.warn(e)
-            }
+            handleError(e);
         } finally {
             setTimeout(() => setLoading(false), 2000)
         }
     }
-
 
     const newPassword = async ({ ...data }) => {
         setErrors({})
@@ -98,12 +82,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 navigate('/login')
             }, 2000)
         } catch (e) {
-            if (typeof e === 'object' && e !== null && 'response' in e) {
-                console.warn((e as { response: { data: unknown } }).response.data)
-                setErrors((e as { response: { data: { errors: [] } } }).response.data.errors)
-            } else {
-                console.warn(e)
-            }
+            handleError(e);
         } finally {
             setTimeout(() => setLoading(false), 2000)
         }
@@ -118,12 +97,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             const response = await axios.post('/email/verification-notification')
             setStatus(response.data?.status)
         } catch (e) {
-            if (typeof e === 'object' && e !== null && 'response' in e) {
-                console.warn((e as { response: { data: unknown } }).response.data)
-                setErrors((e as { response: { data: { errors: [] } } }).response.data.errors)
-            } else {
-                console.warn(e)
-            }
+            handleError(e);
         } finally {
             setTimeout(() => setLoading(false), 2000)
         }
@@ -136,14 +110,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             sessionStorage.removeItem('user');
             navigate('/login');
         } catch (e) {
-            console.warn(e);
-            if (e instanceof AxiosError) {
-                const status = e.response?.status;
-                if (status === 401 || status === 419) {
-                    setUser(null);
-                    sessionStorage.removeItem('user');
-                }
-            }
+            handleError(e);
         }
     }
 
@@ -159,12 +126,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 setStatus(response.data.message);
             }
         } catch (error) {
-            if (error instanceof AxiosError) {
-                console.error(error);
-                setStatusError(error.response?.data.message);
-            }
+            handleError(error);
         }
     };
+
+    const handleError = (e: AxiosError | unknown) => {
+        if (e instanceof AxiosError) {    
+            setErrors(e.response?.data.errors || {error: [e.message]});
+            setStatusError(e.response?.data.message || e.message);
+        }
+        console.error(e);
+    }
 
     return (
       <AuthContext.Provider value={{
