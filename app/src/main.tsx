@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 
 import App from './App.tsx'
-import ErrorBoundary from './components/common/ErrorBoundary.tsx'
-import { AuthProvider } from './services/AuthService.tsx'
+import ErrorBoundary from './components/common/ErrorBoundary'
+import AuthProvider from './providers/AuthProvider'
 
 import './main.scss'
 import './index.css'

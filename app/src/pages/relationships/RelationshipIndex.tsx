@@ -2,6 +2,7 @@ import {useState} from 'react';
 import Modal from 'react-modal';
 import RelationshipList from './components/RelationshipList';
 import RelationshipForm from './components/RelationshipForm';
+import ErrorBoundary from '../../components/common/ErrorBoundary';
 
 export default function RelationshipIndex() {
   const [modalIsOpen, setIsOpen] = useState<boolean>(false);
@@ -17,7 +18,9 @@ export default function RelationshipIndex() {
              className="react-modal right" overlayClassName="react-modal-overlay">
         <RelationshipForm cancel={closeModal} />
       </Modal>
-      <RelationshipList />
+      <ErrorBoundary message="Could not load the relationships." styles="bg-main-blue">
+        <RelationshipList />
+      </ErrorBoundary>
     </>
   );
 }

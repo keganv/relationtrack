@@ -1,6 +1,6 @@
 import {ChangeEvent, MouseEventHandler, useState} from 'react';
 import ImageUploader from '../../../components/ui/ImageUploader';
-import {FormDataModel} from '../../../services/RelationshipService';
+import {FormDataModel} from '../../../providers/RelationshipService';
 import useRelationshipContext from '../../../hooks/useRelationshipContext';
 import Spinner from '../../../components/ui/Spinner';
 

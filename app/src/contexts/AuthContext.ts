@@ -21,4 +21,6 @@ export interface AuthContextValues {
   setApiFile: (image: File) => Promise<void>,
 }
 
-export const AuthContext = createContext<AuthContextValues>({} as AuthContextValues);
+const AuthContext = createContext<AuthContextValues>({} as AuthContextValues);
+
+export default AuthContext;

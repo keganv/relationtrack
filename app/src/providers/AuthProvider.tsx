@@ -2,13 +2,13 @@ import { ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
 import axios from '../lib/axios';
-import { AuthContext } from '../contexts/AuthContext';
+import AuthContext from '../contexts/AuthContext';
 
 type AuthProviderProps = {
     children: ReactNode;
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+const AuthProvider = ({ children }: AuthProviderProps) => {
     const sessionUser = sessionStorage.getItem('user') ? JSON.parse(sessionStorage.getItem('user') ?? '') : null;
     const [user, setUser] = useState(sessionUser);
     const [errors, setErrors] = useState({})
@@ -147,3 +147,5 @@ export function AuthProvider({ children }: AuthProviderProps) {
       </AuthContext.Provider>
     );
 }
+
+export default AuthProvider;

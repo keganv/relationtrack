@@ -2,6 +2,8 @@ import React, { Component, ReactNode } from 'react';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
+  message?: string;
+  styles?: string;
 }
 
 interface ErrorBoundaryState {
@@ -9,10 +11,7 @@ interface ErrorBoundaryState {
 }
 
 class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false };
-  }
+  state: ErrorBoundaryState = { hasError: false };
 
   static getDerivedStateFromError() {
     return { hasError: true };
@@ -24,7 +23,11 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   render() {
     if (this.state.hasError) {
-      return <h1>Something went wrong.</h1>;
+      return (
+        <h1 className={`${this.props.styles} mt-[calc(80vh/2)] m-auto w-[400px] text-white text-center`}>
+          {this.props.message || 'We\'re sorry. Something went wrong.'}
+        </h1>
+      );
     }
 
     return this.props.children;

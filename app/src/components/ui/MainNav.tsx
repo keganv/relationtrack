@@ -1,6 +1,6 @@
 import { FormEvent, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
-import { User } from '../../services/AuthService';
+import { User } from '../../providers/AuthProvider';
 import useAuthContext from '../../hooks/useAuthContext';
 
 interface MainNavProps {
