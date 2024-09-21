@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\File;
 use App\Models\Relationship;
-use App\Models\RelationType;
+use App\Models\RelationshipType;
 use App\Models\User;
 
 use Illuminate\Http\JsonResponse;
@@ -74,7 +74,7 @@ class RelationshipController extends Controller
         ]);
 
         $relationship->user_id = $user->id;
-        $relationship->type_id = RelationType::firstWhere('type', $request->input('type'))->id;
+        $relationship->type_id = RelationshipType::firstWhere('type', $request->input('type'))->id;
         $relationship->name = $request->input('name');
         $relationship->title = $request->input('title');
         $relationship->health = $request->input('health');

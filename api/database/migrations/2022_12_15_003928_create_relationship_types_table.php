@@ -14,14 +14,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('relation_types', function (Blueprint $table) {
+        Schema::create('relationship_types', function (Blueprint $table) {
             $table->id();
             $table->string('type')->unique();
         });
 
         $relations = ['God', 'Spouse', 'Child', 'Parent', 'Sibling', 'Friend', 'Relative', 'Pet'];
         foreach ($relations as $relation) {
-            DB::table('relation_types')->insert([
+            DB::table('relationship_types')->insert([
                 'type' => $relation,
             ]);
         }
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('relation_types');
+        Schema::dropIfExists('relationship_types');
     }
 };
