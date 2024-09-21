@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Relationship extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, SoftDeletes;
 
     public $incrementing = false;
 
@@ -29,7 +30,7 @@ class Relationship extends Model
 
     public function type()
     {
-        return $this->belongsTo(RelationType::class, 'type_id');
+        return $this->belongsTo(RelationshipType::class, 'type_id');
     }
 
     public function primaryImage()
