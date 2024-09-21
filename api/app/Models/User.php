@@ -8,13 +8,16 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, HasUuids, Notifiable;
+    use HasFactory, HasUuids, Notifiable;
 
+    // UUID does not auto-increment
     public $incrementing = false;
+
+    // UUID primary key
+    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.
@@ -22,7 +25,8 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'username',
         'email',
         'password',
@@ -32,6 +36,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /**
      * The attributes that should be hidden for serialization.
+     * Hide sensitive data from serialization.
      *
      * @var array<int, string>
      */
@@ -41,21 +46,34 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
      *
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
+    }
 
     /**
-     * Get the user's name.
+     * Attributes that should be added to serialization.
+     *
+     * @var string[]
      */
-    protected function name(): Attribute
+    protected $appends = ['full_name'];
+
+    /**
+     * Get the user's full name.
+     */
+    protected function fullName(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => ucfirst($value),
+            get: function (mixed $value, array $attributes) {
+                return ucfirst($attributes['first_name'] ?? '') . ' ' . ucfirst($attributes['last_name'] ?? '');
+            }
         );
     }
 
