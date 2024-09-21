@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 :root {
     --black: #222;
     --blue: #0073bc;
@@ -11,25 +13,25 @@
     --yellow: #fbb000;
     --border-color: #bbb;
     --border-radius: 10px;
-    --lighter-blue: lighten(#007FCE, 10%);
+    --lighter-blue: color.adjust(#007FCE, $lightness: 10%);
     --darker-blue: #00497A;
-    --washed-blue: lighten(desaturate(var(--light-blue), 50%), 50%);
+    --washed-blue: lighten(color.adjust(var(--light-blue), 50%), $lightness: 50%);
     --background-gray: #f7f7f7;
     --lighter-gray: #ddd;
     --green: #5f5;
-    --error: lighten(desaturate(var($red), 20%), 20%);
-    --success: lighten(desaturate(var($green), 20%), 20%);
-    --warning: lighten(desaturate(var($yellow), 20%), 20%);
+    --error: color.adjust(color.adjust(var($red), $saturation: 20%), $lightness: 20%);
+    --success: color.adjust(color.adjust(var($green), $saturation: 20%), $lightness: 20%);
+    --warning: color.adjust(color.adjust(var($yellow), $saturation: 20%), $lightness: 20%);
 }
 $border-color: #bbb;
 $border-radius: 10px;
 $black: #000;
 $blue: #0073bc;
 $light-blue: #007FCE;
-$lighter-blue: lighten(#007FCE, 10%);
+$lighter-blue: color.adjust(#007FCE, $lightness: 10%);
 $dark-blue: #005993;
-$darker-blue: darken(#005993, 10%);
-$washed-blue: lighten(desaturate($light-blue, 50%), 50%);
+$darker-blue: color.adjust(#005993, $lightness: -10%);
+$washed-blue: color.adjust(color.adjust($light-blue, $lightness: -50%), $lightness: 50%);
 $background-gray: #f7f7f7;
 $light-gray: #aaa;
 $lighter-gray: #ddd;
@@ -38,10 +40,10 @@ $green: #5f5;
 $dark-gray: #555;
 $white: #fff;
 $red: #ff3838;
-$error: lighten(desaturate($red, 20%), 20%);
-$success: lighten(desaturate($green, 20%), 20%);
+$error: color.adjust(color.adjust($red, $saturation: -20%), $lightness: 20%);
+$success: color.adjust(color.adjust($green, $saturation: -20%),  $lightness: 20%);
 $yellow: #fbb000;
-$warning: lighten(desaturate($yellow, 20%), 20%);
+$warning: color.adjust(color.adjust($yellow, $saturation: -20%), $lightness: 20%);
 @mixin box-shadow { box-shadow: rgba(0, 0, 0, .25) 0 10px 10px 5px; }
 @mixin hover-darken {
     box-shadow: inset 0 0 500px rgba(0, 0, 0, .25);
