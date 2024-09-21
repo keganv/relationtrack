@@ -20,9 +20,9 @@ return new class extends Migration
             $table->string('path')->unique();
             $table->integer('size');
             $table->uuid('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('set null');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->uuid('relationship_id')->nullable();
-            $table->foreign('relationship_id')->references('id')->on('relationships')->onUpdate('cascade')->onDelete('set null');
+            $table->foreign('relationship_id')->references('id')->on('relationships')->onDelete('set null');
             $table->timestamps();
         });
     }
