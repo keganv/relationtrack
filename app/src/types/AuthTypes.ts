@@ -1,10 +1,11 @@
 
 export type AuthError = {
-  name?: string[];
+  firstName?: string[];
+  lastName?: string[];
   email?: string[];
   password?: string[];
   username?: string[];
-  password_confirmation?: string[];
+  passwordConfirmation?: string[];
   terms?: string[];
 }
 
@@ -14,10 +15,11 @@ export type LoginParams = {
 }
 
 export type RegisterParams = {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
-  password_confirmation: string;
+  passwordConfirmation: string;
   username: string;
   terms: string;
 }
