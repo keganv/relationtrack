@@ -54,7 +54,7 @@ export default function RelationshipList() {
       setFormatted(format);
       setLoading(false);
     }
-  }, [relationships, asdfasdfsd]);
+  }, [relationships]);
 
   if (loading) {
     return (

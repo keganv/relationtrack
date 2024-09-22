@@ -1,11 +1,9 @@
 import { FormEvent, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
-import { User } from '../../providers/AuthProvider';
+import User from "../../types/User.ts";
 import useAuthContext from '../../hooks/useAuthContext';
 
-interface MainNavProps {
-    user: User
-}
+interface MainNavProps { user: User }
 
 export default function MainNav({user}: MainNavProps) {
     const profileImageInput = useRef<HTMLInputElement>(null);
