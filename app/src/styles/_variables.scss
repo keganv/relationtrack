@@ -1,28 +1,5 @@
 @use 'sass:color';
 
-:root {
-    --black: #222;
-    --blue: #0073bc;
-    --dark-blue: #005993;
-    --dark-gray: #555;
-    --gray: #999;
-    --light-blue: #007FCE;
-    --light-gray: #aaa;
-    --red: #ff3838;
-    --white: #fff;
-    --yellow: #fbb000;
-    --border-color: #bbb;
-    --border-radius: 10px;
-    --lighter-blue: color.adjust(#007FCE, $lightness: 10%);
-    --darker-blue: #00497A;
-    --washed-blue: lighten(color.adjust(var(--light-blue), 50%), $lightness: 50%);
-    --background-gray: #f7f7f7;
-    --lighter-gray: #ddd;
-    --green: #5f5;
-    --error: color.adjust(color.adjust(var($red), $saturation: 20%), $lightness: 20%);
-    --success: color.adjust(color.adjust(var($green), $saturation: 20%), $lightness: 20%);
-    --warning: color.adjust(color.adjust(var($yellow), $saturation: 20%), $lightness: 20%);
-}
 $border-color: #bbb;
 $border-radius: 10px;
 $black: #000;

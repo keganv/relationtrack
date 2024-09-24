@@ -1,0 +1,147 @@
+header.main {
+  background: var(--dark-blue);
+  box-shadow: rgba(0,0,0,.5) 0 0 5px;
+  height: 50px;
+  justify-content: space-between;
+  padding: 10px 10vw;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+
+  nav.main {
+    order: 1;
+
+    ul {
+      display: flex;
+      margin: 0;
+
+      li a {
+        color: var(--white);
+        font-size: 90%;
+        display: inline;
+        margin-left: 30px;
+        padding: 0 5px;
+      }
+
+      li button {
+        color: var(--white);
+        font-size: 90%;
+      }
+    }
+  }
+}
+
+#banners {
+  background-color: var(--blue);
+  height: 100vh;
+  width: 100%;
+
+  .banner-container {
+    height: 100%;
+    position: relative;
+    width: 100%;
+
+    .banner-image {
+      align-items: center;
+      background-position: center center;
+      background-size: cover;
+      clip-path: polygon(0 95%, 0 0, 100% 0%, 100% 90%);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+
+      .banner-content {
+        text-align: center;
+
+        .banner-text {
+          color: var(--white);
+          font-size: calc(1vw + 1rem);
+          font-style: normal;
+          font-weight: 100;
+          text-shadow: rgba(0,0,0,.5) 0 2px 2px;
+
+          em {
+            font-size: clamp(2rem, 5rem, 10vw);
+            font-weight: bold;
+            line-height: 1;
+          }
+        }
+
+        nav.actions {
+          color: var(--white);
+          display: block;
+          font-style: normal;
+          margin: 2rem auto;
+
+          a {
+            @apply mx-2;
+            box-shadow: rgba(0,0,0,.25) 0 2px 2px;;
+          }
+        }
+      }
+    }
+  }
+}
+
+.home-card {
+  border: 10px solid var(--dark-blue);
+  display: flex;
+  flex-flow: row wrap;
+  font-weight: 100;
+  line-height: 1.25;
+  justify-content: center;
+  position: relative;
+  transition: all ease-in-out .25s;
+
+  header {
+    @apply bg-main-dark-blue;
+    font-family: 'Amatic SC', serif;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-top: -2rem;
+    position: absolute;
+    top: 0;
+    width: 80%;
+    z-index: 100;
+  }
+
+  .reveal {
+    background: var(--white);
+    bottom: 0;
+    color: var(--black);
+    display: flex;
+    font-size: max(calc(.5vw + .5rem), .75rem);
+    margin: 0;
+    opacity: 0;
+    padding: 0 10px;
+    position: absolute;
+    z-index: 110;
+  }
+
+  &:hover {
+    .reveal {
+      height: auto;
+      opacity: 1;
+      padding: 10px 10px;
+      transition: all ease-in-out .25s;
+    }
+  }
+}
+
+footer.main {
+  align-content: center;
+  background: var(--darker-blue);
+  color: white;
+  display: flex;
+  font-size: .75rem;
+  justify-content: space-between;
+  padding: 2vw 10vw;
+  width: 100%;
+  div a {
+    color: var(--washed-blue);
+    margin-right: 1rem;
+  }
+}

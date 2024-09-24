@@ -1,0 +1,16 @@
+@use 'sass:color';
+@import 'variables';
+@import 'components';
+@import 'form';
+@import 'images';
+@import 'tables';
+@import 'modal';
+
+ul.pills { align-content: start; justify-content: start; }
+ul.pills li {
+  background: linear-gradient(to right, var(--light-blue), var(--blue));
+  border-radius: 2px;
+  margin: 5px 10px 5px 0;
+  padding: 1vw;
+  width: fit-content;
+}
