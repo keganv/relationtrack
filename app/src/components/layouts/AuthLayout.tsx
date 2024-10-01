@@ -7,7 +7,7 @@ export default function AuthLayout() {
 
   return user ?
     (
-      <div className="admin flex align-items-stretch">
+      <div className="flex items-stretch">
         <MainNav user={user} />
         <main role="main" id="main">
           <Outlet />
