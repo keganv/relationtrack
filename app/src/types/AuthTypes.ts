@@ -1,30 +1,29 @@
 
-export type AuthError = {
+export type AuthFormErrors = {
   firstName?: string[];
   lastName?: string[];
   email?: string[];
   password?: string[];
   username?: string[];
-  passwordConfirmation?: string[];
   terms?: string[];
 }
 
-export type LoginParams = {
-  email: string,
-  password: string
+export type LoginFields = {
+  email: string;
+  password: string;
 }
 
-export type RegisterParams = {
+export type RegisterFields = {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
-  passwordConfirmation: string;
+  password_confirmation: string;
   username: string;
-  terms: string;
+  terms: boolean;
 }
 
-export type NewPasswordParams = {
+export type NewPasswordFields = {
   email: string | null;
   token: string | undefined;
   password: string;
