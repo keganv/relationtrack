@@ -24,7 +24,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   render() {
     if (this.state.hasError) {
       return (
-        <h1 className={`${this.props.styles} mt-[calc(80vh/2)] m-auto w-[400px] text-white text-center`}>
+        <h1 className={`${this.props.styles} bg-main-dark-blue angle-right mt-[calc(80vh/2)] m-auto w-[400px] text-white text-center`}>
           {this.props.message || 'We\'re sorry. Something went wrong.'}
         </h1>
       );
