@@ -1,11 +1,9 @@
 import { createContext } from 'react';
-import { AxiosResponse } from 'axios';
 import User from '../types/User';
-import { AuthError, LoginFields, NewPasswordFields, RegisterFields } from '../types/AuthTypes';
+import { AuthFormErrors, LoginFields, NewPasswordFields, RegisterFields } from '../types/AuthTypes';
 
 export interface AuthContextValues {
-  csrf: () => Promise<AxiosResponse<unknown>>;
-  errors: AuthError;
+  errors: AuthFormErrors;
   user: User | null;
   login: (data: LoginFields) => Promise<void>;
   register: (data: RegisterFields) => Promise<void>;
