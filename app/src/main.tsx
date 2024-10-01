@@ -6,8 +6,8 @@ import App from './App.tsx'
 import ErrorBoundary from './components/common/ErrorBoundary'
 import AuthProvider from './providers/AuthProvider'
 
-import './main.scss'
 import './index.css'
+import './styles/main.scss'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>

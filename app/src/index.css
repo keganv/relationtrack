@@ -12,7 +12,7 @@
   --dark-gray: #555;
   --gray: #999;
   --light-gray: #aaa;
-  --red: #ff3838;
+  --red: #EF4444;
   --white: #fff;
   --yellow: #FBB000;
   --border-color: #BBB;
@@ -40,6 +40,7 @@ body {
 }
 
 a:hover { text-decoration: underline; }
+a.link { color: var(--dark-blue); }
 
 input[type='number'] {
   -moz-appearance: textfield;
