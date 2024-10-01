@@ -26,7 +26,7 @@ app/yarn-error.log*
 app/pnpm-debug.log*
 app/lerna-debug.log*
 app/.editorconfig
-
+/app/src/coverage
 app/node_modules
 app/dist
 app/dist-ssr
