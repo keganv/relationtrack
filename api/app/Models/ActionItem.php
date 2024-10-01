@@ -15,6 +15,13 @@ class ActionItem extends Model
         'complete'
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'complete' => 'boolean',
+        ];
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
