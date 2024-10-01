@@ -33,7 +33,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             await axios.post('/login', data);
             await getUser();
             navigate('/dashboard');
-            setStatus('Successfully Logged In!')
+            setStatus('Successfully Logged In!');
         } catch (e) {
             handleError(e);
         } finally {
@@ -42,16 +42,19 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     const register = async ({ ...data }) => {
-        setErrors({})
-        setLoading(true)
+        setErrors({});
+        setLoading(true);
+        setStatus(null);
         try {
-            await csrf()
-            await axios.post('/register', data)
-            await getUser()
+            await csrf();
+            await axios.post('/register', data);
+            await getUser();
+            navigate('/dashboard');
+            setStatus('Successfully Logged In!');
         } catch (e) {
             handleError(e);
         } finally {
-            setTimeout(() => setLoading(false), 2000)
+            setTimeout(() => setLoading(false), 1000)
         }
     }
 
@@ -60,31 +63,29 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         setLoading(true)
         setStatus(null)
         try {
-            await csrf()
-            const response = await axios.post('/forgot-password', data)
-            setStatus(response.data?.status)
+            await csrf();
+            const response = await axios.post('/forgot-password', data);
+            setStatus(response.data?.status);
         } catch (e) {
             handleError(e);
         } finally {
-            setTimeout(() => setLoading(false), 2000)
+            setTimeout(() => setLoading(false), 1000);
         }
     }
 
     const newPassword = async ({ ...data }) => {
-        setErrors({})
-        setLoading(true)
-        setStatus(null)
+        setErrors({});
+        setLoading(true);
+        setStatus(null);
         try {
-            await csrf()
-            const response = await axios.post('/reset-password', data)
-            setStatus(response.data?.status)
-            setTimeout(() => {
-                navigate('/login')
-            }, 2000)
+            await csrf();
+            const response = await axios.post('/reset-password', data);
+            setStatus(response.data?.status);
+            navigate('/login');
         } catch (e) {
             handleError(e);
         } finally {
-            setTimeout(() => setLoading(false), 2000)
+            setTimeout(() => setLoading(false), 1000)
         }
     }
 
@@ -114,24 +115,22 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     }
 
-    const setApiFile = async (image: File) => {
+    const setProfileImage = async (image: File) => {
         setStatus(null);
         try {
             const formData = new FormData();
             const url = '/api/update-profile-image';
             formData.append('profile_image', image as File);
             const response = await axios.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' }});
-            if (response) {
-                await getUser();
-                setStatus(response.data.message);
-            }
+            await getUser();
+            setStatus(response.data.message);
         } catch (error) {
             handleError(error);
         }
     };
 
     const handleError = (e: AxiosError | unknown) => {
-        if (e instanceof AxiosError) {    
+        if (e instanceof AxiosError) {
             setErrors(e.response?.data.errors || {error: [e.message]});
             setStatusError(e.response?.data.message || e.message);
         }
@@ -140,8 +139,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
     return (
       <AuthContext.Provider value={{
-        csrf, errors, user, login, register, logout, loading, status, setStatus, statusError, setStatusError,
-        sendPasswordResetLink, newPassword, sendEmailVerificationLink, setApiFile
+        errors, user, login, register, logout, loading, status, setStatus, statusError, setStatusError,
+        sendPasswordResetLink, newPassword, sendEmailVerificationLink, setProfileImage
       }}>
           {children}
       </AuthContext.Provider>
