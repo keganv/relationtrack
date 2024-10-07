@@ -41,6 +41,7 @@ describe('Register Component', () => {
     fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'john@example.com' } });
     fireEvent.change(screen.getByLabelText('Password*', { exact: true }), { target: { value: 'password123' } });
     fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'password123' } });
+    fireEvent.click(screen.getByRole('checkbox', { name: /I agree with the terms/i }));
     fireEvent.click(screen.getByRole('button', { name: /Register/i }));
 
     expect(mockRegister).toHaveBeenCalledWith({
