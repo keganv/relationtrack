@@ -23,56 +23,56 @@ export default function Register() {
       <div className="form-row">
         <label htmlFor="firstName">First Name<span className="required">*</span></label>
         <input id="firstName" name="firstName" type="text" value={firstName}
-               className={`${errors.firstName && 'error'}`}
+               className={`${errors?.firstName && 'error'}`}
                onChange={(e) => setFirstName(e.target.value)}/>
-        {errors.firstName && <span className="error">{errors.firstName[0]}</span>}
+        {errors?.firstName && <span className="error">{errors?.firstName[0]}</span>}
       </div>
       <div className="form-row">
         <label htmlFor="lastName">Last Name<span className="required">*</span></label>
         <input id="lastName" name="lastName" type="text" value={lastName}
-               className={`${errors.lastName && 'error'}`}
+               className={`${errors?.lastName && 'error'}`}
                onChange={e => setLastName(e.target.value)}
         />
-        {errors.lastName && <span className="error">{errors.lastName[0]}</span>}
+        {errors?.lastName && <span className="error">{errors?.lastName[0]}</span>}
       </div>
       <div className="form-row">
         <label htmlFor="username">Username<span className="required">*</span></label>
         <input id="username" name="username" type="text" value={username}
-               className={`${errors.username && 'error'}`}
+               className={`${errors?.username && 'error'}`}
                onChange={e => setUsername(e.target.value)}
         />
-        {errors.username && <span className="error">{errors.username[0]}</span>}
+        {errors?.username && <span className="error">{errors?.username[0]}</span>}
       </div>
       <div className="form-row">
         <label htmlFor="email">Email<span className="required">*</span></label>
         <input id="email" name="email" type="email" autoComplete="email"
-               className={`${errors.email && 'error'}`} value={email}
+               className={`${errors?.email && 'error'}`} value={email}
                onChange={e => setEmail(e.target.value)}
         />
-        {errors.email && <span className="error">{errors.email[0]}</span>}
+        {errors?.email && <span className="error">{errors?.email[0]}</span>}
       </div>
       <div className="form-row">
         <label htmlFor="password">Password<span className="required">*</span></label>
         <input id="password" name="password" type="password" autoComplete="current-password"
-               className={`${errors.password && 'error'}`} value={password}
+               className={`${errors?.password && 'error'}`} value={password}
                onChange={e => setPassword(e.target.value)}
         />
-        {errors.password && <span className="error">{errors.password[0]}</span>}
+        {errors?.password && <span className="error">{errors?.password[0]}</span>}
       </div>
       <div className="form-row">
         <label htmlFor="password_confirmation">Confirm Password<span className="required">*</span></label>
         <input id="password_confirmation" name="password_confirmation" type="password"
-               autoComplete="current-password" className={`${errors.password && 'error'}`}
+               autoComplete="current-password" className={`${errors?.password && 'error'}`}
                value={password_confirmation} onChange={e => setPasswordConfirmation(e.target.value)}
         />
       </div>
-      <div className="form-row">
+      <div className="mt-4">
         <label htmlFor="agree_confirm" className="inline">
           <input id="agree_confirm" type="checkbox" name="terms" className="mr-1"
                  onChange={e => setTerms(e.target.checked)}/>
           I agree with <Link to={'/terms'}>the terms</Link>
         </label>
-        {errors.terms && <div className="flex-1 w-full error">{errors.terms[0]}</div>}
+        {errors?.terms && <div className="flex-1 w-full error">{errors?.terms[0]}</div>}
       </div>
       <div className="flex flex-wrap justify-between items-center">
         <button type="submit" className="button primary angle-right" disabled={loading}>
