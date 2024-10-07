@@ -11,6 +11,7 @@ export type AuthFormErrors = {
 export type LoginFields = {
   email: string;
   password: string;
+  remember?: boolean;
 }
 
 export type RegisterFields = {
@@ -28,4 +29,9 @@ export type NewPasswordFields = {
   token: string | undefined;
   password: string;
   password_confirmation: string;
+}
+
+export type Status = {
+  type: string;
+  message: string;
 }

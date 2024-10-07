@@ -5,7 +5,7 @@ export default function GuestLayout() {
   return (
     <div className="flex flex-col justify-center min-h-screen w-[80vw] lg:w-[60vw] m-auto py-4">
       <Link to="/">
-        <ApplicationLogo className="max-w-[400px] m-auto mb-4"/>
+        <ApplicationLogo className="max-w-[300px] m-auto mb-4"/>
       </Link>
       <Outlet/>
       <footer role="contentinfo" className="text-center text-xs">

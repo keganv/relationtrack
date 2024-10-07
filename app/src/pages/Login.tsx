@@ -11,6 +11,7 @@ import { LoginFields } from "../types/AuthTypes.ts";
 const schema = z.object({
   email: z.string().email('Email address is not valid.'),
   password: z.string().min(8, 'Password must be at least 8 characters long.'),
+  remember: z.boolean().nullable(),
 });
 
 type Schema = z.infer<typeof schema> & LoginFields;
@@ -19,12 +20,12 @@ export default function Login() {
   const { login, loading, errors: apiErrors } = useAuthContext();
 
   const { control, register, handleSubmit, formState: { errors, isSubmitting } } = useForm<Schema>({
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: '', password: '', remember: false },
     resolver: zodResolver(schema),
   });
 
   const handleLogin: SubmitHandler<Schema> = async (data) => {
-    await login({...data});
+    await login(data);
   }
 
   return (
@@ -44,17 +45,22 @@ export default function Login() {
         />
         {apiErrors?.password && <span className="error">{apiErrors?.password[0]}</span>}
       </div>
-      <div className="flex w-full items-center justify-between mt-4">
+      <div className="mt-4">
+        <label htmlFor="remember" className="inline">
+          <input {...register("remember")} type="checkbox" name="remember" id="remember" /> Remember Me
+        </label>        
+      </div>
+      <div className="flex flex-wrap w-full items-center justify-between mt-4">
         <button type="submit" className="button primary angle-left" disabled={loading}>
           <span className={`${loading && 'mr-sm'}`}>Sign in</span>
           <Spinner loading={isSubmitting}/>
         </button>
-        <div className="text-right text-sm">
+        <div className="text-right text-xs">
           <div>
             <Link to={'/forgot-password'} className="link">Forgot your password?</Link>
           </div>
-          <div>
-            Don't have an account? <Link to={'/register'} className="link">Sign up!</Link>
+          <div className="mt-1">
+            No account? <Link to={'/register'} className="link">Sign up!</Link>
           </div>
         </div>
       </div>

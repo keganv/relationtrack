@@ -18,19 +18,14 @@ import RelationshipOutlet from './pages/relationships/RelationshipOutlet';
 import NotFound from './pages/static/NotFound';
 
 export default function App() {
-  const { status, statusError } = useAuthContext();
+  const { status } = useAuthContext();
 
   useEffect(() => {
     if (status) {
-      toast.success(status);
+      status.type === 'error' ? toast.error(status.message) : toast.success(status.message);
     }
+    return () => toast.dismiss();
   }, [status]);
-
-  useEffect(() => {
-    if (statusError) {
-      toast.error(statusError);
-    }
-  }, [statusError]);
 
   return (
     <>
@@ -54,10 +49,7 @@ export default function App() {
         {/* 404 Page */}
         <Route path='*' element={<NotFound />} />
       </Routes>
-      <Toaster
-        position='top-right'
-        toastOptions={{ duration: 5000 }}
-      />
+      <Toaster position='top-right' toastOptions={{ duration: 5000 }} />
     </>
   );
 }
