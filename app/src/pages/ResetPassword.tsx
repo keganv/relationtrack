@@ -1,30 +1,24 @@
 import { FormEvent, useEffect, useState } from 'react';
 import Spinner from '../components/ui/Spinner';
 import useAuthContext from '../hooks/useAuthContext';
-import toast from 'react-hot-toast';
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom';
 
 export default function ResetPassword() {
-  const [email, setEmail] = useState<string|null>('')
-  const [password, setPassword] = useState('')
-  const [password_confirmation, setPasswordConfirmation] = useState('')
-  const { newPassword, loading, errors, status } = useAuthContext()
-  const { token } = useParams()
+  const [email, setEmail] = useState<string|null>('');
+  const [password, setPassword] = useState('');
+  const [password_confirmation, setPasswordConfirmation] = useState('');
+  const { newPassword, loading, errors } = useAuthContext();
+  const { token } = useParams();
   const [searchParams] = useSearchParams();
 
-
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    newPassword({ email, password, token, password_confirmation })
+    e.preventDefault();
+    newPassword({ email, password, token, password_confirmation });
   }
 
   useEffect(() => {
-    if (status) {
-      toast.success(status)
-    }
-
     setEmail(searchParams.get('email') || null)
-  }, [status, searchParams])
+  }, [searchParams]);
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -93,7 +87,7 @@ export default function ResetPassword() {
           <div>
             <button
               type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 flex items-center gap-x-2 disabled:cursor-not-allowed"
+              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 items-center gap-x-2 disabled:cursor-not-allowed"
               disabled={loading}
             >
               <span>Reset</span>

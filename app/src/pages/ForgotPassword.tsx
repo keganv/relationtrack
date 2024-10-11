@@ -1,23 +1,16 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import Spinner from "../components/ui/Spinner";
 import useAuthContext from "../hooks/useAuthContext";
-import toast from "react-hot-toast";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('')
-  const { sendPasswordResetLink, loading, errors, status } = useAuthContext();
+  const { sendPasswordResetLink, loading, errors } = useAuthContext();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     sendPasswordResetLink({ email });
     setEmail('');
   }
-
-  useEffect(() => {
-    if (status) {
-      toast.success(status)
-    }
-  }, [status])
 
   return (
     <form className="space-y-6" method="POST" onSubmit={handleSubmit}>
