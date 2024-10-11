@@ -1,101 +1,74 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import Spinner from '../components/ui/Spinner';
 import useAuthContext from '../hooks/useAuthContext';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { Input } from '../components/form/Input';
+import { NewPasswordFields } from '../types/AuthTypes.ts';
+
+
+const schema = z.object({
+  email: z.string().email('Email address is not valid.'),
+  password: z.string().min(8, 'Password must be at least 8 characters long.'),
+  password_confirmation: z.string().min(8),
+  token: z.string(),
+});
+
+type Schema = z.infer<typeof schema> & NewPasswordFields;
 
 export default function ResetPassword() {
-  const [email, setEmail] = useState<string|null>('');
-  const [password, setPassword] = useState('');
-  const [password_confirmation, setPasswordConfirmation] = useState('');
-  const { newPassword, loading, errors } = useAuthContext();
+  const { newPassword, loading, errors: apiErrors } = useAuthContext();
   const { token } = useParams();
-  const [searchParams] = useSearchParams();
+  const [ searchParams ] = useSearchParams();
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    newPassword({ email, password, token, password_confirmation });
+  const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<Schema>({
+    defaultValues: { email: searchParams.get('email') ?? '', password: '', password_confirmation: '', token },
+    resolver: zodResolver(schema),
+  });
+
+  const handleLogin: SubmitHandler<Schema> = async (data) => {
+    await newPassword(data);
   }
 
-  useEffect(() => {
-    setEmail(searchParams.get('email') || null)
-  }, [searchParams]);
-
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Reset password
-        </h2>
+    <form method="POST" onSubmit={handleSubmit(handleLogin)} className="p-4" noValidate>
+      <h2 className="text-center text-2xl">Reset Password</h2>
+      <Controller
+        name="email"
+        control={control}
+        render={({field}) => (
+          <Input id="email" type="email" fieldErrors={errors?.email} apiErrors={apiErrors?.email}
+                 className={`${apiErrors?.email && 'error'}`} required label="Email" {...field}/>
+        )}
+      />
+      <div className="mt-4">
+        <Controller
+          name="password"
+          control={control}
+          render={({field}) => (
+            <Input id="password" type="password" fieldErrors={errors?.password} apiErrors={apiErrors?.password}
+                  className={`${apiErrors?.password && 'error'}`} required label="New Password" {...field}/>
+          )}
+        />
       </div>
-
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6" method="POST" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-              Email address
-            </label>
-            <div className="mt-2">
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                className={`block w-full border-0 rounded-md py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${errors.email && 'ring-red-500'}`}
-                value={email?.toString()}
-                onChange={e => setEmail(e.target.value)}
-                readOnly
-              />
-            </div>
-            {errors.email && <span className="text-red-400 text-sm">{errors.email[0]}</span>}
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-              New password
-            </label>
-            <div className="mt-2">
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                className={`block w-full border-0 rounded-md py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${errors.password && 'ring-red-500'}`}
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-              />
-            </div>
-            {errors.password && <span className="text-red-400 text-sm">{errors.password[0]}</span>}
-          </div>
-
-          <div>
-            <label htmlFor="password_confirmation" className="block text-sm font-medium leading-6 text-gray-900">
-              Confirm password
-            </label>
-            <div className="mt-2">
-              <input
-                id="password_confirmation"
-                name="password_confirmation"
-                type="password"
-                autoComplete="current-password"
-                className={`block w-full border-0 rounded-md py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 ${errors.password && 'ring-red-500'}`}
-                value={password_confirmation}
-                onChange={e => setPasswordConfirmation(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 items-center gap-x-2 disabled:cursor-not-allowed"
-              disabled={loading}
-            >
-              <span>Reset</span>
-              <Spinner loading={loading} />
-            </button>
-          </div>
-        </form>
+      <div className="mt-4">
+        <Controller
+          name="password_confirmation"
+          control={control}
+          render={({field}) => (
+            <Input id="password_confirmation" type="password" fieldErrors={errors?.password}
+                   required label="Confirm Password" {...field}/>
+          )}
+        />
       </div>
-    </div>
+      <div className="flex flex-wrap w-full items-center justify-between mt-4">
+        <button type="submit" className="button primary angle-left" disabled={loading}>
+          <span className={`${loading && 'mr-sm'}`}>Reset Password</span>
+          <Spinner loading={isSubmitting}/>
+        </button>
+      </div>
+    </form>
   )
 }

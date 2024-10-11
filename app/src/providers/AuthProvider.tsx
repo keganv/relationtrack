@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import axios from "../lib/axios";
 import AuthContext from "../contexts/AuthContext";
-import { LoginFields, Status } from "../types/AuthTypes.ts";
+import { LoginFields, NewPasswordFields, Status } from "../types/AuthTypes.ts";
 import User from "../types/User.ts";
 
 type AuthProviderProps = {
@@ -57,7 +57,6 @@ const AuthProvider = ({children}: AuthProviderProps) => {
   }, []);
 
   const login = async (data: LoginFields) => {
-    console.log(data);
     setErrors({});
     setLoading(true);
     setStatus(null);
@@ -107,12 +106,11 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     }
   }
 
-  const newPassword = async ({...data}) => {
+  const newPassword = async (data: NewPasswordFields) => {
     setErrors({});
     setLoading(true);
     setStatus(null);
     try {
-      await csrf();
       const response = await axios.post('/reset-password', data);
       setStatus({type: 'success', message: response.data?.status});
       navigate('/login');
@@ -128,13 +126,12 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     setLoading(true)
     setStatus(null)
     try {
-      await csrf()
-      const response = await axios.post('/email/verification-notification')
-      setStatus({type: 'success', message: response.data?.status})
+      const response = await axios.post('/email/verification-notification');
+      setStatus({type: 'success', message: response.data?.status});
     } catch (e) {
       handleError(e);
     } finally {
-      setTimeout(() => setLoading(false), 2000)
+      setTimeout(() => setLoading(false), 1000)
     }
   }
 
@@ -142,8 +139,9 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     try {
       await axios.post('/logout');
       setUser(null);
-      localStorage.removeItem('rtud');
       navigate('/');
+      localStorage.removeItem('rtud');
+      document.cookie = "XSRF-TOKEN=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"; // Remove XSRF-TOKEN
     } catch (e) {
       handleError(e);
     }

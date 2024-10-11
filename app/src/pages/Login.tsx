@@ -39,11 +39,14 @@ export default function Login() {
         )}
       />
       <div className="mt-4">
-        <label htmlFor="password">Password<span className="required">*</span></label>
-        <input {...register("password")} id="password" name="password" type="password" autoComplete="current-password"
-               className={`${apiErrors?.password && 'error'}`} required
+        <Controller
+          name="password"
+          control={control}
+          render={({field}) => (
+            <Input id="password" type="password" fieldErrors={errors?.password} apiErrors={apiErrors?.password}
+                  className={`${apiErrors?.password && 'error'}`} required label="Password" {...field}/>
+          )}
         />
-        {apiErrors?.password && <span className="error">{apiErrors?.password[0]}</span>}
       </div>
       <div className="mt-4">
         <label htmlFor="remember" className="inline">
