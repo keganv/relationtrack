@@ -13,7 +13,7 @@ return new class extends Migration
             $table->uuid('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('type_id');
-            $table->foreign('type_id')->references('id')->on('relation_types');
+            $table->foreign('type_id')->references('id')->on('relationship_types');
             $table->string('name');
             $table->string('title')->nullable();
             $table->integer('age')->nullable();
