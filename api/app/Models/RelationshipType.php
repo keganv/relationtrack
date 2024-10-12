@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class RelationshipType extends Model
@@ -11,7 +12,7 @@ class RelationshipType extends Model
         return $this->hasMany(Relationship::class);
     }
 
-    public function types(): array
+    public function types(): Collection
     {
         return $this->all();
     }
