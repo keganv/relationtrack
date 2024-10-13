@@ -25,10 +25,10 @@ export type RegisterFields = {
 }
 
 export type NewPasswordFields = {
-  email: string | null;
-  token: string | undefined;
+  email: string;
   password: string;
   password_confirmation: string;
+  token: string;
 }
 
 export type Status = {
