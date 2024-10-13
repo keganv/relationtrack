@@ -16,14 +16,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-
-        User::factory()->count(1)->unverified()->create(['password' => Hash::make(env('TEST_PASSWORD'))]);
+        User::factory()->count(2)->unverified()->create(['password' => Hash::make(env('TEST_PASSWORD'))]);
 
         User::factory()->create([
-             'first_name' => 'Rider',
+             'first_name' => 'Kegan',
              'last_name' => 'VanSickle',
-             'username' => 'riderv',
-             'email' => 'riderv@example.com',
+             'username' => 'keganv',
+             'email' => 'keganv@keganv.com',
              'email_verified_at' => null,
              'password' => Hash::make(env('TEST_PASSWORD')),
          ]);
