@@ -1,8 +1,8 @@
 <?php
 
-use app\Http\Controllers\ActionItemController;
-use app\Http\Controllers\AdminController;
-use app\Http\Controllers\RelationshipController;
+use App\Http\Controllers\ActionItemController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\RelationshipController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
