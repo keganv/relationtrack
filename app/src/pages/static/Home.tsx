@@ -6,8 +6,6 @@ import HomeNav from "../../components/ui/home/HomeNav";
 import Banners from "../../components/ui/home/Banners";
 import HomeCards from "../../components/ui/home/HomeCards";
 
-import "../../styles/home.scss";
-
 export default function Home() {
   useEffect(()=>{
     const images: string[] = ['/images/banner-couple.jpg', '/images/banner-swing.jpg'];

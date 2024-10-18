@@ -1,9 +1,9 @@
 import {ReactNode, createContext, useState, useEffect, useCallback} from 'react';
-import {AxiosError} from 'axios';
-import {useNavigate} from 'react-router-dom';
-import useAuthContext from '../hooks/useAuthContext';
-import Relationship from '../types/Relationship';
 import axios from '../lib/axios';
+import { AxiosError } from 'axios';
+import { useNavigate } from 'react-router-dom';
+import Relationship from '../types/Relationship';
+
 
 export interface RelationshipContextValues {
   save: (data: FormDataModel) => void,
@@ -43,16 +43,15 @@ type RelationshipProviderProps = {
 
 export function RelationshipProvider({ children }: RelationshipProviderProps) {
   const navigate = useNavigate();
-  const {setStatus, setStatusError} = useAuthContext();
   const [relationships, setRelationships] = useState<Relationship[]|null>(null);
   const [selectedRelationship, setSelectedRelationship] = useState<Relationship|null>(null);
   const [types, setTypes] = useState<string[]|null>(null);
   const [formErrors, setFormErrors] = useState<FormErrors|null>(null);
 
   const _setError = useCallback(() => {
-    setStatusError('You do not have access. Please Login.');
+   // setStatusError('You do not have access. Please Login.');
     return navigate('/login');
-  }, [navigate, setStatusError]);
+  }, [navigate]);
 
   const all = useCallback(async () => {
     try {
@@ -99,13 +98,13 @@ export function RelationshipProvider({ children }: RelationshipProviderProps) {
       const response = await axios.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' }});
 
       if (response) {
-        setStatus(response.data.message);
+        // setStatus(response.data.message);
         all();
       }
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error(error);
-        setStatusError(error.response?.data.message);
+        // setStatusError(error.response?.data.message);
         setFormErrors(error.response?.data.errors);
       }
     }
@@ -124,17 +123,17 @@ export function RelationshipProvider({ children }: RelationshipProviderProps) {
   }, []);
 
   const setPrimaryImageForRelationship = async (id: string) => {
-    setStatus(null);
+    // setStatus(null);
     try {
       const url = `/api/relationships/${selectedRelationship?.id}/primary-image`;
       const response = await axios.post(url, {id: id});
       if (response) {
-        setStatus(response.data.message);
+        // setStatus(response.data.message);
       }
     } catch (error) {
       if (error instanceof AxiosError) {
         console.error(error);
-        setStatusError(error.response?.data.message);
+        // setStatusError(error.response?.data.message);
       }
     }
   };
@@ -145,10 +144,10 @@ export function RelationshipProvider({ children }: RelationshipProviderProps) {
       if (relationship) {
         setSelectedRelationship(relationship);
       } else {
-        setStatusError('No relationship found.')
+        // setStatusError('No relationship found.')
       }
     }
-  }, [relationships, setStatusError]);
+  }, [relationships]);
 
   useEffect(() => {
     if (!relationships) {

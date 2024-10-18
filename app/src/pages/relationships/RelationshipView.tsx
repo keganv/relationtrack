@@ -11,7 +11,7 @@ import ActionItems from '../../components/ui/ActionItems.tsx';
 import API_File from '../../types/ApiFile.ts';
 
 export default function RelationshipView() {
-  const apiUrl = `${import.meta.env.VITE_BACKEND_URL_LOCAL}/api/`;
+  const apiUrl = `${import.meta.env.VITE_API_URL}/api/`;
   const location = useLocation();
   const primaryImage = useRef<HTMLImageElement|null>(null);
   const {

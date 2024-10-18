@@ -99,7 +99,7 @@ export default function SortableTable({columns, data}: SortableTableProps) {
           <tr key={`${row}-${index}`}>
             {columns.map((col: Column, i: number) => (
               <td key={`${row[col.key]}-${i}`} data-key={col.key} datatype={col.type} data-value={row[col.key]} style={col.styles} className={col.className}>
-                {col.type === 'image' && <div className="table-image"><img src={`${import.meta.env.VITE_BACKEND_URL_LOCAL}/api/${row[col.key]}`} alt={row[col.alt]} /></div>}
+                {col.type === 'image' && <div className="table-image"><img src={`${import.meta.env.VITE_API_URL}/api/${row[col.key]}`} alt={row[col.alt]} /></div>}
                 {col.type === 'text' && <>{row[col.key]}</>}
                 {col.type === 'format' && <>{col.format(row)}</>}
                 {col.type === 'number' && <>{row[col.key]}</>}

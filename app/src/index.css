@@ -10,6 +10,7 @@
   --dark-blue: #005993;
   --darker-blue: #003865;
   --dark-gray: #555;
+  --darker-gray: #333;
   --gray: #999;
   --light-gray: #aaa;
   --red: #EF4444;
@@ -17,13 +18,12 @@
   --yellow: #FBB000;
   --border-color: #BBB;
   --border-radius: 10px;
-  --background-gray: #f7f7f7;
+  --background-gray: #E9E9E9;
   --lighter-gray: #ddd;
   --green: #5f5;
   --error: var(--red);
   --success: var(--green);
   --warning: var(--yellow);
-  --radius: 0.5rem;
 }
 
 html { font-size: 20px; }
@@ -60,6 +60,7 @@ input[type='number']::-webkit-outer-spin-button {
 @layer base {
   .bg-main-blue { background-color: var(--blue); }
   .bg-main-dark-blue { background-color: var(--dark-blue); }
+  .bg-main-darker-blue { background-color: var(--darker-blue); }
   .bg-main-light-blue  { background-color: var(--light-blue); }
   .text-blue { color: var(--blue); }
 

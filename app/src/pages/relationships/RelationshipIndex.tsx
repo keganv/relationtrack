@@ -12,7 +12,7 @@ export default function RelationshipIndex() {
     <>
       <header className="flex justify-between border-bottom-dark mb">
         <h2>My Relationships</h2>
-        <button className="primary small" onClick={openModal}>Add Relationship</button>
+        <button className="primary angle-right text-xs" onClick={openModal}>Add Relationship</button>
       </header>
       <Modal isOpen={modalIsOpen} onRequestClose={closeModal}
              className="react-modal right" overlayClassName="react-modal-overlay">
