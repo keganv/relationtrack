@@ -33,12 +33,11 @@ const AuthProvider = ({children}: AuthProviderProps) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState<Status | null>(null);
-  const [rememberMe, setRememebMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (user && rememberMe) {
-      console.log(rememberMe);
       const now = new Date().getTime();
       const userData = {...user, expiration: now + 7200000}; // 2 hours
       localStorage.setItem('rtud', JSON.stringify(userData));
@@ -66,7 +65,7 @@ const AuthProvider = ({children}: AuthProviderProps) => {
       await getUser();
       navigate('/dashboard');
       setStatus({type: 'success', message: 'Successfully Logged In!'});
-      setRememebMe(data.remember ?? false);
+      setRememberMe(data.remember ?? false);
     } catch (e) {
       handleError(e);
     } finally {
