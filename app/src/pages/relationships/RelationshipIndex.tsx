@@ -6,17 +6,16 @@ import ErrorBoundary from '../../components/common/ErrorBoundary';
 
 export default function RelationshipIndex() {
   const [modalIsOpen, setIsOpen] = useState<boolean>(false);
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
+  
   return (
     <>
       <header className="flex justify-between border-bottom-dark mb">
         <h2>My Relationships</h2>
-        <button className="primary angle-right text-xs" onClick={openModal}>Add Relationship</button>
+        <button className="primary angle-right text-xs" onClick={() => setIsOpen(true)}>Add Relationship</button>
       </header>
-      <Modal isOpen={modalIsOpen} onRequestClose={closeModal}
+      <Modal isOpen={modalIsOpen} onRequestClose={() => setIsOpen(false)}
              className="react-modal right" overlayClassName="react-modal-overlay">
-        <RelationshipForm cancel={closeModal} />
+        <RelationshipForm cancel={() => setIsOpen(false)} />
       </Modal>
       <ErrorBoundary message="Could not load the relationships." styles="bg-main-blue">
         <RelationshipList />
