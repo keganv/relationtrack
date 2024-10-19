@@ -1,52 +1,21 @@
-import {ReactNode, createContext, useState, useEffect, useCallback} from 'react';
+import { ReactNode, useState, useEffect, useCallback } from 'react';
 import axios from '../lib/axios';
 import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Relationship from '../types/Relationship';
+import RelationshipContext from '../contexts/RelationshipContext';
+import { Relationship, RelationshipFormData, RelationshipFormErrors } from '../types/Relationship';
 
-
-export interface RelationshipContextValues {
-  save: (data: FormDataModel) => void,
-  relationships: Relationship[]|null,
-  selectedRelationship: Relationship|null,
-  setSelectedRelationship: React.Dispatch<React.SetStateAction<Relationship | null>>,
-  setRelationshipById: (id: string) => void,
-  setPrimaryImageForRelationship: (id: string) => void,
-  types: string[]|null,
-  formErrors: FormErrors|null,
-  convertToFormData: (data: Relationship) => FormDataModel,
-}
-
-export interface FormDataModel {
-  id?: string,
-  title: string,
-  name: string,
-  health: number|string,
-  type: string,
-  birthday: string,
-  description: string,
-  images?: File[]|null
-}
-
-export interface FormErrors {
-  name?: string;
-  type?: string;
-  health?: string;
-  title?: string;
-}
-
-export const RelationshipContext = createContext<RelationshipContextValues>({} as RelationshipContextValues);
 
 type RelationshipProviderProps = {
   children: ReactNode;
 }
 
-export function RelationshipProvider({ children }: RelationshipProviderProps) {
+const RelationshipProvider = ({ children }: RelationshipProviderProps) => {
   const navigate = useNavigate();
   const [relationships, setRelationships] = useState<Relationship[]|null>(null);
   const [selectedRelationship, setSelectedRelationship] = useState<Relationship|null>(null);
   const [types, setTypes] = useState<string[]|null>(null);
-  const [formErrors, setFormErrors] = useState<FormErrors|null>(null);
+  const [formErrors, setFormErrors] = useState<RelationshipFormErrors|null>(null);
 
   const _setError = useCallback(() => {
    // setStatusError('You do not have access. Please Login.');
@@ -79,7 +48,7 @@ export function RelationshipProvider({ children }: RelationshipProviderProps) {
     }
   }, [_setError]);
 
-  const save = async (data: FormDataModel) => {
+  const save = async (data: RelationshipFormData) => {
     setFormErrors(null);
     try {
       const formData = new FormData();
@@ -110,7 +79,7 @@ export function RelationshipProvider({ children }: RelationshipProviderProps) {
     }
   };
 
-  const convertToFormData = useCallback((relationship: Relationship): FormDataModel => {
+  const convertToFormData = useCallback((relationship: Relationship): RelationshipFormData => {
     return {
       id: relationship.id || '',
       title: relationship.title,
@@ -174,3 +143,5 @@ export function RelationshipProvider({ children }: RelationshipProviderProps) {
     </RelationshipContext.Provider>
   );
 }
+
+export default RelationshipProvider;
