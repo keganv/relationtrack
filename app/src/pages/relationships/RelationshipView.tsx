@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import Modal from 'react-modal';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
-import {FormDataModel} from '../../providers/RelationshipService.tsx';
+import { RelationshipFormData } from '../../types/Relationship';
 import RelationshipForm from './components/RelationshipForm';
 import useRelationshipContext from '../../hooks/useRelationshipContext';
 import Spinner from '../../components/ui/Spinner';
@@ -22,7 +22,7 @@ export default function RelationshipView() {
   } = useRelationshipContext();
   const [formIsOpen, setFormIsOpen] = useState<boolean>(false);
   const [imageModal, setImageModal] = useState<boolean>(false);
-  const [formData, setFormData] = useState<FormDataModel>();
+  const [formData, setFormData] = useState<RelationshipFormData>();
   const openFormModal = () => setFormIsOpen(true);
   const closeFormModal = () => setFormIsOpen(false);
   const setPrimaryImage = (path: string, id: string) => {

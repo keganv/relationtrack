@@ -1,5 +1,5 @@
-import {Outlet} from 'react-router-dom';
-import {RelationshipProvider} from '../../providers/RelationshipService.tsx';
+import { Outlet } from 'react-router-dom';
+import RelationshipProvider from '../../providers/RelationshipProvider';
 
 export default function RelationshipOutlet() {
   return (
