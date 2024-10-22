@@ -15,7 +15,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // ADMIN ROUTES
     Route::get('/user', fn (Request $request) => $request->user()->load('profileImage'));
     Route::post('/update-profile-image', [AdminController::class, 'updateProfileImage']);
-    Route::get('/uploads/users/{userId}/profile/{file}', [AdminController::class, 'getProfileImage']);
+    Route::get('/uploads/users/{userId}/{file}', [AdminController::class, 'getPrivateStorageFile']);
 
     // RELATIONSHIP ROUTES
     Route::get('/relationships', [RelationshipController::class, 'index']);
