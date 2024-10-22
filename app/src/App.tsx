@@ -49,7 +49,7 @@ export default function App() {
         {/* 404 Page */}
         <Route path='*' element={<NotFound />} />
       </Routes>
-      <Toaster position='top-right' toastOptions={{ duration: 5000 }} />
+      <Toaster position='bottom-right' toastOptions={{ duration: 5000 }} />
     </>
   );
 }
