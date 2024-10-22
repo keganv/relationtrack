@@ -5,7 +5,7 @@ export default function useAuthContext(): AuthContextValues {
   const context = useContext(AuthContext);
 
   if (context === undefined) {
-    throw new Error("useAuthContext must be used within a AuthProvider");
+    throw new Error("useAuthContext must be used within an AuthProvider.");
   }
 
   return context;
