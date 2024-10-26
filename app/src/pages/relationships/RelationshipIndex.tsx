@@ -6,10 +6,10 @@ import ErrorBoundary from '../../components/common/ErrorBoundary';
 
 export default function RelationshipIndex() {
   const [modalIsOpen, setIsOpen] = useState<boolean>(false);
-  
+
   return (
     <>
-      <header className="flex justify-between border-bottom-dark mb">
+      <header className="flex items-center justify-between mb-3">
         <h2>My Relationships</h2>
         <button className="primary angle-right text-xs" onClick={() => setIsOpen(true)}>Add Relationship</button>
       </header>

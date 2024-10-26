@@ -1,31 +1,31 @@
-import {useEffect, useState} from 'react';
-import {Link} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import SortableTable from '../../../components/ui/SortableTable'
 import Spinner from '../../../components/ui/Spinner';
 import useRelationshipContext from '../../../hooks/useRelationshipContext';
 
-interface FormattedRelationshipTableRow {
-  id: string,
-  primary_image: string,
-  name: string,
-  type: string,
-  title: string,
-  health: number|string,
-  updated_at: string,
+type FormattedRelationshipTableRow = {
+  id: string;
+  primary_image: string;
+  name: string;
+  type: string;
+  title: string;
+  health: number | string;
+  updated_at: string;
 }
 
 export default function RelationshipList() {
-  const {relationships} = useRelationshipContext();
+  const { relationships } = useRelationshipContext();
   const [loading, setLoading] = useState<boolean>(true);
-  const [formatted, setFormatted] = useState<{[key: string]: string | number | undefined }[]|null>(null);
+  const [formatted, setFormatted] = useState<{ [key: string]: string | number | undefined }[] | null>(null);
   const columns = [
-    {key: 'primary_image', label: '', styles: {width: '50px'}, type: 'image', alt: 'name', className: 'relation-image'},
+    { key: 'primary_image', label: '', styles: { width: '50px' }, type: 'image', alt: 'name', className: 'relation-image' },
     {
       key: 'name', label: 'Name', type: 'format',
       format: (data: FormattedRelationshipTableRow) => <Link to={`/relationships/${data.id}`}>{data.name}</Link>
     },
-    {key: 'type', label: 'Relationship', className: 'hide-sm', type: 'text'},
-    {key: 'title', label: 'Title', type: 'text'},
+    { key: 'type', label: 'Relationship', className: 'hide-sm', type: 'text' },
+    { key: 'title', label: 'Title', type: 'text' },
     {
       key: 'health', label: 'Health', className: 'text-center', type: 'format',
       format: (data: FormattedRelationshipTableRow) => (
@@ -34,14 +34,14 @@ export default function RelationshipList() {
         </div>
       )
     },
-    {key: 'updated_at', label: 'Last Update', className: 'hide-sm', type: 'date'},
+    { key: 'updated_at', label: 'Last Update', className: 'hide-sm', type: 'date' },
   ];
 
   useEffect(() => {
     if (relationships) {
-      const format: {[key: string]: string | number | undefined }[] = [];
+      const rows: { [key: string]: string | number | undefined }[] = [];
       relationships?.forEach((r) => {
-        format.push({
+        rows.push({
           'id': r.id || '',
           'primary_image': r.primary_image?.path || '',
           'name': r.name,
@@ -51,7 +51,7 @@ export default function RelationshipList() {
           'updated_at': r.updated_at || '',
         });
       });
-      setFormatted(format);
+      setFormatted(rows);
       setLoading(false);
     }
   }, [relationships]);
