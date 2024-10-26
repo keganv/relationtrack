@@ -30,8 +30,3 @@ export type NewPasswordFields = {
   password_confirmation: string;
   token: string;
 }
-
-export type Status = {
-  type: string;
-  message: string;
-}
