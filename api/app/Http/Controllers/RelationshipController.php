@@ -9,6 +9,7 @@ use App\Models\User;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,16 +23,15 @@ class RelationshipController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        $relationships = $user->relationships->load('primaryImage')->load('type')->load('files')->load('actionItems');
+        $relationships = $user->relationships->load('primaryImage', 'type', 'files', 'actionItems');
 
-        return response()->json($relationships, 200);
+        return response()->json($relationships, Response::HTTP_OK);
     }
 
     public function store(Request $request)
     {
         /** @var User $user */
         $user = Auth::user();
-        /** @var Relationship $relationship */
         $relationship = new Relationship();
 
         return $this->save($request, $user, $relationship);
@@ -47,6 +47,7 @@ class RelationshipController extends Controller
         // Check for both the relationship and a security test to make sure that
         // the requested relationship belongs to the user.
         if (!$relationship || ($relationship?->user_id !== $user->id)) {
+            return response()->json($e->getMessage(), $e->getCode());
             return redirect()->back()->with([
                 'status' => 'error',
                 'message' => 'The requested relationship does not exist.'
@@ -58,9 +59,9 @@ class RelationshipController extends Controller
 
     public function getTypes()
     {
-        $types = DB::table('relation_types')->pluck('type');
+        $types = DB::table('relationship_types')->get();
 
-        return response()->json($types, 200);
+        return response()->json($types, Response::HTTP_OK);
     }
 
     private function save(Request $request, User $user, Relationship $relationship)
@@ -74,7 +75,7 @@ class RelationshipController extends Controller
         ]);
 
         $relationship->user_id = $user->id;
-        $relationship->type_id = RelationshipType::firstWhere('type', $request->input('type'))->id;
+        $relationship->type_id = $request->input('type');
         $relationship->name = $request->input('name');
         $relationship->title = $request->input('title');
         $relationship->health = $request->input('health');
