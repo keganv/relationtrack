@@ -47,7 +47,6 @@ class RelationshipController extends Controller
         // Check for both the relationship and a security test to make sure that
         // the requested relationship belongs to the user.
         if (!$relationship || ($relationship?->user_id !== $user->id)) {
-            return response()->json($e->getMessage(), $e->getCode());
             return redirect()->back()->with([
                 'status' => 'error',
                 'message' => 'The requested relationship does not exist.'
@@ -71,7 +70,9 @@ class RelationshipController extends Controller
             'name' => 'required|max:55',
             'title' => 'required|max:55',
             'health' => 'required|numeric|min:0|max:10',
-            'birthday' => 'nullable|date|before:today'
+            'birthday' => 'nullable|date|before:today',
+            'images' => 'nullable|array|max:10',
+            'images.*' => 'image|max:2048'
         ]);
 
         $relationship->user_id = $user->id;
@@ -84,10 +85,12 @@ class RelationshipController extends Controller
         $relationship->save();
 
         if ($request->file('images')) {
-            if (count($request->file('images')) >= 10 || count($relationship->files) >= 10) {
+            if ((count($request->file('images')) + count($relationship->files)) >= 10) {
                 return response()->json([
-                    'message' => "Sorry, only 10 images can be uploaded per relationship."
-                ], 500);
+                    'errors' => [
+                        'images' => ["Sorry, only 10 images can be uploaded per relationship."]
+                    ]
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
             $addImgResponse = $this->addImagesToRelationship($request->file('images'), $relationship, $user);
@@ -106,7 +109,7 @@ class RelationshipController extends Controller
 
         $successMessage = "Your relationship was saved successfully!";
 
-        return response()->json(['message' => $successMessage], 200);
+        return response()->json(['message' => $successMessage], Response::HTTP_CREATED);
     }
 
     public function delete(string $id)
@@ -183,19 +186,19 @@ class RelationshipController extends Controller
             if (in_array($upload->getClientOriginalName(), $existingFileNames)) {
                 return response()->json([
                     'message' => "The file {$upload->getClientOriginalName()} has already been uploaded."
-                ], 500);
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
             if ($upload->getSize() > 2147483648) {
                 return response()->json([
                     'message' => "The file {$upload->getClientOriginalName()} is too large. {$upload->getSize()}"
-                ], 500);
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
             if (!$upload->isValid()) {
                 return response()->json([
                     'message' => "File {$upload->getClientOriginalName()}: {$upload->getErrorMessage()}."
-                ], 500);
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
             $file = new File();
