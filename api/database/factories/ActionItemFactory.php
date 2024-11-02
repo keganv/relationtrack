@@ -2,6 +2,7 @@
 
 namespace database\factories;
 
+use App\Models\ActionItem;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,6 +10,11 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ActionItemFactory extends Factory
 {
+    /**
+     * @var string <\Illuminate\Database\Eloquent\Model>
+     */
+    protected $model = ActionItem::class;
+
     /**
      * Define the model's default state.
      *
