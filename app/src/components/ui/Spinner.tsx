@@ -1,3 +1,4 @@
-export default function Spinner({ loading }: { loading: boolean }) {
-  return loading && <i className="fa-solid fa-spinner fa-spin-pulse"></i>
+type SpinnerProps = { loading: boolean, className?: string }
+export default function Spinner({ loading, className }: SpinnerProps) {
+  return loading && <i className={`${className} fa-solid fa-spinner fa-spin-pulse`}></i>
 }
