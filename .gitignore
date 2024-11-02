@@ -7,6 +7,7 @@ api/vendor
 api/.env
 api/.env.backup
 api/.env.production
+api/.env.*
 api/.phpunit.result.cache
 api/Homestead.json
 api/Homestead.yaml
@@ -26,7 +27,7 @@ app/yarn-error.log*
 app/pnpm-debug.log*
 app/lerna-debug.log*
 app/.editorconfig
-/app/src/coverage
+app/src/coverage
 app/node_modules
 app/dist
 app/dist-ssr
