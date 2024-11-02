@@ -33,7 +33,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <form method="POST" onSubmit={handleSubmit(handleLogin)} className="p-4" noValidate>
+    <form method="POST" onSubmit={handleSubmit(handleLogin)} className="shadow-md mb-4 thick-border" noValidate>
       <h2 className="text-center text-2xl">Reset Password</h2>
       <Controller
         name="email"

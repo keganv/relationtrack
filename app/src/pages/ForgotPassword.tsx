@@ -13,7 +13,7 @@ export default function ForgotPassword() {
   }
 
   return (
-    <form className="space-y-6" method="POST" onSubmit={handleSubmit}>
+    <form className="shadow-md mb-4 thick-border" method="POST" onSubmit={handleSubmit}>
       <h2 className="text-center text-2xl">Forgot password?</h2>
       <p className="text-sm">Enter your registered email address, and we'll email you a link to
         reset your password.</p>

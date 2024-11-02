@@ -19,7 +19,7 @@ export default function Register() {
   }
 
   return (
-    <form className="space-y-4" method="POST" onSubmit={handleRegister}>
+    <form className="shadow-md mb-4 thick-border" method="POST" onSubmit={handleRegister}>
       <div className="form-row">
         <label htmlFor="firstName">First Name<span className="required">*</span></label>
         <input id="firstName" name="firstName" type="text" value={firstName}

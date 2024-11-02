@@ -29,7 +29,7 @@ export default function Login() {
   }
 
   return (
-    <form method="POST" onSubmit={handleSubmit(handleLogin)} className="p-4" noValidate>
+    <form method="POST" onSubmit={handleSubmit(handleLogin)} className="mb-4 shadow-md thick-border" noValidate>
       <Controller
         name="email"
         control={control}
