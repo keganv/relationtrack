@@ -14,7 +14,7 @@ class Relationship extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'type',
+        'type_id',
         'name',
         'title',
         'birthday',

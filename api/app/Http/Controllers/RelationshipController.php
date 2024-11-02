@@ -21,39 +21,33 @@ class RelationshipController extends Controller
 {
     public function index()
     {
-        /** @var User $user */
-        $user = Auth::user();
-        $relationships = $user->relationships->load('primaryImage', 'type', 'files', 'actionItems');
+        $relationships = Relationship::with(['primaryImage', 'type', 'files', 'actionItems'])
+            ->where('user_id', Auth::id())->get();
 
         return response()->json($relationships, Response::HTTP_OK);
     }
 
     public function store(Request $request)
     {
-        /** @var User $user */
-        $user = Auth::user();
         $relationship = new Relationship();
 
-        return $this->save($request, $user, $relationship);
+        $this->authorize('create', $relationship);
+
+        return $this->save($request, $relationship);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Relationship $relationship)
     {
-        /** @var Relationship|null $relationship */
-        $relationship = Relationship::findOrFail($id);
-        /** @var User $user */
-        $user = Auth::user();
-
         // Check for both the relationship and a security test to make sure that
         // the requested relationship belongs to the user.
-        if (!$relationship || ($relationship?->user_id !== $user->id)) {
-            return redirect()->back()->with([
-                'status' => 'error',
-                'message' => 'The requested relationship does not exist.'
-            ]);
+        if (!$relationship || !$this->authorize('update', $relationship)) {
+            return response()->json(
+                ['message' => 'The requested relationship does not exist.'],
+                Response::HTTP_NOT_FOUND
+            );
         }
 
-        return $this->save($request, $user, $relationship);
+        return $this->save($request, $relationship);
     }
 
     public function getTypes()
@@ -63,10 +57,10 @@ class RelationshipController extends Controller
         return response()->json($types, Response::HTTP_OK);
     }
 
-    private function save(Request $request, User $user, Relationship $relationship)
+    private function save(Request $request, Relationship $relationship)
     {
         $request->validate([
-            'type' => 'required',
+            'type' => 'required|exists:relationship_types,id',
             'name' => 'required|max:55',
             'title' => 'required|max:55',
             'health' => 'required|numeric|min:0|max:10',
@@ -75,13 +69,15 @@ class RelationshipController extends Controller
             'images.*' => 'image|max:2048'
         ]);
 
-        $relationship->user_id = $user->id;
-        $relationship->type_id = $request->input('type');
-        $relationship->name = $request->input('name');
-        $relationship->title = $request->input('title');
-        $relationship->health = $request->input('health');
-        $relationship->birthday = $request->input('birthday');
-        $relationship->description = $request->input('description');
+        $relationship->fill([
+            'type_id' => $request->input('type'),
+            'name' => $request->input('name'),
+            'title' => $request->input('title'),
+            'health' => $request->input('health'),
+            'birthday' => $request->input('birthday'),
+            'description' => $request->input('description')
+        ]);
+        $relationship->user_id = Auth::id();
         $relationship->save();
 
         if ($request->file('images')) {
@@ -158,7 +154,9 @@ class RelationshipController extends Controller
         // Check for both the relationship and a security test to make sure that
         // the requested relationship belongs to the user.
         if (!$relationship || ($relationship?->user_id !== $user->id)) {
-            return response()->json(['message' => 'The requested relationship does not exist.', 404]);
+            return response()->json([
+                'message' => 'The requested relationship does not exist.', Response::HTTP_NOT_FOUND
+            ]);
         }
 
         try {
