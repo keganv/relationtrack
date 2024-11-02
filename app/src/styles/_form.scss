@@ -1,10 +1,9 @@
 form {
-    @apply bg-white shadow-md px-8 pt-6 pb-8 mb-4;
-    border: 10px solid var(--dark-blue);
+    @apply bg-white space-y-4 p-3 border;
 }
 
 label {
-    @apply flex items-start mb-1 text-sm;
+    @apply flex items-start mb-2 text-sm;
     line-height: 1;
     .required {
         @apply text-xs leading-3 ml-[2px];
@@ -18,15 +17,28 @@ label {
 input[type="number"],
 input[type="text"],
 input[type="email"],
-input[type="password"] {
-    @apply h-8 w-full border border-gray-300 text-sm px-3 py-1 focus:outline-none;
+input[type="password"],
+input[type="date"],
+select,
+textarea {
+    @apply min-h-8 w-full text-sm px-2 py-1;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
     background: var(--white);
-    &:focus,
-    &:hover {
-        outline-offset: 1px;
-        outline: var(--lighter-blue) solid 2px;
+    border: 1px solid var(--border-color);
+    &:focus {
+        outline-offset: -1px;
+        outline: var(--lighter-blue) solid 1px;
     }
     &.error { border-color: var(--error); }
+}
+
+select {
+    background-color: #fafafa;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAUCAMAAACtdX32AAAAdVBMVEUAAAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhMdQaAAAAJ3RSTlMAAAECAwQGBwsOFBwkJTg5RUZ4eYCHkJefpaytrsXGy8zW3+Do8vNn0bsyAAAAYElEQVR42tXROwJDQAAA0Ymw1p9kiT+L5P5HVEi3qJn2lcPjtIuzUIJ/rhIGy762N3XaThqMN1ZPALsZPEzG1x8LrFL77DHBnEMxBewz0fJ6LyFHTPL7xhwzWYrJ9z22AqmQBV757MHfAAAAAElFTkSuQmCC);
+    background-position: 100%;
+    background-repeat: no-repeat;
 }
 
 input[type="range"] {
@@ -38,21 +50,22 @@ input[type="range"] {
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
-        margin-top: -6px;
-        background-color: $blue;
-        border-radius: 0;
-        height: 32px;
-        width: 32px;
+        background-color: var(--dark-blue);
+        border-radius: 100%;
+        cursor: pointer;
+        height: 28px;
+        margin-top: -8px;
+        width: 28px;
     }
     &::-moz-range-thumb {
         -moz-appearance: none;
         appearance: none;
-        background-color: $dark-blue;
-        border: 0;
-        border-radius: $border-radius;
+        background-color: var(--dark-blue);
+        border-radius: 100%;
         cursor: pointer;
-        height: 20px;
-        width: 20px;
+        height: 28px;
+        margin-top: -8px;
+        width: 28px;
     }
     &:focus {
         outline: none;
@@ -64,16 +77,25 @@ input[type="range"] {
         }
     }
     &::-webkit-slider-runnable-track {
-        background-color: $washed-blue;
-        border-radius: 0;
-        height: 20px;
+        background: linear-gradient(to right, $lighter-gray, $washed-blue);
+        height: 12px;
         width: 100%;
     }
     &::-moz-range-track {
-        background-color: $washed-blue;
-        border-radius: 0;
-        height: 20px;
+        background: linear-gradient(to right, $lighter-gray, $washed-blue);
+        height: 12px;
         width: 100%;
+    }
+    &::-ms-track {
+        background: transparent; /* Transparent for default track */
+        height: 12px;
+        width: 100%;
+    }
+    &::-ms-fill-lower {
+        background: $lighter-gray; /* Lower fill */
+    }
+    &::-ms-fill-upper {
+        background: $washed-blue; /* Upper fill */
     }
 }
 
@@ -113,6 +135,7 @@ button,
         color: var(--black);
         &.transparent {
             background: rgba(250, 250, 250, .75);
+            color: var(--dark-gray);
         }
     }
     &.yellow {
@@ -136,7 +159,6 @@ button,
     }
     &.transparent {
         background: rgba(0, 0, 0, .5);
-        color: var(--white);
     }
     &.small {
         font-size: 0.75rem;
@@ -145,5 +167,15 @@ button,
     }
     &.three-d {
         @apply border-b-8;
+    }
+    &.remove-image-button {
+        @apply absolute bg-red-500 text-white rounded-full;
+        font-size: 11px;
+        height: 24px;
+        line-height: 1;
+        padding: 0;
+        right: -10px;
+        top: -10px;
+        width: 24px;
     }
 }

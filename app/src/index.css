@@ -63,6 +63,7 @@ input[type='number']::-webkit-outer-spin-button {
   .bg-main-darker-blue { background-color: var(--darker-blue); }
   .bg-main-light-blue  { background-color: var(--light-blue); }
   .text-blue { color: var(--blue); }
+  .thick-border { border: 10px solid var(--dark-blue); }
 
   /***** STYLED HEADINGS *****/
   .heading {
