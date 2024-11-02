@@ -1,7 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import Modal from 'react-modal';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
-import { RelationshipFormData } from '../../types/Relationship';
 import RelationshipForm from './components/RelationshipForm';
 import useRelationshipContext from '../../hooks/useRelationshipContext';
 import Spinner from '../../components/ui/Spinner';
@@ -17,12 +16,10 @@ export default function RelationshipView() {
   const {
     selectedRelationship,
     setRelationshipById,
-    setPrimaryImageForRelationship,
-    convertToFormData,
+    setPrimaryImageForRelationship
   } = useRelationshipContext();
   const [formIsOpen, setFormIsOpen] = useState<boolean>(false);
   const [imageModal, setImageModal] = useState<boolean>(false);
-  const [formData, setFormData] = useState<RelationshipFormData>();
   const openFormModal = () => setFormIsOpen(true);
   const closeFormModal = () => setFormIsOpen(false);
   const setPrimaryImage = (path: string, id: string) => {
@@ -32,14 +29,13 @@ export default function RelationshipView() {
   const setUpRelationshipData = useCallback(() => {
     const id = location?.pathname.split('/')[2];
     if (id) setRelationshipById(id);
-    if (selectedRelationship) setFormData(convertToFormData(selectedRelationship));
-  }, [convertToFormData, location, setRelationshipById, selectedRelationship]);
+  }, [location, setRelationshipById, selectedRelationship]);
 
   useEffect(() => {
     setUpRelationshipData();
   }, [setUpRelationshipData]);
 
-  if (!selectedRelationship || !formData) {
+  if (!selectedRelationship) {
     return (
       <div className="flex justify-center vh-100 align-middle">
         <Spinner loading={true} />
@@ -49,12 +45,12 @@ export default function RelationshipView() {
 
   return (
     <>
-      <header className="flex justify-between border-bottom-dark mb">
-        <h2>{formData.name}</h2>
-        <button className="primary small" onClick={openFormModal}>Edit Relationship</button>
+      <header className="flex justify-between border-bottom-dark mb-3">
+        <h2>{selectedRelationship.name}</h2>
+        <button className="primary small angle-right" onClick={openFormModal}>Edit Relationship</button>
       </header>
-      <div className="flex wrap">
-        <div className="col-4 col-12-sm pr-sm pr-0-sm">
+      <div className="flex flex-wrap bg-white p-3">
+        <div className="w-[100%] sm:w-[50%] md:w-[33%] mr-3">
           <div id="primary-image-container" className="modal-images">
             {selectedRelationship?.primary_image !== null &&
                 <img ref={primaryImage}
@@ -112,8 +108,8 @@ export default function RelationshipView() {
         </div>
       </div>
       <Modal isOpen={formIsOpen} onRequestClose={closeFormModal}
-             className="react-modal right" overlayClassName="react-modal-overlay">
-        <RelationshipForm data={formData} cancel={closeFormModal}/>
+             className="react-modal center" overlayClassName="react-modal-overlay">
+        <RelationshipForm relationship={selectedRelationship} cancel={closeFormModal}/>
       </Modal>
       <Modal isOpen={imageModal} onRequestClose={() => setImageModal(false)}
              className="react-modal center" overlayClassName="react-modal-overlay">

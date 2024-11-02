@@ -16,13 +16,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {props.label}{props.required && <span className="required">*</span>}
         </label>
         <input
-          type={type}
-          {...props}
           ref={ref}
+          type={type}
           className={className}
+          {...props}
         />
         {apiErrors && apiErrors.map((error, i) => (
-          <div className="error" key={error.replace(' ', '').substring(0, 5)+i} role="alert">
+          <div className="error" key={error.replace(/\s+/g, '').substring(0, 5) + i} role="alert">
             {error}
           </div>)
         )}
@@ -34,4 +34,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
 Input.displayName = "Input";
 
-export { Input }
+export { Input };

@@ -59,7 +59,7 @@ const ImageUploader = forwardRef<HTMLInputElement, ImageUploaderProps>(
     };
 
     return (
-      <div className="space-y-2">
+      <>
         <div className="flex flex-col">
           <label htmlFor={props.id ?? 'images'} className="mb-1 text-sm font-medium">
             Images {multiple && '(Max 10)'}
@@ -75,22 +75,14 @@ const ImageUploader = forwardRef<HTMLInputElement, ImageUploaderProps>(
               htmlFor={props.id ?? 'images'}
               className={`flex flex-col items-center justify-center w-full h-32 
                 border-2 border-dashed rounded-lg cursor-pointer 
-                ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:bg-gray-50'}`}
+                ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:bg-gray-50'}`
+              }
             >
               <div className="flex flex-col items-center justify-center p-3">
-                <svg
-                  className="w-8 h-8 mb-4 text-gray-500"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 20 16"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                <svg className="w-6 h-6 mb-2 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                     fill="none" viewBox="0 0 20 20">
+                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                   />
                 </svg>
                 <p className="mb-2 text-xs text-gray-500">
@@ -98,7 +90,8 @@ const ImageUploader = forwardRef<HTMLInputElement, ImageUploaderProps>(
                 </p>
                 <p className="text-xs text-gray-500">Max File Size: 250KB</p>
               </div>
-              <input ref={ref} id={props.id ?? 'images'} type="file" accept="image/*" multiple={multiple} className="hidden"
+              <input
+                ref={ref} id={props.id ?? 'images'} type="file" accept="image/*" multiple={multiple} className="hidden"
                 onChange={handleInputChange} {...props} />
             </label>
           </div>
@@ -111,8 +104,8 @@ const ImageUploader = forwardRef<HTMLInputElement, ImageUploaderProps>(
               <div key={`${file.name}-${index}`} className="relative">
                 <img
                   src={URL.createObjectURL(file)}
-                  alt={`Preview ${index + 1}`}
-                  className="w-20 h-20 object-cover rounded"
+                  alt={`Preview ${file.name}`}
+                  className="w-20 h-20 object-cover"
                   onLoad={(e) => {
                     URL.revokeObjectURL((e.target as HTMLImageElement).src);
                   }}
@@ -120,11 +113,9 @@ const ImageUploader = forwardRef<HTMLInputElement, ImageUploaderProps>(
                 <button
                   type="button"
                   onClick={() => removeFile(index)}
-                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                  className="remove-image-button"
                   aria-label="Remove image"
-                >
-                  ×
-                </button>
+                >x</button>
               </div>
             ))}
           </div>
@@ -140,7 +131,7 @@ const ImageUploader = forwardRef<HTMLInputElement, ImageUploaderProps>(
             {error}
           </div>
         ))}
-      </div>
+      </>
     );
   }
 );

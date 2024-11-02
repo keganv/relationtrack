@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import MainNav from '../ui/MainNav';
 import useAuthContext from '../../hooks/useAuthContext';
+import RelationshipProvider from '../../providers/RelationshipProvider';
 
 export default function AuthLayout() {
   const { user } = useAuthContext();
@@ -9,12 +10,14 @@ export default function AuthLayout() {
 
   return user ?
     (
-      <div className="admin">
-        <MainNav navOpen={navOpen} setNavOpen={setNavOpen} />
-        <main role="main" id="main" className={navOpen ? ' ml-0 sm:ml-[250px]' : 'sm:ml-[250px]'}>
-          <Outlet />
-        </main>
-      </div>
+      <RelationshipProvider>
+        <div className="admin">
+          <MainNav navOpen={navOpen} setNavOpen={setNavOpen} />
+          <main role="main" id="main" className={navOpen ? ' ml-0 sm:ml-[250px]' : 'sm:ml-[250px]'}>
+            <Outlet />
+          </main>
+        </div>
+      </RelationshipProvider>
     ) :
     <Navigate to={'/'} />
 }

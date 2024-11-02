@@ -1,52 +1,38 @@
 import { ReactNode, useState, useEffect, useCallback } from 'react';
-import axios from '../lib/axios';
 import { AxiosError } from 'axios';
-import { useNavigate } from 'react-router-dom';
+import axios from '../lib/axios';
 import RelationshipContext from '../contexts/RelationshipContext';
 import { Relationship, RelationshipFormData, RelationshipFormErrors } from '../types/Relationship';
-
+import useAuthContext from '../hooks/useAuthContext';
 
 type RelationshipProviderProps = {
   children: ReactNode;
 }
 
-const RelationshipProvider = ({ children }: RelationshipProviderProps) => {
-  const navigate = useNavigate();
+function RelationshipProvider ({ children }: RelationshipProviderProps) {
   const [relationships, setRelationships] = useState<Relationship[]|null>(null);
   const [selectedRelationship, setSelectedRelationship] = useState<Relationship|null>(null);
-  const [types, setTypes] = useState<string[]|null>(null);
+  const [types, setTypes] = useState(null);
   const [formErrors, setFormErrors] = useState<RelationshipFormErrors|null>(null);
-
-  const _setError = useCallback(() => {
-   // setStatusError('You do not have access. Please Login.');
-    return navigate('/login');
-  }, [navigate]);
+  const { handleError } = useAuthContext();
 
   const all = useCallback(async () => {
     try {
       const response = await axios.get('/api/relationships');
       setRelationships(response.data);
     } catch (e) {
-      if (e instanceof AxiosError) {
-        if (e.response?.status === 401) {
-          _setError();
-        }
-      }
+      handleError(e);
     }
-  }, [_setError]);
+  }, [handleError]);
 
   const getTypes = useCallback(async () => {
     try {
       const response = await axios.get('/api/relationships/types');
       setTypes(response.data);
     } catch (e) {
-      if (e instanceof AxiosError) {
-        if (e.response?.status === 401) {
-          _setError();
-        }
-      }
+      handleError(e);
     }
-  }, [_setError]);
+  }, [handleError]);
 
   const save = async (data: RelationshipFormData) => {
     setFormErrors(null);
@@ -71,25 +57,21 @@ const RelationshipProvider = ({ children }: RelationshipProviderProps) => {
         all();
       }
     } catch (error) {
-      if (error instanceof AxiosError) {
-        console.error(error);
-        // setStatusError(error.response?.data.message);
-        setFormErrors(error.response?.data.errors);
-      }
+      handleError(error);
     }
   };
 
-  const convertToFormData = useCallback((relationship: Relationship): RelationshipFormData => {
+  const convertRelationshipToFormData = (relationship: Relationship): RelationshipFormData => {
     return {
-      id: relationship.id || '',
+      id: relationship.id ?? undefined,
       title: relationship.title,
       name: relationship.name,
       health: relationship.health,
-      type: relationship.type?.type,
-      birthday: relationship.birthday || '',
-      description: relationship.description || '',
+      type: relationship.type.id.toString(),
+      birthday: relationship.birthday ?? '',
+      description: relationship.description ?? '',
     }
-  }, []);
+  };
 
   const setPrimaryImageForRelationship = async (id: string) => {
     // setStatus(null);
@@ -133,7 +115,7 @@ const RelationshipProvider = ({ children }: RelationshipProviderProps) => {
       relationships,
       types,
       formErrors,
-      convertToFormData,
+      convertRelationshipToFormData,
       selectedRelationship,
       setSelectedRelationship,
       setRelationshipById,
