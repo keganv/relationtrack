@@ -9,7 +9,7 @@ import Home from './pages/static/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ResetPassword from './pages/ResetPassword';
-import useAuthContext from './hooks/useAuthContext';
+import useGlobalContext from './hooks/useGlobalContext.ts';
 import CookiePolicy from './pages/static/CookiePolicy';
 import Terms from './pages/static/Terms';
 import RelationshipIndex from './pages/relationships/RelationshipIndex';
@@ -18,7 +18,7 @@ import RelationshipOutlet from './pages/relationships/RelationshipOutlet';
 import NotFound from './pages/static/NotFound';
 
 export default function App() {
-  const { status } = useAuthContext();
+  const { status } = useGlobalContext();
 
   useEffect(() => {
     if (status) {
