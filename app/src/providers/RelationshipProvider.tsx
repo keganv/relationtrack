@@ -3,7 +3,7 @@ import { AxiosError } from 'axios';
 import axios from '../lib/axios';
 import RelationshipContext from '../contexts/RelationshipContext';
 import { Relationship, RelationshipFormData, RelationshipFormErrors } from '../types/Relationship';
-import useAuthContext from '../hooks/useAuthContext';
+import useGlobalContext from '../hooks/useGlobalContext.ts';
 
 type RelationshipProviderProps = {
   children: ReactNode;
@@ -14,7 +14,7 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
   const [selectedRelationship, setSelectedRelationship] = useState<Relationship|null>(null);
   const [types, setTypes] = useState(null);
   const [formErrors, setFormErrors] = useState<RelationshipFormErrors|null>(null);
-  const { handleError } = useAuthContext();
+  const { handleError } = useGlobalContext();
 
   const all = useCallback(async () => {
     try {
