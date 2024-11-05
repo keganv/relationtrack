@@ -1,37 +1,20 @@
 import { useCallback, useEffect, ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AxiosError } from "axios";
 import axios from "../lib/axios";
 import AuthContext from "../contexts/AuthContext";
 import { LoginFields, NewPasswordFields } from "../types/AuthTypes.ts";
-import { Status } from "../types/Status.ts";
 import User from "../types/User.ts";
+import useGlobalContext from "../hooks/useGlobalContext.ts";
 
 type AuthProviderProps = { children: ReactNode; }
 
-function getSessionUser(): User | null {
-  const now = new Date().getTime();
-  const sessionUser = localStorage.getItem('rtud') ? JSON.parse(localStorage.getItem('rtud') ?? '') : null;
-
-  // If it has been longer than 2 hours since the user logged in for "remember me users",
-  // then remove the user from local storage.
-  if (sessionUser && now > sessionUser.expiration) {
-    localStorage.removeItem('rtud');
-
-    return null;
-  }
-
-  return sessionUser;
-}
-
-const DISALLOWED_STATUS_MESSAGES = ['sql', 'connection', 'select', 'from', 'where'];
-const sessionUser = getSessionUser();
+const sessionUser: User | null = localStorage.getItem('rtud') ? JSON.parse(localStorage.getItem('rtud') ?? '') : null;
 
 const AuthProvider = ({ children }: AuthProviderProps) => {
+  const { doLogout, handleError, setStatus } = useGlobalContext();
   const [user, setUser] = useState(sessionUser);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({}); // Used for form and API validation errors
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState<Status | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
@@ -50,11 +33,11 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       const { data } = await axios.get('/api/user');
       setUser(data);
     } catch (e) {
-      handleError(e);
+      handleError(e, setErrors);
     }
   };
 
-  const login = async (data: LoginFields) => {
+  const login = useCallback(async (data: LoginFields) => {
     setErrors({});
     setLoading(true);
     setStatus(null);
@@ -66,11 +49,11 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       setStatus({ type: 'success', message: 'Successfully Logged In!' });
       setRememberMe(data.remember ?? false);
     } catch (e) {
-      handleError(e);
+      handleError(e, setErrors);
     } finally {
       setTimeout(() => setLoading(false), 1000);
     }
-  }
+  }, [setStatus, getUser, navigate, handleError]);
 
   const register = async ({ ...data }) => {
     setErrors({});
@@ -83,7 +66,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       navigate('/dashboard');
       setStatus({ type: 'success', message: 'Successfully Logged In!' });
     } catch (e) {
-      handleError(e);
+      handleError(e, setErrors);
     } finally {
       setTimeout(() => setLoading(false), 1000)
     }
@@ -98,7 +81,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       const response = await axios.post('/forgot-password', data);
       setStatus({ type: 'success', message: response.data?.status });
     } catch (e) {
-      handleError(e);
+      handleError(e, setErrors);
     } finally {
       setTimeout(() => setLoading(false), 1000);
     }
@@ -113,7 +96,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       setStatus({ type: 'success', message: response.data?.status });
       navigate('/login');
     } catch (e) {
-      handleError(e);
+      handleError(e, setErrors);
     } finally {
       setTimeout(() => setLoading(false), 1000)
     }
@@ -127,13 +110,13 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       const response = await axios.post('/email/verification-notification');
       setStatus({ type: 'success', message: response.data?.status });
     } catch (e) {
-      handleError(e);
+      handleError(e, setErrors);
     } finally {
       setTimeout(() => setLoading(false), 1000)
     }
   }
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       setUser(null);
       navigate('/');
@@ -141,9 +124,9 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       await axios.post('/logout');
       document.cookie = "XSRF-TOKEN=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"; // Remove XSRF-TOKEN
     } catch (e) {
-      handleError(e);
+      handleError(e, setErrors);
     }
-  }
+  }, [navigate, handleError]);
 
   const setProfileImage = async (image: File) => {
     setStatus(null);
@@ -159,18 +142,15 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const handleError = useCallback((e: AxiosError | unknown) => {
-    if (e instanceof AxiosError) {
-      const message = e.response?.data.message || e.message;
-      const allowMessage = !DISALLOWED_STATUS_MESSAGES.find(status => message.includes(status));
-      setErrors(e.response?.data.errors || { error: [e.message] });
-      setStatus({ type: 'error', message: allowMessage ? message : 'Uh oh! Something went wrong.' });
+  useEffect(() => {
+    if (doLogout) {
+      logout();
     }
-  }, [setErrors, setStatus]);
+  }, [doLogout, logout]);
 
   return (
     <AuthContext.Provider value={{
-      errors, user, login, register, logout, loading, status, setStatus, handleError,
+      errors, user, login, register, logout, loading,
       sendPasswordResetLink, newPassword, sendEmailVerificationLink, setProfileImage
     }}>
       {children}
