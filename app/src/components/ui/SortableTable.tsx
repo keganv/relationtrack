@@ -1,5 +1,4 @@
-// @ts-nocheck
-import React, {useCallback, useEffect} from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 type Column = {
   alt?: string,
@@ -8,7 +7,7 @@ type Column = {
   label: string,
   styles?: object,
   type: string,
-  format?: (data) => React.JSX.Element | Element
+  format?: (data: object) => React.JSX.Element | Element
 }
 
 interface SortableTableProps {
@@ -16,94 +15,70 @@ interface SortableTableProps {
   data: object[],
 }
 
-export default function SortableTable({columns, data}: SortableTableProps) {
-  const tableId = `sortTable-${Math.floor(Math.random() * 100)}`;
-  const activateSortableTable = useCallback((table: HTMLElement) => {
-    const headings = table?.querySelectorAll('th') as NodeListOf<HTMLTableCellElement>;
-    const tbody = table?.querySelector('tbody');
-    const rows = tbody?.querySelectorAll('tr');
-    if (headings && tbody && rows) {
-      const rowsArray: HTMLTableRowElement[] = Array.from(rows);
-      let order = 'asc';
-      for (const heading of headings) {
-        heading.addEventListener('click', (e: MouseEvent) => {
-          const dataKey = (e.target as HTMLTableCellElement).getAttribute('data-key') || '';
-          headings.forEach(h => h.classList.remove('sorted', 'asc', 'desc'));
-          order = order === 'asc' ? 'desc' : 'asc';
-          heading.classList.add('sorted', order);
-          sortRowsByKey(dataKey, tbody, rowsArray, order);
-        });
-      }
+const sortData = (data: object[], key: string, order: 'asc' | 'desc', type: string) => {
+  return [...data].sort((a, b) => {
+    let aValue = a[key];
+    let bValue = b[key];
+
+    if (type === 'text' || type === 'string') {
+      aValue = String(aValue).toLowerCase();
+      bValue = String(bValue).toLowerCase();
+    } else if (type === 'int' || type === 'number' || type === 'float') {
+      aValue = Number(aValue);
+      bValue = Number(bValue);
+    } else if (type === 'date' || type === 'datetime' || type === 'time') {
+      aValue = new Date(aValue).getTime();
+      bValue = new Date(bValue).getTime();
     }
-  }, []);
 
-  const sortRowsByKey = (
-    key: string,
-    tbody: HTMLTableSectionElement,
-    rowsArray:  HTMLTableRowElement[],
-    order: string
-  ) => {
-    rowsArray.sort((a: HTMLTableRowElement, b: HTMLTableRowElement) => {
-      let aValue, bValue;
-      const aItem = a.querySelector(`[data-key="${key}"]`);
-      const bItem = b.querySelector(`[data-key="${key}"]`);
-      const type = aItem?.getAttribute('datatype');
+    if (aValue < bValue) return order === 'asc' ? -1 : 1;
+    if (aValue > bValue) return order === 'asc' ? 1 : -1;
 
-      if (type === 'text' || type === 'string') {
-        aValue = aItem?.getAttribute('data-value')?.trim().toLowerCase();
-        bValue = bItem?.getAttribute('data-value')?.trim().toLowerCase();
-      }
+    return 0;
+  });
+}
 
-      if (type === 'int' || type === 'number' || type === 'float') {
-        aValue = Number(aItem?.getAttribute('data-value')?.trim());
-        bValue = Number(bItem?.getAttribute('data-value')?.trim());
-      }
+type SortConfigType = { key: string, order: 'asc' | 'desc', type: string } | null;
 
-      if (type === 'date' || type === 'datetime' || type === 'time') {
-        aValue = new Date(aItem?.getAttribute('data-value')?.trim() || '').getTime();
-        bValue = new Date(bItem?.getAttribute('data-value')?.trim() || '').getTime();
-      }
+export default function SortableTable({columns, data}: SortableTableProps) {
+  const [sortConfig, setSortConfig] = useState<SortConfigType>(null);
+  const [sortedData, setSortedData] = useState(data);
 
-      if (aValue && bValue) {
-        if (aValue < bValue) {
-          return order === 'asc' ? -1 : 1;
-        } else if (aValue > bValue) {
-          return order === 'asc' ? 1 : -1;
-        } else {
-          return 0;
-        }
-      }
-
-      return -1;
-    });
-
-    rowsArray.forEach((tr: HTMLTableRowElement) => tbody.appendChild(tr));
-  }
+  const handleSort = useCallback((key: string, type: string) => {
+    setSortConfig((currentConfig: SortConfigType) => {
+      return { key, order: currentConfig?.order === 'asc' ? 'desc' : 'asc', type };
+    })
+  }, [setSortConfig]);
 
   useEffect(() => {
-    const table: HTMLElement|null = document.getElementById(tableId);
-    if (table) {
-      activateSortableTable(table);
+    if (sortConfig) {
+      const sorted = sortData(data, sortConfig.key, sortConfig.order, sortConfig.type);
+      setSortedData(sorted);
     }
-  }, [tableId, activateSortableTable]);
+  }, [data, sortConfig]);
 
   return (
-    <table id={tableId} className="sortable">
+    <table className="sortable">
       <thead>
-      <tr>
-        {columns.map((col: Column) => <th key={col.key} style={col.styles} data-key={col.key} className={col.className}>{col.label}</th>)}
-      </tr>
+        <tr>
+          {columns.map((col: Column) => (
+            <th key={col.key} style={col.styles} data-key={col.key} className={col.className}
+                {...(col.type !== 'image' && { onClick: () => handleSort(col.key, col.type) })}>
+              {col.label}
+            </th>
+          ))}
+        </tr>
       </thead>
       <tbody>
-        {data.map((row, index: number) => (
-          <tr key={`${row}-${index}`}>
+        {sortedData.map((row) => (
+          <tr key={`${row.id ?? row.key}`}>
             {columns.map((col: Column, i: number) => (
-              <td key={`${row[col.key]}-${i}`} data-key={col.key} datatype={col.type} data-value={row[col.key]} style={col.styles} className={col.className}>
-                {col.type === 'image' && <div className="table-image"><img src={`${import.meta.env.VITE_API_URL}/api/${row[col.key]}`} alt={row[col.alt]} /></div>}
+              <td key={`${row[col.key]}-${i}`} data-key={col.key} data-type={col.type} data-value={row[col.key]} style={col.styles} className={col.className}>
+                {col.type === 'image' && row[col.key] ? <div className="table-image"><img src={`${import.meta.env.VITE_API_URL}/api/${row[col.key]}`} alt={row[col.alt]} /></div> : ''}
                 {col.type === 'text' && <>{row[col.key]}</>}
-                {col.type === 'format' && <>{col.format(row)}</>}
+                {col.type === 'format' && col.format && <>{col.format(row)}</>}
                 {col.type === 'number' && <>{row[col.key]}</>}
-                {col.type === 'date' && <>{new Date(row[col.key]).toLocaleDateString(undefined, {year: 'numeric', month: 'long', day: 'numeric'})}</>}
+                {col.type === 'date' && <>{new Date(row[col.key]).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}</>}
               </td>
             ))}
           </tr>

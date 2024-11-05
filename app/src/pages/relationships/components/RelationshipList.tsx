@@ -17,7 +17,7 @@ type FormattedRelationshipTableRow = {
 export default function RelationshipList() {
   const { relationships } = useRelationshipContext();
   const [loading, setLoading] = useState<boolean>(true);
-  const [formatted, setFormatted] = useState<{ [key: string]: string | number | undefined }[] | null>(null);
+  const [formatted, setFormatted] = useState<{ [k: string]: string | number | undefined }[] | null>(null);
   const columns = [
     { key: 'primary_image', label: '', styles: { width: '50px' }, type: 'image', alt: 'name', className: 'relation-image' },
     {
@@ -43,12 +43,12 @@ export default function RelationshipList() {
       relationships?.forEach((r) => {
         rows.push({
           'id': r.id || '',
-          'primary_image': r.primary_image?.path || '',
+          'primary_image': r.primary_image?.path ?? '',
           'name': r.name,
           'type': r.type?.type,
           'title': r.title,
           'health': r.health,
-          'updated_at': r.updated_at || '',
+          'updated_at': r.updated_at ?? '',
         });
       });
       setFormatted(rows);
