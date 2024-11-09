@@ -1,21 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-type Column = {
+export type BaseRow = {
+  key: string | number;
+  [k: string]: string | number | boolean | object | null;
+}
+export type Column<T extends BaseRow = BaseRow> = {
   alt?: string,
   className?: string,
   key: string,
   label: string,
   styles?: object,
   type: string,
-  format?: (data: object) => React.JSX.Element | Element
+  format?: (data: T) => React.JSX.Element | Element
 }
 
-interface SortableTableProps {
-  columns: Column[],
-  data: object[],
-}
-
-const sortData = (data: object[], key: string, order: 'asc' | 'desc', type: string) => {
+const sortData = <T extends BaseRow>(data: T[], key: string, order: 'asc' | 'desc', type: string) => {
   return [...data].sort((a, b) => {
     let aValue = a[key];
     let bValue = b[key];
@@ -27,8 +26,8 @@ const sortData = (data: object[], key: string, order: 'asc' | 'desc', type: stri
       aValue = Number(aValue);
       bValue = Number(bValue);
     } else if (type === 'date' || type === 'datetime' || type === 'time') {
-      aValue = new Date(aValue).getTime();
-      bValue = new Date(bValue).getTime();
+      aValue = new Date(aValue as string).getTime();
+      bValue = new Date(bValue as string).getTime();
     }
 
     if (aValue < bValue) return order === 'asc' ? -1 : 1;
@@ -40,9 +39,14 @@ const sortData = (data: object[], key: string, order: 'asc' | 'desc', type: stri
 
 type SortConfigType = { key: string, order: 'asc' | 'desc', type: string } | null;
 
-export default function SortableTable({columns, data}: SortableTableProps) {
+interface SortableTableProps<T extends BaseRow> {
+  columns: Column<T>[],
+  data: T[],
+}
+
+export default function SortableTable<T extends BaseRow>({columns, data}: SortableTableProps<T>) {
   const [sortConfig, setSortConfig] = useState<SortConfigType>(null);
-  const [sortedData, setSortedData] = useState(data);
+  const [sortedData, setSortedData] = useState<T[]>(data);
 
   const handleSort = useCallback((key: string, type: string) => {
     setSortConfig((currentConfig: SortConfigType) => {
@@ -61,7 +65,7 @@ export default function SortableTable({columns, data}: SortableTableProps) {
     <table className="sortable">
       <thead>
         <tr>
-          {columns.map((col: Column) => (
+          {columns.map((col: Column<T>) => (
             <th key={col.key} style={col.styles} data-key={col.key} className={col.className}
                 {...(col.type !== 'image' && { onClick: () => handleSort(col.key, col.type) })}>
               {col.label}
@@ -72,13 +76,17 @@ export default function SortableTable({columns, data}: SortableTableProps) {
       <tbody>
         {sortedData.map((row) => (
           <tr key={`${row.id ?? row.key}`}>
-            {columns.map((col: Column, i: number) => (
+            {columns.map((col: Column<T>, i: number) => (
               <td key={`${row[col.key]}-${i}`} data-key={col.key} data-type={col.type} data-value={row[col.key]} style={col.styles} className={col.className}>
-                {col.type === 'image' && row[col.key] ? <div className="table-image"><img src={`${import.meta.env.VITE_API_URL}/api/${row[col.key]}`} alt={row[col.alt]} /></div> : ''}
+                {col.type === 'image' && row[col.key] ?
+                  <div className="table-image">
+                    <img src={`${import.meta.env.VITE_API_URL}/api/${row[col.key]}`} alt={col.alt ? row[col.alt] as string : ''} />
+                  </div> : ''
+                }
                 {col.type === 'text' && <>{row[col.key]}</>}
                 {col.type === 'format' && col.format && <>{col.format(row)}</>}
                 {col.type === 'number' && <>{row[col.key]}</>}
-                {col.type === 'date' && <>{new Date(row[col.key]).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}</>}
+                {col.type === 'date' && <>{new Date(row[col.key] as string).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}</>}
               </td>
             ))}
           </tr>
