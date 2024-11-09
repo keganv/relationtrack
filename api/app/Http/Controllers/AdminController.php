@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
 {
@@ -71,11 +72,19 @@ class AdminController extends Controller
         }
     }
 
-    public function getPrivateStorageFile(string $userId, string $file)
+    public function getPrivateFile(User $user, string $path)
     {
-        $path = "uploads/users/$userId/$file";
-        $file = $this->fileService->servePrivateStorageFile(Auth::user(), $path);
+        $file = null;
+        $s3 = Storage::disk('s3');
 
-        return response()->file($file);
+        if (Auth::id() === $user->id) {
+            $fullpath = '/uploads/users/' . $user->id . '/' . $path;
+
+            if ($s3->exists($fullpath)) {
+                $file = $s3->response($fullpath);
+            }
+        }
+
+        return $file;
     }
 }

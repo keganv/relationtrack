@@ -16,12 +16,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // ADMIN ROUTES
     Route::get('/user', fn (Request $request) => Auth::user()->load('profileImage'));
     Route::post('/update-profile-image', [AdminController::class, 'updateProfileImage']);
-    Route::get('/uploads/users/{userId}/{file}', [AdminController::class, 'getPrivateStorageFile']);
+    Route::get('/uploads/users/{user}/{path}', [AdminController::class, 'getPrivateFile'])->where('path', '.*');
 
     // RELATIONSHIP ROUTES
     Route::get('/relationships', [RelationshipController::class, 'index']);
     Route::get('/relationships/types', [RelationshipController::class, 'getTypes']);
-    Route::get('/uploads/users/{userId}/relationships/{relationshipId}/{file}', [RelationshipController::class, 'getRelationshipImage']);
+    // Route::get('/uploads/users/{userId}/relationships/{relationshipId}/{file}', [RelationshipController::class, 'getRelationshipImage']);
     Route::post('/relationships', [RelationshipController::class, 'store']);
     Route::post('/relationships/{relationship}', [RelationshipController::class, 'update']);
     Route::post('/relationships/{id}/primary-image', [RelationshipController::class, 'updatePrimaryImage']);

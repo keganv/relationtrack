@@ -11,7 +11,7 @@ export function checkFileType(file: File): boolean {
  * @returns {T} A new object or array with undefined properties removed, maintaining the original type
  */
 export function removeUndefined<T>(obj: T): T {
-  if (obj === null || typeof obj !== 'object') {
+  if (obj === null || typeof obj !== 'object' || obj instanceof File) {
     return obj;
   }
 

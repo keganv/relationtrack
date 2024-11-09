@@ -81,14 +81,14 @@ class FileService
         return $file;
     }
 
-    public function servePrivateStorageFile(User $user, string $path)
+    public function servePrivateFile(User $user, string $path)
     {
         Gate::authorize('view', $user);
 
-        if (!Storage::disk('private')->exists($path)) {
+        if (!Storage::disk('s3')->exists($path)) {
             throw new FileNotFoundException($path, Response::HTTP_NOT_FOUND);
         }
 
-        return Storage::disk('private')->path($path);
+        return Storage::disk('s3')->path($path);
     }
 }

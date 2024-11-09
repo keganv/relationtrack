@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\File;
 use App\Models\Relationship;
-use App\Models\RelationshipType;
 use App\Models\User;
 
 use Illuminate\Http\JsonResponse;
@@ -15,14 +14,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
-use Symfony\Component\HttpFoundation\FileBag;
-
 class RelationshipController extends Controller
 {
     public function index()
     {
-        $relationships = Relationship::with(['primaryImage', 'type', 'files', 'actionItems'])
-            ->where('user_id', Auth::id())->get();
+        $relationships = Relationship::with(['primaryImage', 'files', 'type', 'actionItems'])
+            ->where('user_id', Auth::id())->get()->toArray();
 
         return response()->json($relationships, Response::HTTP_OK);
     }
@@ -67,6 +64,10 @@ class RelationshipController extends Controller
             'birthday' => 'nullable|date|before:today',
             'images' => 'nullable|array|max:10',
             'images.*' => 'image|max:2048'
+        ], [
+            'images.max' => 'You may not upload more than 10 images per relationship.',
+            'images.*.image' => 'The file :attribute must be a valid image (jpg, jpeg, png, bmp, gif, svg, or webp).',
+            'images.*.max' => ':attribute exceeds the maximum allowed file size.',
         ]);
 
         $relationship->fill([
@@ -89,7 +90,7 @@ class RelationshipController extends Controller
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-            $addImgResponse = $this->addImagesToRelationship($request->file('images'), $relationship, $user);
+            $addImgResponse = $this->addImagesToRelationship($request->file('images'), $relationship, Auth::user());
 
             // If there is an error
             if (!is_array($addImgResponse)) {
@@ -140,7 +141,7 @@ class RelationshipController extends Controller
     {
         $path = "/uploads/users/{$userId}/relationships/$id/{$file}";
 
-        return response()->file(Storage::disk('private')->path($path)) ?? response('Not found.', 404);
+        return response()->file(Storage::disk('s3')->path('https://relationtrack.s3.us-east-1.amazonaws.com/relationships/0S4sQOcRwC60gSzA4pYn2STkmikYLvEJuGhByTTV.jpg')) ?? response('Not found.', 404);
     }
 
     public function updatePrimaryImage(Request $request, $id)
@@ -170,12 +171,15 @@ class RelationshipController extends Controller
     }
 
     /**
-     * @param FileBag $images
+     * Send back a collection of Files after they are saved and stored or an JSON response error.
+     *
+     * @param array $images
+     * @param Relationship $relationship
+     * @param User $user
      * @return File[]|JsonResponse
      */
     private function addImagesToRelationship(array $images, Relationship $relationship, User $user): array|JsonResponse
     {
-        // Send back a collection of Files or a redirect response after they are saved and stored or an error.
         $files = [];
         // Existing file names for the Relationship
         $existingFileNames = array_map(fn($img) => $img['name'], $relationship->files()->get()->toArray());
@@ -199,22 +203,23 @@ class RelationshipController extends Controller
                 ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
 
-            $file = new File();
-            $path = $upload->store('uploads/users/' . $user->id . '/relationships/' . $relationship->id, 'private');
-            $file->user_id = $user->id;
-            $file->relationship_id = $relationship->id;
-            $file->name = $upload->getClientOriginalName();
-            $file->extension = $upload->extension();
-            $file->path = $path;
-            $file->size = $upload->getSize();
+            if ($path = Storage::disk('s3')->putFile('/uploads/users/' . $user->id . '/relationships', $upload)) {
+                $file = new File();
+                $file->user_id = $user->id;
+                $file->relationship_id = $relationship->id;
+                $file->name = $upload->getClientOriginalName();
+                $file->extension = $upload->extension();
+                $file->path = $path;
+                $file->size = $upload->getSize();
 
-            if (!$file->save()) {
-                return response()->json([
-                    'message' => "The file {$upload->getClientOriginalName()} could not be uploaded."
-                ], 500);
+                if (!$file->save()) {
+                    return response()->json([
+                        'message' => "The file {$upload->getClientOriginalName()} could not be uploaded."
+                    ], 500);
+                }
+
+                $files[] = $file;
             }
-
-            $files[] = $file;
         }
 
         return $files;
