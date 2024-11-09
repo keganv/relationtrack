@@ -15,14 +15,14 @@ return new class extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('extension', 10);
-            $table->string('path')->unique();
-            $table->integer('size');
             $table->uuid('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->uuid('relationship_id')->nullable();
             $table->foreign('relationship_id')->references('id')->on('relationships')->onDelete('set null');
+            $table->string('name');
+            $table->string('extension', 10);
+            $table->string('path')->unique();
+            $table->integer('size');
             $table->timestamps();
         });
     }
