@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import SortableTable from '../../../components/ui/SortableTable'
+import SortableTable, { Column } from '../../../components/ui/SortableTable'
 import Spinner from '../../../components/ui/Spinner';
 import useRelationshipContext from '../../../hooks/useRelationshipContext';
 
 type FormattedRelationshipTableRow = {
   id: string;
+  key: string;
   primary_image: string;
   name: string;
   type: string;
@@ -17,18 +18,18 @@ type FormattedRelationshipTableRow = {
 export default function RelationshipList() {
   const { relationships } = useRelationshipContext();
   const [loading, setLoading] = useState<boolean>(true);
-  const [formatted, setFormatted] = useState<{ [k: string]: string | number | undefined }[] | null>(null);
-  const columns = [
+  const [formatted, setFormatted] = useState<FormattedRelationshipTableRow[] | null>(null);
+  const columns: Column<FormattedRelationshipTableRow>[] = [
     { key: 'primary_image', label: '', styles: { width: '50px' }, type: 'image', alt: 'name', className: 'relation-image' },
     {
       key: 'name', label: 'Name', type: 'format',
-      format: (data: FormattedRelationshipTableRow) => <Link to={`/relationships/${data.id}`}>{data.name}</Link>
+      format: (data) => <Link to={`/relationships/${data.id}`}>{data.name}</Link>
     },
     { key: 'type', label: 'Relationship', className: 'hide-sm', type: 'text' },
     { key: 'title', label: 'Title', type: 'text' },
     {
       key: 'health', label: 'Health', className: 'text-center', type: 'format',
-      format: (data: FormattedRelationshipTableRow) => (
+      format: (data) => (
         <div className={`heart health-${data.health}`} title={`${data.health} out of 10`}>
           <div className="score">{data.health}</div>
         </div>
@@ -39,10 +40,11 @@ export default function RelationshipList() {
 
   useEffect(() => {
     if (relationships) {
-      const rows: { [key: string]: string | number | undefined }[] = [];
+      const rows: FormattedRelationshipTableRow[] = [];
       relationships?.forEach((r) => {
         rows.push({
           'id': r.id || '',
+          'key': r.id || '',
           'primary_image': r.primary_image?.path ?? '',
           'name': r.name,
           'type': r.type?.type,
