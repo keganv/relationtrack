@@ -21,7 +21,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // RELATIONSHIP ROUTES
     Route::get('/relationships', [RelationshipController::class, 'index']);
     Route::get('/relationships/types', [RelationshipController::class, 'getTypes']);
-    // Route::get('/uploads/users/{userId}/relationships/{relationshipId}/{file}', [RelationshipController::class, 'getRelationshipImage']);
     Route::post('/relationships', [RelationshipController::class, 'store']);
     Route::post('/relationships/{relationship}', [RelationshipController::class, 'update']);
     Route::post('/relationships/{id}/primary-image', [RelationshipController::class, 'updatePrimaryImage']);
