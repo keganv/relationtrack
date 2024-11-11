@@ -1,14 +1,14 @@
-import Relationship from '../../../types/Relationship';
+import { Relationship } from '../../../types/Relationship';
 
 type RelationshipDetailsProps = { relationship: Relationship; }
 export default function RelationshipDetails({relationship}: RelationshipDetailsProps) {
   return (
-    <div className="flex wrap">
-      <div className="col-6 mb-sm">
+    <div className="">
+      <div>
         <strong>Relationship:</strong>
         <p>{relationship.type.type}</p>
       </div>
-      <div className="col-6 mb-sm">
+      <div>
         <strong>Health:</strong>
         <div>
           <div className={`heart health-${relationship.health}`}
@@ -17,11 +17,11 @@ export default function RelationshipDetails({relationship}: RelationshipDetailsP
           </div> out of 10
         </div>
       </div>
-      <div className="col-6 mb-sm">
+      <div>
         <strong>Title:</strong>
         <p>{relationship.title}</p>
       </div>
-      <div className="col-6 mb-sm">
+      <div>
         <strong>Birthday:</strong>
         {relationship.birthday &&
           <p>

@@ -1,0 +1,16 @@
+#relationship-images-container {
+  @apply w-[100%] sm:w-[50%] md:w-[33%];
+  #primary-image-container {
+    @apply w-[100%] overflow-hidden relative;
+    height: max(250px, 50vh);
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    #primary-image-button {
+      @apply absolute bottom-3 left-3;
+    }
+  }
+}

@@ -12,7 +12,7 @@
             @apply text-white rounded-full;
             background-color: var(--darker-blue);
             box-shadow: none !important;
-            font-size: 1em; 
+            font-size: 1em;
             height: 36px;
             line-height: 36px;
             padding: 2px !important;
@@ -20,7 +20,7 @@
 
             .avatar {
                 @apply rounded-full;
-                max-width: 32px;         
+                max-width: 32px;
             }
         }
 
@@ -67,5 +67,13 @@
     main {
         @apply relative mt-12 p-4 w-full;
         overflow-x: scroll;
+
+        .page-header {
+            @apply flex items-center justify-between mb-3;
+        }
+
+        .container {
+            @apply bg-white flex flex-wrap p-3 gap-3 flex-1;
+        }
     }
 }

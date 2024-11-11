@@ -8,11 +8,12 @@ import {useLocation} from 'react-router-dom';
 import RelationshipDetails from './components/RelationshipDetails';
 import ActionItems from '../../components/ui/ActionItems.tsx';
 import API_File from '../../types/ApiFile.ts';
+import '../../styles/relationship.scss';
 
 export default function RelationshipView() {
   const apiUrl = `${import.meta.env.VITE_API_URL}/api/`;
   const location = useLocation();
-  const primaryImage = useRef<HTMLImageElement|null>(null);
+  const primaryImage = useRef<HTMLImageElement | null>(null);
   const {
     selectedRelationship,
     setRelationshipById,
@@ -38,36 +39,38 @@ export default function RelationshipView() {
   if (!selectedRelationship) {
     return (
       <div className="flex justify-center vh-100 align-middle">
-        <Spinner loading={true} />
+        <Spinner loading={true}/>
       </div>
     )
   }
 
   return (
     <>
-      <header className="flex justify-between border-bottom-dark mb-3">
+      <header className="page-header">
         <h2>{selectedRelationship.name}</h2>
         <button className="primary small angle-right" onClick={openFormModal}>Edit Relationship</button>
       </header>
-      <div className="flex flex-wrap bg-white p-3">
-        <div className="w-[100%] sm:w-[50%] md:w-[33%] mr-3">
-          <div id="primary-image-container" className="modal-images">
-            {selectedRelationship?.primary_image !== null &&
+      <div className="flex flex-wrap gap-3">
+        <div id="relationship-images-container">
+          <div id="primary-image-container" className="container">
+            {selectedRelationship.primary_image &&
+              <>
                 <img ref={primaryImage}
-                     src={`${apiUrl}${selectedRelationship?.primary_image?.path}`}
-                     id="primary-image"
-                     alt={selectedRelationship?.name}
-                     data-id={selectedRelationship?.primary_image?.id}
-                     onClick={() => setImageModal(true)}/>
+                     src={`${apiUrl}${selectedRelationship.primary_image?.path}`}
+                     alt={selectedRelationship.name}
+                     data-id={selectedRelationship.primary_image?.id}
+                     onClick={() => setImageModal(true)}
+                />
+                <button id="primary-image-button" className="transparent tooltip top" type="button"
+                        data-tooltip={`Make this the primary image For ${selectedRelationship?.name}.`}
+                        onClick={() => setPrimaryImageForRelationship(primaryImage.current.getAttribute('data-id'))}>
+                  <i className="fa-solid fa-file-arrow-up"></i>
+                </button>
+              </>
             }
-            {!selectedRelationship?.primary_image &&
-                <img ref={primaryImage} src="/images/generic-user.jpg" id="primary-image" alt="No Primary Image"/>
+            {!selectedRelationship.primary_image &&
+              <img ref={primaryImage} src="/images/generic-user.jpg" alt="No Primary Image"/>
             }
-            <button className="transparent tooltip" type="button" id="primary-image-button"
-                    data-tooltip={`Make this the primary image For ${selectedRelationship?.name}.`}
-                    onClick={() => setPrimaryImageForRelationship(primaryImage.current?.getAttribute('data-id') || '')}>
-              <i className="fa-solid fa-file-arrow-up"></i>
-            </button>
           </div>
           <ul className="image-list profile-images-list">
             {selectedRelationship?.files?.map((file: API_File) => (
@@ -79,20 +82,20 @@ export default function RelationshipView() {
             ))}
           </ul>
         </div>
-        <div className="col-8 col-12-sm pb pl-sm pl-0-sm">
+        <div className="container">
           <Tabs>
             <TabList>
-              <Tab>Details</Tab>
+              <Tab>Overview</Tab>
               <Tab>Action Items</Tab>
               <Tab>Notes</Tab>
               <Tab>Reminders</Tab>
               <Tab>Media</Tab>
             </TabList>
             <TabPanel>
-              <RelationshipDetails relationship={selectedRelationship} />
+              <RelationshipDetails relationship={selectedRelationship}/>
             </TabPanel>
             <TabPanel>
-              <ActionItems relationship={selectedRelationship} />
+              <ActionItems relationship={selectedRelationship}/>
             </TabPanel>
             <TabPanel>
             </TabPanel>

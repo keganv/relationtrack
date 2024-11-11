@@ -113,4 +113,61 @@ input[type='number']::-webkit-outer-spin-button {
   .handwriting {
     font-family: 'Amatic SC', serif;
   }
+
+  /***** TOOLTIPS *****/
+  .tooltip {
+    position: relative;
+
+    &::before {
+      background-color: rgba(0, 0, 0, 0.75);
+      bottom: 100%;
+      color: var(--white);
+      content: attr(data-tooltip);
+      font-size: 0.75rem;
+      left: 50%;
+      max-width: max-content;
+      opacity: 0;
+      padding: 0.25rem 0.5rem;
+      position: absolute;
+      text-transform: initial;
+      transform: translateX(-50%) translateY(-10px);
+      transition: all .5s ease-in-out;
+      white-space: nowrap;
+      visibility: hidden;
+    }
+
+    &:hover::before {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    &.right::before {
+      transform: translateY(calc(100% + .5rem));
+      left: calc(100% + 10px);
+    }
+
+    &::after {
+      border: 6px solid transparent;
+      border-top-color: rgba(0, 0, 0, 0.75);
+      content: "";
+      opacity: 0;
+      left: 50%;
+      position: absolute;
+      transform: translateX(-50%) translateY(-20px);
+      transition: all .5s ease-in-out;
+      visibility: hidden;
+    }
+
+    &:hover::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    &.right::after {
+      border-right-color: rgba(0, 0, 0, 0.75);
+      border-top-color: transparent;
+      transform: translateY(calc(50% + 5px));
+      left: calc(100% - 2px);
+    }
+  }
 }
