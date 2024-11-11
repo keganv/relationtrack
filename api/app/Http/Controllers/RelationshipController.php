@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\File;
 use App\Models\Relationship;
 use App\Models\User;
-
-use app\Services\FileService;
+use App\Services\FileService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;

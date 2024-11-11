@@ -38,14 +38,6 @@ class Relationship extends Model
         return $this->belongsTo(RelationshipType::class, 'type_id');
     }
 
-    protected function type(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value, $attributes) => $this->relationshipType()->getResults(),
-            set: fn ($value) => ['type_id' => $value],
-        );
-    }
-
     public function primaryImage(): BelongsTo
     {
         return $this->belongsTo(File::class, 'primary_image_id');
@@ -59,5 +51,13 @@ class Relationship extends Model
     public function actionItems(): HasMany
     {
         return $this->hasMany(ActionItem::class, 'relationship_id');
+    }
+
+    protected function type(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, $attributes) => $this->relationshipType()->getResults(),
+            set: fn ($value) => ['type_id' => $value],
+        );
     }
 }
