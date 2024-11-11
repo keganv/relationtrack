@@ -72,6 +72,12 @@ class AdminController extends Controller
         }
     }
 
+    /**
+     * @route '/uploads/users/{user}/{path}'
+     * @param User $user
+     * @param string $path
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse|null
+     */
     public function getPrivateFile(User $user, string $path)
     {
         $file = null;
