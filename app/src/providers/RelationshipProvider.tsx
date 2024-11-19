@@ -14,7 +14,7 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
   const [selectedRelationship, setSelectedRelationship] = useState<Relationship|null>(null);
   const [types, setTypes] = useState(null);
   const [formErrors, setFormErrors] = useState<RelationshipFormErrors|null>(null);
-  const { handleError } = useGlobalContext();
+  const { handleError, setStatus } = useGlobalContext();
 
   const all = useCallback(async () => {
     try {
@@ -91,14 +91,14 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
 
   const setRelationshipById = useCallback((id: string) => {
     if (relationships) {
-      const relationship = relationships?.find(r => r.id == id);
+      const relationship = relationships?.find(r => r.id === id);
       if (relationship) {
         setSelectedRelationship(relationship);
       } else {
-        // setStatusError('No relationship found.')
+        setStatus({type: 'error', message: 'No relationship found.'})
       }
     }
-  }, [relationships]);
+  }, [relationships, setStatus]);
 
   useEffect(() => {
     if (!relationships) {
