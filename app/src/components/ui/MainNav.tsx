@@ -1,28 +1,29 @@
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import useAuthContext from '../../hooks/useAuthContext';
 
 type MainNavProps = {
-  navOpen: boolean;
-  setNavOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  navToggled: boolean;
+  setNavToggle: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function MainNav({ navOpen, setNavOpen }: MainNavProps) {
+export default function MainNav({ navToggled, setNavToggle }: MainNavProps) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const profileImageInput = useRef<HTMLInputElement>(null);
-  const { logout, setProfileImage, user } = useAuthContext();
+  const { logout, user } = useAuthContext();
 
   const handleLogout = async (e: FormEvent) => {
     e.preventDefault();
     await logout();
   }
-  const handleProfileImage = (image: File) => setProfileImage(image);
+
+  // const profileImageInput = useRef<HTMLInputElement>(null);
+  // const handleProfileImage = (image: File) => setProfileImage(image);
 
   return user && (
     <>
       <header className="main !px-3 !py-0" role="banner">
         <div className="flex flex-row w-full justify-between items-center">
-          <button className="main-sidebar-btn" type="button" onClick={() => setNavOpen(!navOpen)}
+          <button className="main-sidebar-btn" type="button" onClick={() => setNavToggle(!navToggled)}
                   data-drawer-target="main-sidebar" data-drawer-toggle="main-sidebar" aria-controls="main-sidebar">
             <span className="sr-only">Open sidebar</span>
             <svg className="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -64,7 +65,7 @@ export default function MainNav({ navOpen, setNavOpen }: MainNavProps) {
         </div>
       </header>
 
-      <aside id="main-sidebar" aria-label="Sidebar" className={navOpen ? '' : '-translate-x-full'}>
+      <aside id="main-sidebar" aria-label="Sidebar" className={!navToggled ? '' : '!translate-x-0'}>
         <div className="h-full px-3 pb-4 overflow-y-auto">
           <ul>
             <li>
@@ -83,33 +84,6 @@ export default function MainNav({ navOpen, setNavOpen }: MainNavProps) {
         </div>
       </aside>
     </>
-    // <aside className="bg-main-darker-blue fixed top-0 left-0 h-screen w-full sm:w-[150px] p-4 flex flex-col">
-    //   <div className="flex justify-between items-center sm:block">
-    //     <img src="/images/logo-md.png" alt="Relation Track" className="logo w-10 h-10 sm:w-auto sm:h-auto" />
-    //     
-    //   </div>
-    //   <div id="user-menu" className={`${isOpen ? 'block' : 'hidden'} sm:block mt-4`}>
-    //     <div className="profile-image mb-4">
-    //       {!user.profile_image ? (
-    //         <i className="fa-solid fa-user text-white"></i>
-    //       ) : (
-    //         <img
-    //           src={`${import.meta.env.VITE_API_URL}/api/${user.profile_image.path}`}
-    //           alt={user.username}
-    //           className="w-10 h-10 rounded-full"
-    //         />
-    //       )}
-    //       <button
-    //         type="button"
-    //         id="edit-profile-image"
-    //         title="Edit Profile Image"
-    //         onClick={() => profileImageInput?.current?.click()}
-    //         className="text-white"
-    //       >
-    //         <i className="fa-solid fa-pencil"></i>
-    //       </button>
-    //     </div>
-    //     <div className="username text-white">{user.username}</div>
 
     //   <input
     //     ref={profileImageInput}

@@ -6,13 +6,13 @@ import RelationshipProvider from '../../providers/RelationshipProvider';
 
 export default function AuthLayout() {
   const { user } = useAuthContext();
-  const [navOpen, setNavOpen] = useState(true);
+  const [navOpen, setNavToggle] = useState(false);
 
   return user ?
     (
       <RelationshipProvider>
         <div className="admin">
-          <MainNav navOpen={navOpen} setNavOpen={setNavOpen} />
+          <MainNav navToggled={navOpen} setNavToggle={setNavToggle} />
           <main role="main" id="main" className={navOpen ? ' ml-0 sm:ml-[250px]' : 'sm:ml-[250px]'}>
             <Outlet />
           </main>
