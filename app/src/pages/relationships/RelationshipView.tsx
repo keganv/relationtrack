@@ -1,31 +1,27 @@
-import {useCallback, useEffect, useRef, useState} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Modal from 'react-modal';
-import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
+
 import RelationshipForm from './components/RelationshipForm';
 import useRelationshipContext from '../../hooks/useRelationshipContext';
 import Spinner from '../../components/ui/Spinner';
-import {useLocation} from 'react-router-dom';
 import RelationshipDetails from './components/RelationshipDetails';
 import ActionItems from '../../components/ui/ActionItems.tsx';
 import API_File from '../../types/ApiFile.ts';
 import '../../styles/relationship.scss';
+import Tooltip from "../../components/ui/Tooltip.tsx";
 
 export default function RelationshipView() {
   const apiUrl = `${import.meta.env.VITE_API_URL}/api/`;
   const location = useLocation();
-  const primaryImage = useRef<HTMLImageElement | null>(null);
-  const {
-    selectedRelationship,
-    setRelationshipById,
-    setPrimaryImageForRelationship
-  } = useRelationshipContext();
+  const primaryImageRef = useRef<HTMLImageElement | null>(null);
+  const { selectedRelationship, setSelectedRelationship, setRelationshipById, setPrimaryImageForRelationship } = useRelationshipContext();
   const [formIsOpen, setFormIsOpen] = useState<boolean>(false);
   const [imageModal, setImageModal] = useState<boolean>(false);
-  const openFormModal = () => setFormIsOpen(true);
-  const closeFormModal = () => setFormIsOpen(false);
   const setPrimaryImage = (path: string, id: string) => {
-    primaryImage?.current?.setAttribute('src', path);
-    primaryImage?.current?.setAttribute('data-id', id);
+    primaryImageRef?.current?.setAttribute('src', path);
+    primaryImageRef?.current?.setAttribute('data-id', id);
   };
   const setUpRelationshipData = useCallback(() => {
     const id = location?.pathname.split('/')[2];
@@ -34,11 +30,12 @@ export default function RelationshipView() {
 
   useEffect(() => {
     setUpRelationshipData();
-  }, [setUpRelationshipData]);
+    return () => setSelectedRelationship(null);
+  }, [setUpRelationshipData, setSelectedRelationship]);
 
   if (!selectedRelationship) {
     return (
-      <div className="flex justify-center vh-100 align-middle">
+      <div className="flex justify-center h-[100vh] items-center">
         <Spinner loading={true}/>
       </div>
     )
@@ -48,28 +45,30 @@ export default function RelationshipView() {
     <>
       <header className="page-header">
         <h2>{selectedRelationship.name}</h2>
-        <button className="primary small angle-right" onClick={openFormModal}>Edit Relationship</button>
+        <button className="primary small angle-right" onClick={() => setFormIsOpen(true)}>
+          Edit Relationship
+        </button>
       </header>
       <div className="flex flex-wrap gap-3">
         <div id="relationship-images-container">
-          <div id="primary-image-container" className="container">
+          <div id="primary-image-container" className="section">
             {selectedRelationship.primary_image &&
               <>
-                <img ref={primaryImage}
+                <img ref={primaryImageRef}
                      src={`${apiUrl}${selectedRelationship.primary_image?.path}`}
                      alt={selectedRelationship.name}
                      data-id={selectedRelationship.primary_image?.id}
                      onClick={() => setImageModal(true)}
                 />
-                <button id="primary-image-button" className="transparent tooltip top" type="button"
-                        data-tooltip={`Make this the primary image For ${selectedRelationship?.name}.`}
-                        onClick={() => setPrimaryImageForRelationship(primaryImage.current.getAttribute('data-id'))}>
+                <button id="primary-image-button" className="text-xs white right" type="button"
+                        onClick={() => setPrimaryImageForRelationship(primaryImageRef.current?.getAttribute('data-id') ?? '')}>
                   <i className="fa-solid fa-file-arrow-up"></i>
                 </button>
+                <Tooltip elId="primary-image-button" message={`Make this the primary image For ${selectedRelationship?.name}.`} position="right" />
               </>
             }
             {!selectedRelationship.primary_image &&
-              <img ref={primaryImage} src="/images/generic-user.jpg" alt="No Primary Image"/>
+              <img src="/images/generic-user.jpg" alt="No Primary Image"/>
             }
           </div>
           <ul className="image-list profile-images-list">
@@ -82,10 +81,10 @@ export default function RelationshipView() {
             ))}
           </ul>
         </div>
-        <div className="container">
+        <div className="section">
           <Tabs>
             <TabList>
-              <Tab>Overview</Tab>
+            <Tab>Overview</Tab>
               <Tab>Action Items</Tab>
               <Tab>Notes</Tab>
               <Tab>Reminders</Tab>
@@ -110,14 +109,14 @@ export default function RelationshipView() {
           </Tabs>
         </div>
       </div>
-      <Modal isOpen={formIsOpen} onRequestClose={closeFormModal}
+      <Modal isOpen={formIsOpen} onRequestClose={() => setFormIsOpen(false)}
              className="react-modal center" overlayClassName="react-modal-overlay">
-        <RelationshipForm relationship={selectedRelationship} cancel={closeFormModal}/>
+        <RelationshipForm relationship={selectedRelationship} cancel={() => setFormIsOpen(false)}/>
       </Modal>
       <Modal isOpen={imageModal} onRequestClose={() => setImageModal(false)}
              className="react-modal center" overlayClassName="react-modal-overlay">
         <div className="close" onClick={() => setImageModal(false)}>X</div>
-        <img src={primaryImage?.current?.src} alt={primaryImage?.current?.alt}/>
+        <img src={primaryImageRef?.current?.src} alt={primaryImageRef?.current?.alt}/>
       </Modal>
     </>
   );
