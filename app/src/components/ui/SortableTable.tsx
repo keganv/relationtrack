@@ -30,8 +30,10 @@ const sortData = <T extends BaseRow>(data: T[], key: string, order: 'asc' | 'des
       bValue = new Date(bValue as string).getTime();
     }
 
-    if (aValue < bValue) return order === 'asc' ? -1 : 1;
-    if (aValue > bValue) return order === 'asc' ? 1 : -1;
+    if (aValue && bValue) {
+      if (aValue < bValue) return order === 'asc' ? -1 : 1;
+      if (aValue > bValue) return order === 'asc' ? 1 : -1;
+    }
 
     return 0;
   });
@@ -49,10 +51,10 @@ export default function SortableTable<T extends BaseRow>({columns, data}: Sortab
   const [sortedData, setSortedData] = useState<T[]>(data);
 
   const handleSort = useCallback((key: string, type: string) => {
-    setSortConfig((currentConfig: SortConfigType) => {
-      return { key, order: currentConfig?.order === 'asc' ? 'desc' : 'asc', type };
+    setSortConfig(() => {
+      return { key, order: sortConfig?.order === 'asc' ? 'desc' : 'asc', type };
     })
-  }, [setSortConfig]);
+  }, [sortConfig]);
 
   useEffect(() => {
     if (sortConfig) {
@@ -66,7 +68,8 @@ export default function SortableTable<T extends BaseRow>({columns, data}: Sortab
       <thead>
         <tr>
           {columns.map((col: Column<T>) => (
-            <th key={col.key} style={col.styles} data-key={col.key} className={col.className}
+            <th key={col.key} style={col.styles} data-key={col.key}
+                className={`${col.className ?? ''}${col.key === sortConfig?.key ? ` sorted ${sortConfig.order}` : ''}`.trim()}
                 {...(col.type !== 'image' && { onClick: () => handleSort(col.key, col.type) })}>
               {col.label}
             </th>
