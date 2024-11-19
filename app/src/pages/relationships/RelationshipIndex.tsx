@@ -9,7 +9,7 @@ export default function RelationshipIndex() {
 
   return (
     <>
-      <header className="flex items-center justify-between mb-3">
+      <header className="page-header">
         <h2>My Relationships</h2>
         <button className="primary angle-right text-xs" onClick={() => setIsOpen(true)}>Add Relationship</button>
       </header>

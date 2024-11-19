@@ -40,18 +40,17 @@ export default function RelationshipList() {
 
   useEffect(() => {
     if (relationships) {
-      const rows: FormattedRelationshipTableRow[] = [];
-      relationships?.forEach((r) => {
-        rows.push({
+      const rows: FormattedRelationshipTableRow[] = relationships.map((r) => {
+        return {
           'id': r.id || '',
           'key': r.id || '',
           'primary_image': r.primary_image?.path ?? '',
           'name': r.name,
-          'type': r.type?.type,
+          'type': r.type.type,
           'title': r.title,
           'health': r.health,
           'updated_at': r.updated_at ?? '',
-        });
+        };
       });
       setFormatted(rows);
       setLoading(false);
@@ -72,7 +71,9 @@ export default function RelationshipList() {
 
   return (
     <>
-      {formatted?.length && <SortableTable columns={columns} data={formatted} />}
+      <section className="section">
+        <SortableTable columns={columns} data={formatted} />
+      </section>
     </>
   );
 }
