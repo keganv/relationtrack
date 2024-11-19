@@ -1,5 +1,5 @@
 #relationship-images-container {
-  @apply w-[100%] sm:w-[50%] md:w-[33%];
+  @apply w-[100%] md:w-[50%] lg:w-[33%];
   #primary-image-container {
     @apply w-[100%] overflow-hidden relative;
     height: max(250px, 50vh);
@@ -10,7 +10,16 @@
       object-position: center;
     }
     #primary-image-button {
-      @apply absolute bottom-3 left-3;
+      @apply absolute bottom-4 left-4 px-2 py-1;
+      &:hover { box-shadow: none; }
     }
   }
 }
+
+.details {
+  @apply flex flex-wrap justify-between gap-3;
+  p {
+    @apply text-sm;
+  }
+}
+

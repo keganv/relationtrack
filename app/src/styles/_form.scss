@@ -1,3 +1,5 @@
+@use 'variables';
+
 form {
     @apply bg-white space-y-4 p-3 border;
 }
@@ -70,19 +72,19 @@ input[type="range"] {
     &:focus {
         outline: none;
         &::-webkit-slider-thumb {
-            background-color: $darker-blue;
+            background-color: variables.$darker-blue;
         }
         &::-moz-range-thumb {
-            background-color: $darker-blue;
+            background-color: variables.$darker-blue;
         }
     }
     &::-webkit-slider-runnable-track {
-        background: linear-gradient(to right, $lighter-gray, $washed-blue);
+        background: linear-gradient(to right, variables.$lighter-gray, variables.$washed-blue);
         height: 12px;
         width: 100%;
     }
     &::-moz-range-track {
-        background: linear-gradient(to right, $lighter-gray, $washed-blue);
+        background: linear-gradient(to right, variables.$lighter-gray, variables.$washed-blue);
         height: 12px;
         width: 100%;
     }
@@ -92,10 +94,10 @@ input[type="range"] {
         width: 100%;
     }
     &::-ms-fill-lower {
-        background: $lighter-gray; /* Lower fill */
+        background: variables.$lighter-gray; /* Lower fill */
     }
     &::-ms-fill-upper {
-        background: $washed-blue; /* Upper fill */
+        background: variables.$washed-blue; /* Upper fill */
     }
 }
 

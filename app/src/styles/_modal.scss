@@ -1,3 +1,5 @@
+@use 'variables';
+
 /* The Modal (background) */
 .modal {
     background-color: rgba(0,0,0,0.75); /* Black w/ opacity */
@@ -102,7 +104,7 @@
         .close {
             background: black;
             box-shadow: rgba(0,0,0,.5) 0 .5rem .5rem;
-            color: $white;
+            color: variables.$white;
             cursor: pointer;
             font-size: 1rem;
             height: 32px;

@@ -1,6 +1,6 @@
 .admin {
     align-items: stretch;
-    background-color: var(--background-gray);
+    background-color: var(--bg-gray);
     display: flex;
     margin: 0;
     min-height: 100vh;
@@ -43,7 +43,7 @@
     }
 
     #main-sidebar {
-        @apply fixed left-0 z-40 h-screen mt-12 pt-3 transition-transform sm:translate-x-0;
+        @apply -translate-x-full fixed left-0 z-40 h-screen mt-12 pt-3 transition-transform sm:translate-x-0;
         background-color: var(--darker-gray);
         width: 250px;
 
@@ -69,11 +69,12 @@
         overflow-x: scroll;
 
         .page-header {
-            @apply flex items-center justify-between mb-3;
+            @apply flex items-center justify-between mb-3 text-[1.25rem];
         }
 
-        .container {
+        .section {
             @apply bg-white flex flex-wrap p-3 gap-3 flex-1;
+            overflow-x: scroll;
         }
     }
 }

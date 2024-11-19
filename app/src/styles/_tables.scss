@@ -1,50 +1,14 @@
 /***** TABLE STYLES *****/
-.scroll-table {
-    border: 1px solid var(--border-color);
-    max-height: 50vh;
-    overflow-y: auto;
-    table {
-        border: none;
-        thead {
-            th {
-                position: sticky;
-                top: 0;
-            }
-        }
-        tbody {
-            tr:last-child {
-                border-bottom: none;
-            }
-        }
-        tfoot {
-            td {
-                background: var(--white);
-                position: sticky;
-                bottom: -1px;
-            }
-        }
-    }
-}
-
 table {
-    border: 1px solid var(--border-color);
     border-collapse: collapse;
     width: 100%;
     tr {
-        border-bottom: 1px solid var(--border-color);
-        &:nth-child(odd) { background-color: var(--background-gray); }
+        border-bottom: 1px solid var(--lighter-gray);
         th {
-            background: var(--white);
-            cursor: pointer;
-            padding: .5em;
-            text-align: left;
-            &.sorted.asc::after { content: '↑'; margin-left: 5px; position: absolute; }
-            &.sorted.desc::after { content: '↓'; margin-left: 5px; position: absolute; }
-            &.text-center { text-align: center; }
-            &.text-right { text-align: right; }
+            @apply cursor-default px-2 py-1 text-left;
         }
         td {
-            padding: .5em;
+            @apply p-2 text-sm;
             .table-image {
                 align-items: start;
                 aspect-ratio: 1/1;
@@ -55,6 +19,41 @@ table {
                     display: block;
                 }
             }
+        }
+    }
+
+    &.scrollable {
+        border: 1px solid var(--border-color);
+        max-height: 50vh;
+        overflow-y: auto;
+        table {
+            border: none;
+            thead {
+                th {
+                    position: sticky;
+                    top: 0;
+                }
+            }
+            tbody {
+                tr:last-child {
+                    border-bottom: none;
+                }
+            }
+            tfoot {
+                td {
+                    background: var(--white);
+                    position: sticky;
+                    bottom: -1px;
+                }
+            }
+        }
+    }
+
+    &.sortable {
+        th {
+            &.sorted::after { font-size: .875rem; margin: 2px 0 0 2px; position: absolute; }
+            &.sorted.asc::after { content: '↑'; }
+            &.sorted.desc::after { content: '↓'; }
         }
     }
 }

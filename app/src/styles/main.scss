@@ -1,7 +1,6 @@
-@import 'variables';
-@import 'admin';
-@import 'home';
-@import 'components';
-@import 'form';
-@import 'tables';
-@import 'modal';
+@use 'admin';
+@use 'home';
+@use 'components';
+@use 'form';
+@use 'tables';
+@use 'modal';

@@ -12,14 +12,15 @@
   --dark-gray: #555;
   --darker-gray: #333;
   --gray: #999;
-  --light-gray: #aaa;
+  --light-gray: #AAA;
+  --lighter-gray: #CCC;
+  --bg-gray: #E9E9E9;
   --red: #EF4444;
-  --white: #fff;
+  --white: #FFF;
   --yellow: #FBB000;
   --border-color: #BBB;
   --border-radius: 10px;
-  --background-gray: #E9E9E9;
-  --lighter-gray: #ddd;
+
   --green: #5f5;
   --error: var(--red);
   --success: var(--green);
@@ -116,46 +117,48 @@ input[type='number']::-webkit-outer-spin-button {
 
   /***** TOOLTIPS *****/
   .tooltip {
-    position: relative;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: var(--white);
+    cursor: default;
+    display: none;
+    font-size: .75rem;
+    left: 0;
+    line-height: 20px;
+    margin-top: -5px;
+    padding: 5px 10px;
+    position: absolute;
+    text-transform: initial;
+    top: -100%;
+    transition: opacity, visibility 1s ease-in-out;
+    transform: translateX(0);
+    width: max-content;
 
-    &::before {
-      background-color: rgba(0, 0, 0, 0.75);
-      bottom: 100%;
-      color: var(--white);
-      content: attr(data-tooltip);
-      font-size: 0.75rem;
-      left: 50%;
-      max-width: max-content;
-      opacity: 0;
-      padding: 0.25rem 0.5rem;
-      position: absolute;
-      text-transform: initial;
-      transform: translateX(-50%) translateY(-10px);
-      transition: all .5s ease-in-out;
-      white-space: nowrap;
-      visibility: hidden;
+    &.right {
+      /*left: calc(100% + 10px);*/
+      /*top: 50%;*/
+      /*transform: translateY(-50%);*/
     }
+  }
 
-    &:hover::before {
-      opacity: 1;
-      visibility: visible;
-    }
+  /**
 
     &.right::before {
-      transform: translateY(calc(100% + .5rem));
       left: calc(100% + 10px);
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     &::after {
       border: 6px solid transparent;
       border-top-color: rgba(0, 0, 0, 0.75);
       content: "";
-      opacity: 0;
+      opacity: 1;
       left: 50%;
       position: absolute;
-      transform: translateX(-50%) translateY(-20px);
+      top: 0;
+      transform: translateX(-50%) translateY(-10px);
       transition: all .5s ease-in-out;
-      visibility: hidden;
+      visibility: visible;
     }
 
     &:hover::after {
@@ -166,8 +169,9 @@ input[type='number']::-webkit-outer-spin-button {
     &.right::after {
       border-right-color: rgba(0, 0, 0, 0.75);
       border-top-color: transparent;
-      transform: translateY(calc(50% + 5px));
       left: calc(100% - 2px);
+      top: 50%;
+      transform: translateY(-50%);
     }
-  }
+   */
 }
