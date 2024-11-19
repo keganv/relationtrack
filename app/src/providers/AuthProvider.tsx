@@ -10,8 +10,8 @@ type AuthProviderProps = { children: ReactNode; }
 
 const sessionUser: User | null = localStorage.getItem('rtud') ? JSON.parse(localStorage.getItem('rtud') ?? '') : null;
 
-const AuthProvider = ({ children }: AuthProviderProps) => {
-  const { doLogout, handleError, setStatus } = useGlobalContext();
+const AuthProvider = ({children}: AuthProviderProps) => {
+  const {doLogout, handleError, setStatus} = useGlobalContext();
   const [user, setUser] = useState(sessionUser);
   const [errors, setErrors] = useState({}); // Used for form and API validation errors
   const [loading, setLoading] = useState(false);
@@ -20,8 +20,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     if (user && rememberMe) {
-      const now = new Date().getTime();
-      const userData = { ...user, expiration: now + 7200000 }; // 2 hours
+      const userData = {...user};
       localStorage.setItem('rtud', JSON.stringify(userData));
     }
   }, [user, rememberMe]);
@@ -30,7 +29,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const getUser = async () => {
     try {
-      const { data } = await axios.get('/api/user');
+      const {data} = await axios.get('/api/user');
       setUser(data);
     } catch (e) {
       handleError(e, setErrors);
@@ -46,7 +45,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       await axios.post('/login', data);
       await getUser();
       navigate('/dashboard');
-      setStatus({ type: 'success', message: 'Successfully Logged In!' });
+      setStatus({type: 'success', message: 'Successfully Logged In!'});
       setRememberMe(data.remember ?? false);
     } catch (e) {
       handleError(e, setErrors);
@@ -55,7 +54,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [setStatus, getUser, navigate, handleError]);
 
-  const register = async ({ ...data }) => {
+  const register = async ({...data}) => {
     setErrors({});
     setLoading(true);
     setStatus(null);
@@ -64,7 +63,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       await axios.post('/register', data);
       await getUser();
       navigate('/dashboard');
-      setStatus({ type: 'success', message: 'Successfully Logged In!' });
+      setStatus({type: 'success', message: 'Successfully Logged In!'});
     } catch (e) {
       handleError(e, setErrors);
     } finally {
@@ -72,14 +71,14 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }
 
-  const sendPasswordResetLink = async ({ ...data }) => {
+  const sendPasswordResetLink = async ({...data}) => {
     setErrors({})
     setLoading(true)
     setStatus(null)
     try {
       await csrf();
       const response = await axios.post('/forgot-password', data);
-      setStatus({ type: 'success', message: response.data?.status });
+      setStatus({type: 'success', message: response.data?.status});
     } catch (e) {
       handleError(e, setErrors);
     } finally {
@@ -93,7 +92,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     setStatus(null);
     try {
       const response = await axios.post('/reset-password', data);
-      setStatus({ type: 'success', message: response.data?.status });
+      setStatus({type: 'success', message: response.data?.status});
       navigate('/login');
     } catch (e) {
       handleError(e, setErrors);
@@ -108,7 +107,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     setStatus(null)
     try {
       const response = await axios.post('/email/verification-notification');
-      setStatus({ type: 'success', message: response.data?.status });
+      setStatus({type: 'success', message: response.data?.status});
     } catch (e) {
       handleError(e, setErrors);
     } finally {
@@ -134,9 +133,9 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       const formData = new FormData();
       const url = "/api/update-profile-image";
       formData.append('profile_image', image as File);
-      const response = await axios.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const response = await axios.post(url, formData, {headers: {'Content-Type': 'multipart/form-data'}});
       await getUser();
-      setStatus({ type: 'success', message: response.data.message });
+      setStatus({type: 'success', message: response.data.message});
     } catch (error) {
       handleError(error);
     }
