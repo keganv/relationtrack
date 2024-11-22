@@ -38,7 +38,7 @@ class RelationshipPolicy
      */
     public function delete(User $user, Relationship $relationship): bool
     {
-        //
+        return $user->id === $relationship->user_id;
     }
 
     /**
