@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { useEffect } from "react";
 import Footer from "../../components/ui/Footer";
 import ApplicationLogo from "../../components/ui/ApplicationLogo";

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, ReactNode, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import axios from "../lib/axios";
 import AuthContext from "../contexts/AuthContext";
 import { LoginFields, NewPasswordFields } from "../types/AuthTypes.ts";

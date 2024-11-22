@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import useAuthContext from "../../../hooks/useAuthContext.ts";
 import {FormEvent} from "react";
 

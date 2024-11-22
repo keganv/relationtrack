@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import SortableTable, { Column } from '../../../components/ui/SortableTable'
 import Spinner from '../../../components/ui/Spinner';
 import useRelationshipContext from '../../../hooks/useRelationshipContext';

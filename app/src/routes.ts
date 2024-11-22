@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouteObject } from 'react-router-dom';
+import { createBrowserRouter, RouteObject } from 'react-router';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/static/Home';
 import Login from './pages/Login';
@@ -50,4 +50,6 @@ const routes: RouteObject[] = [
   { path: '*', Component: NotFound }
 ];
 
-export const router = createBrowserRouter(routes);
+const router = createBrowserRouter(routes);
+
+export { routes, router };

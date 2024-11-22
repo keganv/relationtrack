@@ -1,20 +1,25 @@
 import {useCallback, useEffect, useState} from 'react';
-import Relationship from '../../types/Relationship.ts';
+import { Relationship } from '../../types/Relationship.ts';
 import ActionItem from '../../types/ActionItem.ts';
-import SortableTable from './SortableTable';
+import SortableTable, { Column } from './SortableTable';
 
-type ActionItemRow = { id: number, action: string, complete: boolean, updated_at: string }
+type ActionItemRow = { key: number | string } & ActionItem;
 type ActionItemsProps = { relationship?: Relationship; }
 
 export default function ActionItems({relationship}: ActionItemsProps) {
-  const [actionItems, setActionItems] = useState<ActionItem[]>();
+  const [actionItems, setActionItems] = useState<ActionItemRow[]>();
   const fetchActionItems = useCallback(() => {
     if (relationship) {
-      setActionItems(relationship.action_items);
+      const formattedActionItems = relationship.action_items?.map(item => {
+        return { key: item.id ?? item.action.substring(0, 10), ...item }
+      });
+      if (formattedActionItems) {
+        setActionItems(formattedActionItems);
+      }
     }
   }, [relationship]);
 
-  const columns = [
+  const columns: Column<ActionItemRow>[] = [
     {key: 'action', label: 'Action', type: 'text'},
     {
       key: 'complete', label: 'Complete', type: 'format', className: 'text-center',
@@ -32,9 +37,19 @@ export default function ActionItems({relationship}: ActionItemsProps) {
   useEffect(() => {
     fetchActionItems();
   }, [fetchActionItems]);
-  return (
-    <>
-      <SortableTable columns={columns} data={actionItems || []} />
-    </>
-  );
+
+  if (actionItems) {
+    return (
+      <>
+        <SortableTable columns={columns} data={actionItems} />
+      </>
+    );
+  } else {
+    return (
+      <>
+        <p>No action items.</p>
+      </>
+    )
+  }
+
 }

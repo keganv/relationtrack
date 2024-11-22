@@ -1,5 +1,5 @@
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -51,7 +51,7 @@ export default function Login() {
       <div className="mt-4">
         <label htmlFor="remember" className="inline">
           <input {...register("remember")} type="checkbox" name="remember" id="remember" /> Remember Me
-        </label>        
+        </label>
       </div>
       <div className="flex flex-wrap w-full items-center justify-between mt-4">
         <button type="submit" className="button primary angle-left" disabled={loading}>

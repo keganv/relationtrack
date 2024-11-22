@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router';
 import toast, { Toaster } from 'react-hot-toast';
 import useGlobalContext from './hooks/useGlobalContext.ts';
 import AuthProvider from './providers/AuthProvider.tsx';

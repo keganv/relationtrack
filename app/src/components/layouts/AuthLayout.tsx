@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router';
 import MainNav from '../ui/MainNav';
 import useAuthContext from '../../hooks/useAuthContext';
 import RelationshipProvider from '../../providers/RelationshipProvider';

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 export default function NotFound() {
   return (
     <div className="bg-main-dark-blue angle-right mt-[calc(80vh/2)] m-auto max-w-[400px] text-white text-center">

@@ -1,4 +1,4 @@
-export default interface ActionItem {
+type ActionItem = {
   action: string;
   complete: boolean;
   created_at: string;
@@ -7,3 +7,5 @@ export default interface ActionItem {
   updated_at: string;
   user_id: string;
 }
+
+export default ActionItem;
