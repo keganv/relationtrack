@@ -7,14 +7,14 @@ export type BaseRow = {
 export type Column<T extends BaseRow = BaseRow> = {
   alt?: string,
   className?: string,
-  key: string,
+  key: string | number,
   label: string,
   styles?: object,
   type: string,
-  format?: (data: T) => React.JSX.Element | Element
+  format?: (data: T) => React.ReactNode
 }
 
-const sortData = <T extends BaseRow>(data: T[], key: string, order: 'asc' | 'desc', type: string) => {
+const sortData = <T extends BaseRow>(data: T[], key: string | number, order: 'asc' | 'desc', type: string) => {
   return [...data].sort((a, b) => {
     let aValue = a[key];
     let bValue = b[key];
@@ -39,7 +39,7 @@ const sortData = <T extends BaseRow>(data: T[], key: string, order: 'asc' | 'des
   });
 }
 
-type SortConfigType = { key: string, order: 'asc' | 'desc', type: string } | null;
+type SortConfigType = { key: string | number, order: 'asc' | 'desc', type: string } | null;
 
 interface SortableTableProps<T extends BaseRow> {
   columns: Column<T>[],
@@ -50,7 +50,7 @@ export default function SortableTable<T extends BaseRow>({columns, data}: Sortab
   const [sortConfig, setSortConfig] = useState<SortConfigType>(null);
   const [sortedData, setSortedData] = useState<T[]>(data);
 
-  const handleSort = useCallback((key: string, type: string) => {
+  const handleSort = useCallback((key: string | number, type: string) => {
     setSortConfig(() => {
       return { key, order: sortConfig?.order === 'asc' ? 'desc' : 'asc', type };
     })
@@ -86,9 +86,9 @@ export default function SortableTable<T extends BaseRow>({columns, data}: Sortab
                     <img src={`${import.meta.env.VITE_API_URL}/api/${row[col.key]}`} alt={col.alt ? row[col.alt] as string : ''} />
                   </div> : ''
                 }
-                {col.type === 'text' && <>{row[col.key]}</>}
+                {col.type === 'text' && <>{String(row[col.key])}</>}
                 {col.type === 'format' && col.format && <>{col.format(row)}</>}
-                {col.type === 'number' && <>{row[col.key]}</>}
+                {col.type === 'number' && <>{Number(row[col.key])}</>}
                 {col.type === 'date' && <>{new Date(row[col.key] as string).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}</>}
               </td>
             ))}
