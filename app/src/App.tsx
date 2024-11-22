@@ -29,25 +29,3 @@ export default function App() {
     </>
   );
 }
-
-/*
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route element={<AuthLayout />}>
-          <Route path='/dashboard' element={<Dashboard />} />
-          <Route path="/relationships" element={<RelationshipOutlet />}>
-            <Route index element={<RelationshipIndex />} />
-            <Route path=":id" element={<RelationshipView />} />
-          </Route>
-        </Route>
-        <Route element={<GuestLayout />}>
-          <Route path='/login' element={<Login />} />
-          <Route path='/register' element={<Register />} />
-          <Route path='/forgot-password' element={<ForgotPassword />} />
-          <Route path='/password-reset/:token' element={<ResetPassword />} />
-          <Route path='/cookie-policy' element={<CookiePolicy />} />
-          <Route path='/terms' element={<Terms />} />
-        </Route>
-      <Route path='*' element={<NotFound />} />
-    </Routes>
- */
