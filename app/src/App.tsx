@@ -1,21 +1,10 @@
 import { useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
-import AuthLayout from './components/layouts/AuthLayout';
-import GuestLayout from './components/layouts/GuestLayout';
-import ForgotPassword from './pages/ForgotPassword';
-import Dashboard from './pages/Dashboard';
-import Home from './pages/static/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ResetPassword from './pages/ResetPassword';
 import useGlobalContext from './hooks/useGlobalContext.ts';
-import CookiePolicy from './pages/static/CookiePolicy';
-import Terms from './pages/static/Terms';
-import RelationshipIndex from './pages/relationships/RelationshipIndex';
-import RelationshipView from './pages/relationships/RelationshipView';
-import RelationshipOutlet from './pages/relationships/RelationshipOutlet';
-import NotFound from './pages/static/NotFound';
+import AuthProvider from './providers/AuthProvider.tsx';
+import ErrorBoundary from './components/common/ErrorBoundary.tsx';
+import GlobalProvider from './providers/GlobalProvider.tsx';
 
 export default function App() {
   const { status } = useGlobalContext();
@@ -29,6 +18,19 @@ export default function App() {
 
   return (
     <>
+      <GlobalProvider>
+        <AuthProvider>
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
+        </AuthProvider>
+      </GlobalProvider>
+      <Toaster position='bottom-right' toastOptions={{ duration: 5000 }} />
+    </>
+  );
+}
+
+/*
       <Routes>
         <Route path='/' element={<Home />} />
         <Route element={<AuthLayout />}>
@@ -46,10 +48,6 @@ export default function App() {
           <Route path='/cookie-policy' element={<CookiePolicy />} />
           <Route path='/terms' element={<Terms />} />
         </Route>
-        {/* 404 Page */}
-        <Route path='*' element={<NotFound />} />
-      </Routes>
-      <Toaster position='bottom-right' toastOptions={{ duration: 5000 }} />
-    </>
-  );
-}
+      <Route path='*' element={<NotFound />} />
+    </Routes>
+ */

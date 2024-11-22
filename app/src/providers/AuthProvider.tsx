@@ -15,26 +15,25 @@ const AuthProvider = ({children}: AuthProviderProps) => {
   const [user, setUser] = useState(sessionUser);
   const [errors, setErrors] = useState({}); // Used for form and API validation errors
   const [loading, setLoading] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user && rememberMe) {
+    if (user) {
       const userData = {...user};
       localStorage.setItem('rtud', JSON.stringify(userData));
     }
-  }, [user, rememberMe]);
+  }, [user]);
 
   const csrf = () => axios.get('/sanctum/csrf-cookie');
 
-  const getUser = async () => {
+  const getUser = useCallback(async () => {
     try {
       const {data} = await axios.get('/api/user');
       setUser(data);
     } catch (e) {
       handleError(e, setErrors);
     }
-  };
+  }, [handleError]);
 
   const login = useCallback(async (data: LoginFields) => {
     setErrors({});
@@ -46,7 +45,6 @@ const AuthProvider = ({children}: AuthProviderProps) => {
       await getUser();
       navigate('/dashboard');
       setStatus({type: 'success', message: 'Successfully Logged In!'});
-      setRememberMe(data.remember ?? false);
     } catch (e) {
       handleError(e, setErrors);
     } finally {
