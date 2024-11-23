@@ -6,6 +6,8 @@ use App\Models\File;
 use App\Models\Relationship;
 use App\Models\User;
 use App\Services\FileService;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
@@ -65,12 +67,10 @@ class RelationshipController extends Controller
             'title' => 'required|max:55',
             'health' => 'required|numeric|min:0|max:10',
             'birthday' => 'nullable|date|before:today',
-            'images' => 'nullable|array|max:10',
-            'images.*' => 'image|max:2048'
+            'images' => 'nullable|array|max:10'
         ], [
             'images.max' => 'You may not upload more than 10 images per relationship.',
             'images.*.image' => 'The file :attribute must be a valid image (jpg, jpeg, png, bmp, gif, svg, or webp).',
-            'images.*.max' => ':attribute exceeds the maximum allowed file size.',
         ]);
 
         // Remove the id to pass fillable mass assignment
@@ -88,36 +88,36 @@ class RelationshipController extends Controller
 
             return response()->json(['message' => $successMessage], Response::HTTP_CREATED);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], $e->getCode());
+            return response()->json(
+                ['message' => $e->getMessage()],
+                $e->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
     }
 
-    public function delete(string $id)
+    /**
+     * @param Relationship $relationship
+     * @return JsonResponse
+     * @throws AuthorizationException
+     */
+    public function delete(Relationship $relationship): JsonResponse
     {
-        /** @var Relationship|null $relationship */
-        $relationship = Relationship::findOrFail($id);
-        /** @var User $user */
-        $user = Auth::user();
-
-        // Check if the current User and the Relationship is correct
-        if ($relationship?->user_id === $user->id) {
-            /**
-             * Remove the existing Files
-             * @var File $file
-             */
-            foreach ($relationship->files() as $file) {
-                $file->delete();
-                if (Storage::exists($file->path)) {
-                    Storage::delete($file->path);
-                }
-            }
-
-            $relationship->delete();
-
-            return response()->json(['message' => 'Successfully deleted the Relationship.'], 201);
+        // Check for both the relationship and a security test to make sure that
+        // the requested relationship belongs to the user.
+        if (!$relationship || !$this->authorize('delete', $relationship)) {
+            return response()->json(
+                ['message' => 'The requested relationship does not exist.'],
+                Response::HTTP_NOT_FOUND
+            );
         }
 
-        return response()->json(['message' => 'Could not find the Relationship.'], 404);
+        if ($files = $relationship->files) {
+            $this->fileService->removeFilesFromStorage($files);
+        }
+
+        $relationship->delete();
+
+        return response()->json(['message' => 'Successfully deleted the Relationship.'], 201);
     }
 
     public function updatePrimaryImage(Request $request, $id)

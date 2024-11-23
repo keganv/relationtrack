@@ -10,11 +10,11 @@ type RelationshipProviderProps = {
 }
 
 function RelationshipProvider ({ children }: RelationshipProviderProps) {
+  const { handleError, setStatus } = useGlobalContext();
   const [relationships, setRelationships] = useState<Relationship[]|null>(null);
   const [selectedRelationship, setSelectedRelationship] = useState<Relationship|null>(null);
   const [types, setTypes] = useState(null);
-  const [formErrors, setFormErrors] = useState<RelationshipFormErrors|null>(null);
-  const { handleError, setStatus } = useGlobalContext();
+  const [formErrors, setFormErrors] = useState<RelationshipFormErrors>(null);
 
   const all = useCallback(async () => {
     try {
@@ -52,12 +52,10 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
       const url = data.id ? `/api/relationships/${data.id}` : '/api/relationships/';
       const response = await axios.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' }});
 
-      if (response) {
-        // setStatus(response.data.message);
-        all();
-      }
+      setStatus({type: 'success', message: response.data.message});
+      await all();
     } catch (error) {
-      handleError(error);
+      handleError(error, setFormErrors);
     }
   };
 

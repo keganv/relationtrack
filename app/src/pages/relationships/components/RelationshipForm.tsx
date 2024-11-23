@@ -10,27 +10,29 @@ import { removeUndefined } from '../../../lib/helpers.ts';
 
 type RelationshipFormProps = {
   relationship?: Relationship;
-  cancel?: () => void;
+  cancel: () => void;
 };
 
-const defaultForm = {
-  type: '',
-  name: '',
-  title: '',
-  health: 6,
-  description: '',
-};
+const defaultForm = { type: '', name: '', title: '', health: 6, description: '' };
 
 export default function RelationshipForm({ relationship, cancel }: RelationshipFormProps) {
   const { types, save, formErrors: apiErrors, convertRelationshipToFormData } = useRelationshipContext();
-  const initialForm: RelationshipFormData = relationship ? { ...convertRelationshipToFormData(relationship) } : defaultForm;
+
+  const initialForm: RelationshipFormData = relationship ?
+    { ...convertRelationshipToFormData(relationship) } :
+    defaultForm;
+
   const { control, register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RelationshipFormData>({
     defaultValues: initialForm,
     resolver: zodResolver(relationshipFormSchema)
   });
+
   const handleFormSubmit: SubmitHandler<RelationshipFormData> = async (data: RelationshipFormData) => {
     const cleaned = removeUndefined<RelationshipFormData>(data);
     await save(cleaned);
+    if (!apiErrors) {
+      cancel(); // Close the form after a successful save.
+    }
   }
 
   if (!types?.length) {
@@ -122,9 +124,9 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                   value={value}
                   errors={[...(apiErrors?.images ?? []), fieldState.error?.message ?? '']}
                 />
-                )}
-              />
-            </div>
+              )}
+            />
+          </div>
         </fieldset>
         <div className="flex justify-between mt-2">
           <button type="submit" className="primary mt angle-right">

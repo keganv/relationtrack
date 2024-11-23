@@ -31,8 +31,8 @@ export const relationshipFormSchema = z.object({
     .refine((date) => (new Date(date) <= new Date()), { message: 'This age is too young.' })
     .optional(),
   description: z.string().max(500, 'Maximum of 500 characters.').nullable(),
-  images: z.array(z.instanceof(globalThis.File))
-    .refine((files) => files.every((f) => f.size < 250_000), { message: 'Max 250 kB upload size.' })
+  images: z.array(z.instanceof(File))
+    .refine((files) => files.every((f) => f.size < 250_000_000), { message: 'Max 250 kB upload size.' })
     .refine((files) => files.every(checkFileType))
     .optional()
 });
@@ -47,4 +47,4 @@ export type RelationshipFormErrors = {
   health?: string[];
   title?: string[];
   images?: string[];
-}
+} | null

@@ -4,7 +4,6 @@ type ImageUploaderProps = {
   id?: string;
   className?: string;
   multiple?: boolean;
-  apiErrors?: string[];
   errors: string[] | null;
   onChange: (files: File[]) => void;
   value: File[] | undefined;
@@ -18,7 +17,6 @@ const ImageUploader = forwardRef<HTMLInputElement, ImageUploaderProps>(
 
     const handleFileChange = useCallback((newFiles: FileList | null) => {
       if (!newFiles || !onChange) return;
-
       // Convert FileList to File array and combine with existing files if multiple
       const fileArray = Array.from(newFiles);
       const newFileList = multiple ? [...value, ...fileArray] : fileArray;

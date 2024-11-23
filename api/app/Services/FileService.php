@@ -7,6 +7,7 @@ use App\Models\Relationship;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FileService
 {
-    public function storePrivateFileToStorage(User $user, UploadedFile $uploadedFile): string
+    public function storeFileToStorage(User $user, UploadedFile $uploadedFile): string
     {
         $path = $uploadedFile->store("uploads/users/$user->id", 'private');
 
@@ -28,14 +29,30 @@ class FileService
         return $path;
     }
 
-    public function removeFileFromStorage(string $path): bool
+    /**
+     * @param File $files
+     * @return bool
+     */
+    public function removeFilesFromStorage(File $files): bool
     {
-        if (Storage::exists($path) && Storage::delete($path)) {
-            return true;
+        /** @var File $file */
+        foreach ($files as $file) {
+            $file->delete(); // Delete the database record
+
+            if (Storage::disk('s3')->exists($file->path)) {
+                // Remove the actual file from S3
+                $deleteSuccess = Storage::disk('s3')->delete($file->path);
+
+                // Important to Log the file that didn't get deleted for audits and removing from S3
+                if (!$deleteSuccess) {
+                    $message = "Failed to remove the file {$file->path} from storage.";
+                    Log::channel('single')->error($message); // TODO: Write to custom FileLogger
+                    throw new UploadException($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+                }
+            }
         }
 
-        $message = 'Failed to remove the file from storage.';
-        throw new UploadException($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+        return true;
     }
 
     /**
@@ -96,16 +113,20 @@ class FileService
     }
 
     /**
-     * Send back a collection of Files after they are saved and stored or an JSON response error.
+     * Returns true if the Files are saved and stored or throws an Exception response error.
      *
      * @param UploadedFile[] $images
      * @param Relationship $relationship
      * @param User $user
      * @return bool
+     * @throws FileException
      */
     public function addFilesToRelationship(array $images, Relationship $relationship, User $user): bool
     {
-        /** @var Collection $files */
+        /**
+         * We need a collection to keep a count of the total files and to prevent duplicate uploads
+         * @var Collection $files
+         */
         $files = $relationship->files ?? new Collection();
 
         // First check to see that the User is not over the 10 files per Relationship limit.
@@ -123,18 +144,19 @@ class FileService
             // Check if the user has already uploaded a file with the same name.
             if (in_array($upload->getClientOriginalName(), $existingFileNames)) {
                 throw new FileException(
-                    "The file {$upload->getClientOriginalName()} has already been uploaded.",
+                    sprintf("The file %s has already been uploaded.", $upload->getClientOriginalName()),
                     Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
 
-            if ($upload->getSize() > 2147483648) {
+            if ($upload->getSize() > 2097152) {
                 throw new FileException(
-                    "The file {$upload->getClientOriginalName()} is too large. {$upload->getSize()}",
+                    sprintf("The file %s is too large.", $upload->getClientOriginalName()),
                     Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
 
+            // Upload the UploadedFile to S3 and save the File (model) record to the database
             if ($path = Storage::disk('s3')->putFile('/uploads/users/' . $user->id . '/relationships', $upload)) {
                 $file = new File();
                 $file->user_id = $user->id;
@@ -145,16 +167,16 @@ class FileService
                 $file->size = $upload->getSize();
 
                 if (!$file->save()) {
-                    throw new \RuntimeException(
+                    throw new FileException(
                         "The file {$upload->getClientOriginalName()} could not be saved.",
                         Response::HTTP_INTERNAL_SERVER_ERROR
                     );
                 }
 
-                $files->add($file);
+                $files->add($file); // Add to the temporary File Collection
             } else {
-                // The file could not be uploaded
-                throw new \RuntimeException(
+                // The File could not be uploaded or saved
+                throw new FileException(
                     "The file {$upload->getClientOriginalName()} could not be uploaded.",
                     Response::HTTP_INTERNAL_SERVER_ERROR
                 );

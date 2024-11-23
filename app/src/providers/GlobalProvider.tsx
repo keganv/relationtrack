@@ -1,7 +1,8 @@
-import { ReactNode, useCallback, useState, } from "react";
+import { ReactNode, useCallback, useEffect, useState, } from "react";
 import GlobalContext from "../contexts/GlobalContext";
 import { Status } from "../types/Status";
 import { AxiosError } from "axios";
+import toast from 'react-hot-toast';
 
 const DISALLOWED_STATUS_MESSAGES = ['sql', 'connection', 'select', 'from', 'where'];
 const UNAUTHORIZED_STRINGS = ['unauthenticated', 'unauthorized', 'csrf'];
@@ -12,7 +13,14 @@ const GlobalProvider = ({ children }: GlobalProviderProps) => {
   const [doLogout, setDoLogout] = useState(false);
   const [status, setStatus] = useState<Status | null>(null);
 
-  const handleError = useCallback((e: AxiosError | unknown, setErrorsFn?: (arg: object[]) => void) => {
+  useEffect(() => {
+    if (status) {
+      status.type === 'error' ? toast.error(status.message) : toast.success(status.message);
+    }
+    return () => toast.dismiss();
+  }, [status]);
+
+  const handleError = useCallback(<T,>(e: AxiosError | unknown, setErrorsFn?: (arg: T) => void) => {
     if (e instanceof AxiosError) {
       const message = e.response?.data.message || e.message;
       const allowMessage = !DISALLOWED_STATUS_MESSAGES.some(status => message.toLowerCase().includes(status));
@@ -26,6 +34,7 @@ const GlobalProvider = ({ children }: GlobalProviderProps) => {
       }
       setStatus({ type: 'error', message: allowMessage ? message : 'Uh oh! Something went wrong.' });
     }
+    throw e;
   }, [setStatus]);
 
   return (

@@ -24,5 +24,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/relationships', [RelationshipController::class, 'store']);
     Route::post('/relationships/{relationship}', [RelationshipController::class, 'update']);
     Route::post('/relationships/{id}/primary-image', [RelationshipController::class, 'updatePrimaryImage']);
-    Route::delete('/relationships/{id}', [RelationshipController::class, 'delete']);
+    Route::delete('/relationships/{relationship}', [RelationshipController::class, 'delete']);
 });

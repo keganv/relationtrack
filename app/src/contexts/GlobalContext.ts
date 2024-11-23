@@ -4,7 +4,7 @@ import { Status } from '../types/Status.ts';
 
 export interface GlobalContextType {
   doLogout: boolean;
-  handleError: (e: AxiosError | unknown, setErrorsFn?: (arg: object[]) => void) => void;
+  handleError: <T>(e: AxiosError | unknown, setErrorsFn?: (arg: T) => void) => void;
   status: Status | null;
   setStatus: React.Dispatch<React.SetStateAction<Status | null>>;
 }
