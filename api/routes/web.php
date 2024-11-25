@@ -16,5 +16,3 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return ['RelationTrack' => app()->version()];
 });
-
-require __DIR__.'/auth.php';
