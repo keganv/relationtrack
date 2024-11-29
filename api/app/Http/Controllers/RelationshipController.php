@@ -147,7 +147,7 @@ class RelationshipController extends Controller
     }
 
     private function handlePrimaryImage(Relationship $relationship, UploadedFile $file) {
-        $previous = $relationship->primaryImage();
+        $previous = $relationship->primaryImage;
         try {
             /** @var File $previous */
             if ($previous) {

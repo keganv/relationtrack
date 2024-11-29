@@ -43,13 +43,13 @@ class AdminController extends Controller
         $uploadedFile = $request->file('profile_image'); // Get the uploaded image
 
         try {
-            $path = $this->fileService->storePrivateFileToStorage($user, $uploadedFile);
+            $path = $this->fileService->storeFileToStorage($user, $uploadedFile);
             $uploadedFileName = $uploadedFile->getClientOriginalName();
 
             // If there was no previous profile image, update it
             if ($previous) {
                 // First remove the old File from storage to keep things clean
-                $this->fileService->removeFileFromStorage($previous->path);
+                $this->fileService->removeFilesFromStorage([$previous]);
 
                 // Update the existing profile image File
                 $data = [
