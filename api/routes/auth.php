@@ -8,16 +8,14 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
-/**
- * All routes are prefixed with 'api' defined in the RouteServiceProvider.php
- */
+// All routes are prefixed with '/api' defined in the RouteServiceProvider.php
 
 Route::post('/register', [RegisteredUserController::class, 'store'])
                 ->middleware('guest')
                 ->name('register');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-                ->middleware('guest')
+                ->middleware(['guest', 'verified', 'throttle:6,1'])
                 ->name('login');
 
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
@@ -41,5 +39,5 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
 
 Route::put('/update-password', [NewPasswordController::class, 'update'])
-    ->middleware('auth')
-    ->name('password.update');
+                ->middleware('auth')
+                ->name('password.update');

@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     // ACTION ITEM ROUTES
     Route::post('/action-items', [ActionItemController::class, 'store']);
-    Route::post('/action-items/{id}', [ActionItemController::class, 'update']);
-    Route::delete('/action-items/{id}', [ActionItemController::class, 'delete']);
+    Route::post('/action-items/{actionItem}', [ActionItemController::class, 'update']);
+    Route::delete('/action-items/{actionItem}', [ActionItemController::class, 'delete']);
 
     // ADMIN ROUTES
     Route::get('/user', fn (Request $request) => Auth::user()->load('profileImage'));
