@@ -14,16 +14,17 @@ Route::post('/register', [RegisteredUserController::class, 'store'])
                 ->middleware('guest')
                 ->name('register');
 
+// Login route is throttled in the LoginRequest.php class
 Route::post('/login', [AuthenticatedSessionController::class, 'store'])
-                ->middleware(['guest', 'verified', 'throttle:6,1'])
+                ->middleware(['guest'])
                 ->name('login');
 
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
-                ->middleware('guest')
+                ->middleware(['guest', 'throttle:6,1'])
                 ->name('password.email');
 
 Route::post('/reset-password', [NewPasswordController::class, 'store'])
-                ->middleware('guest')
+                ->middleware(['guest', 'throttle:5,1'])
                 ->name('password.store');
 
 Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
@@ -35,9 +36,9 @@ Route::post('/email/verification-notification', [EmailVerificationNotificationCo
                 ->name('verification.send');
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-                ->middleware('auth')
+                ->middleware(['auth', 'throttle:3,1'])
                 ->name('logout');
 
 Route::put('/update-password', [NewPasswordController::class, 'update'])
-                ->middleware('auth')
+                ->middleware(['auth', 'auth.session'])
                 ->name('password.update');
