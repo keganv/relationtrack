@@ -3,28 +3,37 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\RedirectResponse;
 
 class VerifyEmailController extends Controller
 {
     /**
      * Mark the authenticated user's email address as verified.
+     *
+     * @param EmailVerificationRequest $request
+     * @return RedirectResponse
      */
-    public function __invoke(EmailVerificationRequest $request): Response
+    public function __invoke(EmailVerificationRequest $request)
     {
         if ($request->user()->hasVerifiedEmail()) {
-             return redirect()->intended(
-                 config('app.frontend_url') . RouteServiceProvider::LOGIN . '?verified=1'
-             );
+             return $this->redirectTheUserToLogin($request->user());
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
 
-        return response()->json(['message' => 'Successfully verified your email!'], Response::HTTP_CREATED);
+        return $this->redirectTheUserToLogin($request->user());
+    }
+
+    private function redirectTheUserToLogin(User $user): RedirectResponse
+    {
+        return redirect()->intended(
+            config('app.frontend_url') . RouteServiceProvider::DASHBOARD . '?verified=1'
+        )->with(['message' => 'You have successfully verified your email', 'user' => json_encode($user->toArray())]);
     }
 }
