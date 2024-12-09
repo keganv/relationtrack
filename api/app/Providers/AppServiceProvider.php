@@ -20,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Prevent non-fillable attributes from being silently discarded.
         Model::preventSilentlyDiscardingAttributes($this->app->isLocal());
     }
 }
