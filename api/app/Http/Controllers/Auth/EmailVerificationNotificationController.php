@@ -20,30 +20,17 @@ class EmailVerificationNotificationController extends Controller
      */
     public function store(Request $request): JsonResponse|RedirectResponse
     {
-        $email = $request->has('email') ? $request->get('email') : null;
-        $user = $request->user() ?? User::firstWhere(['email' => $email]);
-
-        if (!$user) {
-            $email_msg = 'A registered user with that email could not be found.';
-            $error = [
-                'message' => $email_msg,
-                'errors' => [
-                    'email' => [$email_msg]
-                ]
-            ];
-
-            return response()->json($error, Response::HTTP_NOT_FOUND);
-        }
-
-        if ($user->hasVerifiedEmail()) {
+        if ($request->user()->hasVerifiedEmail()) {
+            $message = 'You have already verified your email.';
             if ($request->expectsJson()) {
-                return response()->json();
+                return response()->json(['message' => $message]);
             }
 
-            return redirect()->intended(RouteServiceProvider::HOME);
+            return redirect()->to(config('app.frontend_url') . RouteServiceProvider::DASHBOARD)
+                ->with(['message' => $message]);
         }
 
-        $user->sendEmailVerificationNotification();
+        $request->user()->sendEmailVerificationNotification();
 
         return response()->json(['message' => 'The email verification link has been sent to your inbox!']);
     }

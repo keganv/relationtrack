@@ -11,7 +11,7 @@ export interface AuthContextValues {
   loading: boolean;
   sendPasswordResetLink: (data: { email: string }) => Promise<void>;
   newPassword: (data: NewPasswordFields) => Promise<void>;
-  sendEmailVerificationLink: () => Promise<void>;
+  sendEmailVerificationLink: (email?: string) => Promise<void>;
   setProfileImage: (image: File) => Promise<void>;
 }
 
