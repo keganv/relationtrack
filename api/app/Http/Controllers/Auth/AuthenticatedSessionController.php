@@ -53,4 +53,9 @@ class AuthenticatedSessionController extends Controller
 
         return response()->noContent();
     }
+
+    public function check(): JsonResponse
+    {
+        return response()->json(['authenticated' => Auth::check()], Response::HTTP_OK);
+    }
 }
