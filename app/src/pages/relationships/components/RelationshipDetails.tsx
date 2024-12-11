@@ -11,13 +11,13 @@ export default function RelationshipDetails({relationship}: RelationshipDetailsP
       </div>
       <div>
         <strong>Health:</strong>
-        <p id="health-score">
+        <div id="health-score">
           <div className={`heart health-${relationship.health}`}
                title={`${relationship.health} out of 10`}>
             <div className="score">{relationship.health}</div>
           </div>
           out of 10
-        </p>
+        </div>
         <Tooltip elId="health-score" message={`The health of this relationship is a ${relationship.health} out of 10`} />
       </div>
       <div>
