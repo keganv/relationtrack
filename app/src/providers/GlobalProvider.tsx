@@ -20,7 +20,7 @@ const GlobalProvider = ({ children }: GlobalProviderProps) => {
     return () => toast.dismiss();
   }, [status]);
 
-  const handleError = useCallback(<T,>(e: AxiosError | unknown, setErrorsFn?: (arg: T) => void) => {
+  const handleError = useCallback(<T,>(e: AxiosError | unknown, setErrorsCallback?: (arg: T) => void) => {
     if (e instanceof AxiosError) {
       const message = e.response?.data.message || e.message;
       const allowMessage = !DISALLOWED_STATUS_MESSAGES.some(status => message.toLowerCase().includes(status));
@@ -29,12 +29,11 @@ const GlobalProvider = ({ children }: GlobalProviderProps) => {
         setDoLogout(true);
         return setStatus({ type: 'error', message: 'Your session has ended. Please log back in.'});
       }
-      if (setErrorsFn) {
-        setErrorsFn(e.response?.data.errors || {error: [e.message]});
+      if (setErrorsCallback) {
+        setErrorsCallback(e.response?.data?.errors || {error: [e.message]});
       }
       setStatus({ type: 'error', message: allowMessage ? message : 'Uh oh! Something went wrong.' });
     }
-    throw e;
   }, [setStatus]);
 
   return (

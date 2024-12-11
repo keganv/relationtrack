@@ -6,6 +6,7 @@ export type AuthFormErrors = {
   password?: string[];
   username?: string[];
   terms?: string[];
+  email_verified_at?: string|boolean;
 }
 
 export type LoginFields = {

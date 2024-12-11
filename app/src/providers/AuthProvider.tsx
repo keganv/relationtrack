@@ -10,6 +10,7 @@ type AuthProviderProps = { children: ReactNode; }
 const AuthProvider = ({children}: AuthProviderProps) => {
   const {doLogout, handleError, setStatus} = useGlobalContext();
   const [user, setUser] = useState(null);
+  const [authenticated, setAuthenticated] = useState(false);
   const [errors, setErrors] = useState({}); // Used for form and API validation errors
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     } catch (e) {
       handleError(e, setErrors);
     } finally {
-      setTimeout(() => setLoading(false), 1000)
+      setTimeout(() => setLoading(false), 1000);
     }
   }
 
@@ -91,7 +92,6 @@ const AuthProvider = ({children}: AuthProviderProps) => {
   const logout = useCallback(async () => {
     try {
       setUser(null);
-      localStorage.removeItem('rtud');
       await axios.post('/api/logout');
       document.cookie = "XSRF-TOKEN=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"; // Remove XSRF-TOKEN
       navigate('/');
@@ -107,19 +107,31 @@ const AuthProvider = ({children}: AuthProviderProps) => {
       const url = "/api/update-profile-image";
       formData.append('profile_image', image as File);
       const response = await axios.post(url, formData, {headers: {'Content-Type': 'multipart/form-data'}});
-      await getUser();
+      // await getUser();
       setStatus({ type: 'success', message: response.data?.message });
     } catch (error) {
       handleError(error);
     }
   };
 
+  const checkAuthenticated = useCallback(async () => {
+    await csrf();
+    const response = await axios.post('/api/authenticated');
+    const { authenticated } = response.data;
+    setAuthenticated(authenticated ?? false);
+  }, []);
+
   useEffect(() => {
-    if (!user) {
-      // console.log('NO USER!')
-      // getUser();
+    if (!authenticated) {
+      checkAuthenticated()
     }
-  }, [user, getUser]);
+  }, [authenticated, checkAuthenticated]);
+
+  useEffect(() => {
+    if (!user && authenticated) {
+      getUser();
+    }
+  }, [user, getUser, authenticated]);
 
   useEffect(() => {
     if (doLogout) {
@@ -129,7 +141,7 @@ const AuthProvider = ({children}: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider value={{
-      errors, user, login, register, logout, loading,
+      authenticated, errors, user, login, register, logout, loading,
       sendPasswordResetLink, newPassword, sendEmailVerificationLink, setProfileImage
     }}>
       {children}

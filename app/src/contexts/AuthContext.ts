@@ -3,6 +3,7 @@ import User from '../types/User';
 import { AuthFormErrors, LoginFields, NewPasswordFields, RegisterFields } from '../types/AuthTypes';
 
 export interface AuthContextValues {
+  authenticated: boolean;
   errors: AuthFormErrors;
   user: User | null;
   login: (data: LoginFields) => Promise<void>;
@@ -11,7 +12,7 @@ export interface AuthContextValues {
   loading: boolean;
   sendPasswordResetLink: (data: { email: string }) => Promise<void>;
   newPassword: (data: NewPasswordFields) => Promise<void>;
-  sendEmailVerificationLink: (email?: string) => Promise<void>;
+  sendEmailVerificationLink: () => Promise<void>;
   setProfileImage: (image: File) => Promise<void>;
 }
 
