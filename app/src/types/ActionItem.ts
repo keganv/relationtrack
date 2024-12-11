@@ -1,6 +1,8 @@
+import { z } from 'zod';
+
 type ActionItem = {
   action: string;
-  complete: boolean;
+  complete?: boolean;
   created_at: string;
   id?: number;
   relationship_id: string|null;
@@ -9,3 +11,11 @@ type ActionItem = {
 }
 
 export default ActionItem;
+
+export const actionItemFormSchema = z.object({
+  id: z.number().nullish(),
+  action: z.string().min(10, 'The action item must be at least 10 characters.').max(100),
+  complete: z.boolean().optional(),
+});
+
+export type ActionItemFormData = z.infer<typeof actionItemFormSchema>;
