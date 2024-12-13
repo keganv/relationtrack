@@ -11,8 +11,10 @@ const AuthProvider = ({children}: AuthProviderProps) => {
   const {doLogout, handleError, setStatus} = useGlobalContext();
   const [user, setUser] = useState(null);
   const [authenticated, setAuthenticated] = useState(false);
+  const [doAuthCheck, setDoAuthCheck] = useState(true);
   const [errors, setErrors] = useState({}); // Used for form and API validation errors
   const [loading, setLoading] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true); // Default to true for initial page loads
   const navigate = useNavigate();
 
   const csrf = () => axios.get('/api/sanctum/csrf-cookie');
@@ -31,6 +33,8 @@ const AuthProvider = ({children}: AuthProviderProps) => {
       await csrf();
       const response = await axios.post('/api/login', data);
       response.data.user ? setUser(response.data.user) : await getUser();
+      setAuthenticated(true);
+      setDoAuthCheck(true);
       navigate('/dashboard');
       setStatus({type: 'success', message: 'Successfully Logged In!'});
     } catch (e) {
@@ -91,9 +95,11 @@ const AuthProvider = ({children}: AuthProviderProps) => {
 
   const logout = useCallback(async () => {
     try {
-      setUser(null);
       await axios.post('/api/logout');
-      document.cookie = "XSRF-TOKEN=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"; // Remove XSRF-TOKEN
+      setDoAuthCheck(false);
+      setAuthenticated(false);
+      setUser(null);
+      document.cookie = "XSRF-TOKEN=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"; // Remove XSRF-TOKEN cookie
       navigate('/');
     } catch (e) {
       handleError(e, setErrors);
@@ -114,24 +120,29 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     }
   };
 
+  /**
+   * The API "api/authentication" route must send back the `authenticated` key with a boolean value
+   */
   const checkAuthenticated = useCallback(async () => {
+    setCheckingAuth(true);
     await csrf();
     const response = await axios.post('/api/authenticated');
-    const { authenticated } = response.data;
-    setAuthenticated(authenticated ?? false);
+    const auth = response.data?.authenticated;
+    setAuthenticated(auth ?? false);
+    setDoAuthCheck(true); // Always reset to true
+    setCheckingAuth(false);
   }, []);
 
   useEffect(() => {
-    if (!authenticated) {
-      checkAuthenticated()
+    if (!authenticated && doAuthCheck) {
+      console.log('checking auth.')
+      checkAuthenticated();
     }
-  }, [authenticated, checkAuthenticated]);
-
-  useEffect(() => {
     if (!user && authenticated) {
+      console.log('no user');
       getUser();
     }
-  }, [user, getUser, authenticated]);
+  }, [user, getUser, authenticated, checkAuthenticated, doAuthCheck, navigate]);
 
   useEffect(() => {
     if (doLogout) {
@@ -141,7 +152,7 @@ const AuthProvider = ({children}: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider value={{
-      authenticated, errors, user, login, register, logout, loading,
+      authenticated, checkingAuth, doAuthCheck, errors, user, login, register, logout, loading,
       sendPasswordResetLink, newPassword, sendEmailVerificationLink, setProfileImage
     }}>
       {children}

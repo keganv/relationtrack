@@ -4,6 +4,8 @@ import { AuthFormErrors, LoginFields, NewPasswordFields, RegisterFields } from '
 
 export interface AuthContextValues {
   authenticated: boolean;
+  checkingAuth: boolean;
+  doAuthCheck: boolean;
   errors: AuthFormErrors;
   user: User | null;
   login: (data: LoginFields) => Promise<void>;
