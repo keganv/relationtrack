@@ -82,8 +82,7 @@
         }
 
         .section {
-            @apply bg-white flex flex-wrap p-3 gap-3 flex-1;
-            overflow-x: scroll;
+            @apply bg-white flex flex-wrap p-3 gap-3 flex-1 overflow-x-scroll;
         }
     }
 }

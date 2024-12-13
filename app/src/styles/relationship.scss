@@ -1,5 +1,5 @@
 #relationship-images-container {
-  @apply w-[100%] md:w-[50%] lg:w-[33%];
+  @apply w-full md:w-1/2 lg:w-1/3 md:pr-3 lg:pr-3;
   #primary-image-container {
     @apply w-[100%] overflow-hidden relative;
     height: max(250px, 50vh);
@@ -14,6 +14,10 @@
       &:hover { box-shadow: none; }
     }
   }
+}
+
+#relationship-data {
+  @apply w-full md:w-1/2 lg:w-2/3
 }
 
 .details {
