@@ -20,7 +20,7 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store'])
                 ->name('login');
 
 Route::post('/authenticated', [AuthenticatedSessionController::class, 'check'])
-                ->middleware('throttle:10,1')
+                ->middleware('throttle:20,1')
                 ->name('authenticated.check');
 
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
@@ -40,7 +40,7 @@ Route::post('/email/verification-notification', [EmailVerificationNotificationCo
                 ->name('verification.send');
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-                ->middleware(['auth', 'throttle:3,1'])
+                ->middleware(['auth', 'throttle:6,1'])
                 ->name('logout');
 
 Route::put('/update-password', [NewPasswordController::class, 'update'])
