@@ -54,6 +54,10 @@ class AuthenticatedSessionController extends Controller
         return response()->noContent();
     }
 
+    /**
+     * The API "api/authentication" route must send back the `authenticated` key with a boolean value
+     * for the React SPA AuthProvider authentication checks to work properly, do not change.
+     */
     public function check(): JsonResponse
     {
         return response()->json(['authenticated' => Auth::check()], Response::HTTP_OK);
