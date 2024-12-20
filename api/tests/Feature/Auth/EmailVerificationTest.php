@@ -32,7 +32,9 @@ class EmailVerificationTest extends TestCase
 
         Event::assertDispatched(Verified::class);
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
-        $response->assertJson(['message' => 'Successfully verified your email!']);
+        $response->assertRedirectContains(
+            config('app.frontend_url') . RouteServiceProvider::DASHBOARD,
+        );
     }
 
     public function test_email_is_not_verified_with_invalid_hash(): void
