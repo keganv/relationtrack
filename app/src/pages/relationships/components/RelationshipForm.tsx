@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { relationshipFormSchema, RelationshipFormData, Relationship } from '../../../types/Relationship';
 import useRelationshipContext from '../../../hooks/useRelationshipContext';
-import { ImageUploader } from '../../../components/ui/ImageUploader';
+import ImageUploader from '../../../components/ui/ImageUploader';
 import Spinner from '../../../components/ui/Spinner';
 import { Input } from '../../../components/form/Input';
 import { removeUndefined } from '../../../lib/helpers.ts';
@@ -117,9 +117,10 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
             <Controller
               name="images"
               control={control}
-              render={({field: {onChange, value, ...field}, fieldState}) => (
+              render={({field: {onChange, value, ref, ...field}, fieldState}) => (
                 <ImageUploader
                   {...field}
+                  ref={ref}
                   onChange={onChange}
                   value={value}
                   errors={[...(apiErrors?.images ?? []), fieldState.error?.message ?? '']}
@@ -130,8 +131,7 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
         </fieldset>
         <div className="flex justify-between mt-2">
           <button type="submit" className="primary mt angle-right">
-            {relationship ? 'Update' : 'Create'}
-            {<Spinner loading={isSubmitting} className="ml-2"/>}
+            {relationship ? 'Update' : 'Create'} <Spinner loading={isSubmitting} className="ml-2"/>
           </button>
           <button id="cancel-edit-button" type="button" className="transparent angle-left text-white" onClick={cancel}>Cancel</button>
         </div>
