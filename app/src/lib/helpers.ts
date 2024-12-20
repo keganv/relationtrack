@@ -1,5 +1,5 @@
 export function checkFileType(file: File): boolean {
-  const allowed = ['jpg', 'gif', 'png', 'jpeg'];
+  const allowed = ['jpg', 'gif', 'png', 'jpeg', 'webp'];
   const extension = file.name.split('.').pop()?.toLowerCase() || '';
   return allowed.includes(extension);
 }
