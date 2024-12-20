@@ -33,7 +33,7 @@ export default function RelationshipDetails({relationship}: RelationshipDetailsP
             )}
           </p>}
       </div>
-      <div className="col-12 mb-sm">
+      <div>
         <strong>Description:</strong>
         <p>{ relationship.description }</p>
       </div>

@@ -3,7 +3,7 @@ import Spinner from "../components/ui/Spinner";
 import useAuthContext from "../hooks/useAuthContext";
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState('');
   const { sendPasswordResetLink, loading, errors } = useAuthContext();
 
   const handleSubmit = async (e: FormEvent) => {

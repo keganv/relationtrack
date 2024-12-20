@@ -38,9 +38,9 @@ const ActionItemForm = ({relationship, actionItem, cancel}: ActionItemFormProps)
   }, [apiErrors]);
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <p className="mb-3 text-sm">{actionItem?.id ? 'Update' : 'Create'} an action item for {relationship.name}.</p>
-      <form method="POST" noValidate>
+      <form method="POST" noValidate className="grid grid-cols-1 place-content-between h-full">
         <fieldset>
           <div className="mb-3">
             <Controller

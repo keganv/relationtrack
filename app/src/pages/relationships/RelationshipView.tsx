@@ -7,7 +7,7 @@ import RelationshipForm from './components/RelationshipForm';
 import useRelationshipContext from '../../hooks/useRelationshipContext';
 import Spinner from '../../components/ui/Spinner';
 import RelationshipDetails from './components/RelationshipDetails';
-import ActionItems from '../../components/ui/ActionItems.tsx';
+import ActionItems from '../../components/ui/action-items/ActionItems.tsx';
 import API_File from '../../types/ApiFile.ts';
 import '../../styles/relationship.scss';
 import Tooltip from "../../components/ui/Tooltip.tsx";
@@ -15,13 +15,15 @@ import Tooltip from "../../components/ui/Tooltip.tsx";
 export default function RelationshipView() {
   const apiUrl = `${import.meta.env.VITE_API_URL}/api/`;
   const location = useLocation();
-  const primaryImageRef = useRef<HTMLImageElement | null>(null);
+  const primaryImageRef = useRef<HTMLImageElement>(null);
   const { selectedRelationship, setSelectedRelationship, setRelationshipById, setPrimaryImageForRelationship } = useRelationshipContext();
   const [formIsOpen, setFormIsOpen] = useState<boolean>(false);
   const [imageModal, setImageModal] = useState<boolean>(false);
   const setPrimaryImage = (path: string, id: string) => {
-    primaryImageRef?.current?.setAttribute('src', path);
-    primaryImageRef?.current?.setAttribute('data-id', id);
+    if (primaryImageRef.current) {
+      primaryImageRef.current.src = path;
+      primaryImageRef.current.setAttribute('data-id', id);
+    }
   };
   const setUpRelationshipData = useCallback(() => {
     const id = location?.pathname.split('/')[2];
@@ -49,7 +51,7 @@ export default function RelationshipView() {
           Edit Relationship
         </button>
       </header>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap">
         <div id="relationship-images-container">
           <div id="primary-image-container" className="section">
             {selectedRelationship.primary_image &&
@@ -68,52 +70,57 @@ export default function RelationshipView() {
               </>
             }
             {!selectedRelationship.primary_image &&
-              <img src="/images/generic-user.jpg" alt="No Primary Image"/>
+              <img ref={primaryImageRef} src="/images/generic-user.jpg" alt="No Primary Image"/>
             }
           </div>
-          <ul className="image-list profile-images-list">
-            {selectedRelationship?.files?.map((file: API_File) => (
-              <li key={file.id}>
-                <img src={`${apiUrl}${file.path}`} alt={file.name}
-                     className="profile-image" data-id={file.id} loading="lazy"
-                     onClick={() => setPrimaryImage(`${apiUrl}${file.path}`, `${file.id}`)}/>
-              </li>
-            ))}
-          </ul>
+          <div className="section mt-3">
+            <ul className="flex -mx-1">
+              {selectedRelationship.files?.map((file: API_File) => (
+                <li key={file.id} className="w-1/3 px-1">
+                  <img src={`${apiUrl}${file.path}`} alt={file.name}
+                       className="profile-image" data-id={file.id} loading="lazy"
+                       onClick={() => setPrimaryImage(`${apiUrl}${file.path}`, `${file.id}`)} />
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div className="section">
-          <Tabs>
-            <TabList>
-            <Tab>Overview</Tab>
-              <Tab>Action Items</Tab>
-              <Tab>Notes</Tab>
-              <Tab>Reminders</Tab>
-              <Tab>Media</Tab>
-            </TabList>
-            <TabPanel>
-              <RelationshipDetails relationship={selectedRelationship}/>
-            </TabPanel>
-            <TabPanel>
-              <ActionItems relationship={selectedRelationship}/>
-            </TabPanel>
-            <TabPanel>
-            </TabPanel>
-            <TabPanel>
-              <h2>Any content 2</h2>
-            </TabPanel>
-            <TabPanel>
-              <iframe style={{'display': 'block'}}
-                      src="https://open.spotify.com/embed/track/6vWu5uWlox5TVDPl3LvoG3?theme=0" width="100%"
-                      height="80" frameBorder="0" allow="autoplay; encrypted-media;" loading="lazy"></iframe>
-            </TabPanel>
-          </Tabs>
+        <div id="relationship-data">
+          <div className="section">
+            <Tabs>
+              <TabList>
+                <Tab>Overview</Tab>
+                <Tab>Notes</Tab>
+                <Tab>Reminders</Tab>
+                <Tab>Media</Tab>
+              </TabList>
+              <TabPanel>
+                <RelationshipDetails relationship={selectedRelationship}/>
+              </TabPanel>
+              <TabPanel>
+              </TabPanel>
+              <TabPanel>
+                <h2>Any content 2</h2>
+              </TabPanel>
+              <TabPanel>
+                <iframe style={{'display': 'block'}}
+                        src="https://open.spotify.com/embed/track/6vWu5uWlox5TVDPl3LvoG3?theme=0" width="100%"
+                        height="80" frameBorder="0" allow="autoplay; encrypted-media;" loading="lazy"></iframe>
+              </TabPanel>
+            </Tabs>
+          </div>
+          <div className="section mt-3">
+            <ActionItems relationship={selectedRelationship} />
+          </div>
         </div>
       </div>
       <Modal isOpen={formIsOpen} onRequestClose={() => setFormIsOpen(false)}
+             appElement={document.getElementById('root') ?? undefined}
              className="react-modal center" overlayClassName="react-modal-overlay">
         <RelationshipForm relationship={selectedRelationship} cancel={() => setFormIsOpen(false)}/>
       </Modal>
       <Modal isOpen={imageModal} onRequestClose={() => setImageModal(false)}
+             appElement={document.getElementById('root') ?? undefined}
              className="react-modal center" overlayClassName="react-modal-overlay">
         <div className="close" onClick={() => setImageModal(false)}>X</div>
         <img src={primaryImageRef?.current?.src} alt={primaryImageRef?.current?.alt}/>
