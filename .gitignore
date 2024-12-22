@@ -47,6 +47,7 @@ app/.gitattributes
 *.njsproj
 *.sln
 *.sw?
+.git
 
 # Docker Storage
 .env
