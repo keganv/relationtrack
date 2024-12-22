@@ -4,7 +4,7 @@ type ActionItem = {
   action: string;
   complete?: boolean;
   created_at: string;
-  id?: number;
+  id: number | 0;
   relationship_id: string|null;
   updated_at: string;
   user_id: string;
