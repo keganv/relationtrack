@@ -33,12 +33,13 @@ jobs:
           npm install --legacy-peer-deps
           npm run build
 
-      - name: Deploy to Server
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          source: "."
-          target: "/var/www/html/relationtrack"
-          exclude: ".git/*"
+      - name: Create deployment archive
+        run: |
+          zip -r relationtrack.zip . -x ".git/*" ".github/*" "node_modules/*" "api/vendor/*/test/*" "api/vendor/*/tests/*"
+
+      - name: Copy archive to server
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > deploy_key
+          chmod 600 deploy_key
+          scp -i deploy_key -o StrictHostKeyChecking=no relationtrack.zip ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/html/
+          rm deploy_key
