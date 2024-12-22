@@ -1,4 +1,4 @@
-import { useEffect, useState, useOptimistic } from 'react';
+import { useEffect, useState } from 'react';
 import { Relationship } from '../../../types/Relationship.ts';
 import ActionItem from '../../../types/ActionItem.ts';
 import SortableTable, { Column } from '../SortableTable.tsx';
