@@ -1,5 +1,4 @@
 import { ReactNode, useState, useEffect, useCallback } from 'react';
-import { AxiosError } from 'axios';
 import axios from '../lib/axios';
 import RelationshipContext from '../contexts/RelationshipContext';
 import { Relationship, RelationshipFormData, RelationshipFormErrors } from '../types/Relationship';
@@ -51,7 +50,6 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
 
       const url = data.id ? `/api/relationships/${data.id}` : '/api/relationships/';
       const response = await axios.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' }});
-
       setStatus({type: 'success', message: response.data.message});
       await all();
     } catch (error) {
@@ -72,18 +70,12 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
   };
 
   const setPrimaryImageForRelationship = async (id: string) => {
-    // setStatus(null);
     try {
       const url = `/api/relationships/${selectedRelationship?.id}/primary-image`;
       const response = await axios.post(url, {id: id});
-      if (response) {
-        // setStatus(response.data.message);
-      }
+      setStatus({type: 'success', message: response.data.message});
     } catch (error) {
-      if (error instanceof AxiosError) {
-        console.error(error);
-        // setStatusError(error.response?.data.message);
-      }
+      handleError(error, setFormErrors);
     }
   };
 
