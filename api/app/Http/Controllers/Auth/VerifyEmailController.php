@@ -34,6 +34,6 @@ class VerifyEmailController extends Controller
     {
         return redirect()->intended(
             config('app.frontend_url') . RouteServiceProvider::DASHBOARD . '?verified=1'
-        )->with(['message' => 'You have successfully verified your email', 'user' => json_encode($user->toArray())]);
+        );
     }
 }

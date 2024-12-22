@@ -11,15 +11,7 @@ class ActionItemController extends Controller
 {
     public function store(Request $request)
     {
-        $request->validate([
-            'action' => 'required|min:10|max:100',
-            'complete' => 'boolean',
-            'relationship_id' => ['required', 'string']
-        ], [
-            'action.min' => 'The action item must be at least 10 characters.',
-            'action.max' => 'Action items must be less than 100 characters.',
-            'relationship_id' => 'There was no relationship provided for the action item.'
-        ]);
+        $this->validateRequest($request);
 
         $actionItem = new ActionItem();
 
@@ -28,15 +20,7 @@ class ActionItemController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'action' => 'required|min:0|max:100',
-            'complete' => 'boolean',
-            'relationship_id' => ['required', 'string']
-        ], [
-            'action.min' => 'Action must be at least 20 characters.',
-            'action.max' => 'Please shorten the action to less than 100 characters.',
-            'relationship_id' => 'There was no relationship provided for the action item.'
-        ]);
+        $this->validateRequest($request);
 
         $actionItem = ActionItem::findOrFail($id);
 
@@ -56,17 +40,32 @@ class ActionItemController extends Controller
         }
     }
 
+    /**
+     * Validate the given request with the given rules.
+     *
+     * @param Request $request
+     * @return array
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    private function validateRequest(Request $request): array
+    {
+        return $request->validate([
+            'action' => 'required|min:10|max:50',
+            'complete' => 'boolean',
+            'relationship_id' => ['required', 'string']
+        ], [
+            'action.min' => 'The action item must be at least 10 characters.',
+            'action.max' => 'Action items must be less than 100 characters.',
+            'relationship_id' => 'There was no relationship provided for the action item.'
+        ]);
+    }
+
     private function save(ActionItem $actionItem, Request $request)
     {
         $actionItem->action = $request->get('action');
-        $actionItem->complete = $request->get('complete');
+        $actionItem->complete = $request->get('complete') ?? false;
         $actionItem->user_id = Auth::id();
-        // TODO: make migration so that relationship_id cannot be null
         $actionItem->relationship_id = $request->get('relationship_id');
-
-//
-//        $actionItem->action = $request->get('action');
-//        $actionItem->complete = false;
 
         try {
             $actionItem->save();
