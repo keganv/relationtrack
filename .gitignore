@@ -1,3 +1,4 @@
+#API
 api/node_modules
 api/public/build
 api/public/hot
@@ -18,7 +19,7 @@ api/.fleet
 api/*.idea
 api/*.vscode
 
-# Logs
+# APP
 app/logs
 app/*.log
 app/npm-debug.log*
@@ -37,7 +38,7 @@ app/*.local
 app/.gitattributes
 
 # Editor directories and files
-.vscode/*
+.vscode/
 !.vscode/extensions.json
 .idea
 .DS_Store
@@ -46,3 +47,9 @@ app/.gitattributes
 *.njsproj
 *.sln
 *.sw?
+
+# Docker Storage
+.env
+data/
+logs/
+config/
