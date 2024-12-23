@@ -25,7 +25,10 @@ jobs:
 
       - name: Install Composer dependencies
         working-directory: api
-        run: composer install --no-dev --optimize-autoloader
+        run: |
+          composer install --no-dev --optimize-autoloader
+          chmod -R 775 storage
+          chmod -R ugo+rw storage
 
       - name: Install NPM dependencies and build React
         working-directory: app
@@ -35,11 +38,12 @@ jobs:
 
       - name: Create deployment archive
         run: |
-          zip -r relationtrack.zip . -x ".git/*" ".github/*" "node_modules/*" "api/vendor/*/test/*" "api/vendor/*/tests/*"
+          zip -r relationtrack.zip . -x ".git/*" ".github/*" "api/vendor/*/test/*" "api/vendor/*/tests/*"
 
       - name: Copy archive to server
         run: |
           echo "${{ secrets.SSH_KEY }}" > deploy_key
           chmod 600 deploy_key
-          scp -i deploy_key -o StrictHostKeyChecking=no relationtrack.zip ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:~/
+          scp -i deploy_key -o StrictHostKeyChecking=no relationtrack.zip ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/html
           rm deploy_key
+          rm relationtrack.zip
