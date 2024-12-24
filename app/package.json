@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "NODE_ENV=production ./node_modules/typescript/bin/tsc -p tsconfig.prod.json && vite build",
+    "postbuild": "cp ./.htaccess ./dist/",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "jest"
