@@ -26,7 +26,7 @@ jobs:
       - name: Install Composer dependencies
         working-directory: api
         run: |
-          composer install --no-dev --optimize-autoloader
+          composer install --prefer-dist --no-interaction --no-dev --optimize-autoloader
           chmod -R 775 storage
           chmod -R ugo+rw storage
 
