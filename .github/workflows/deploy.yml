@@ -40,10 +40,17 @@ jobs:
         run: |
           zip -r relationtrack.zip . -x ".git/*" ".github/*" "api/vendor/*/test/*" "api/vendor/*/tests/*"
 
-      - name: Copy archive to server
+      - name: Copy archive to server and set permissions
         run: |
           echo "${{ secrets.SSH_KEY }}" > deploy_key
           chmod 600 deploy_key
-          scp -i deploy_key -o StrictHostKeyChecking=no relationtrack.zip ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/var/www/html/relationtrack
+          scp -i deploy_key -o StrictHostKeyChecking=no relationtrack.zip ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/
+          ssh -i deploy_key -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
+            sudo rm -rf /var/www/html/relationtrack/*
+            sudo unzip -o /tmp/relationtrack.zip -d /var/www/html/relationtrack
+            sudo chown -R www-data:www-data /var/www/html/relationtrack
+            sudo chmod -R 755 /var/www/html/relationtrack
+            rm /tmp/relationtrack.zip
+          EOF
           rm deploy_key
           rm relationtrack.zip
