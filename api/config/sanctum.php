@@ -68,5 +68,5 @@ return [
     | Sanctum Routes
     |--------------------------------------------------------------------------
     */
-    'prefix' => 'api/sanctum',
+    'prefix' => env('API_PREFIX') . '/sanctum',
 ];
