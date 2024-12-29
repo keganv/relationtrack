@@ -50,6 +50,12 @@ jobs:
             sudo chown -R www-data:www-data /var/www/html/relationtrack
             sudo chmod -R 755 /var/www/html/relationtrack
             rm /tmp/relationtrack.zip
+            php artisan cache:clear
+            php artisan config:clear
+            php artisan route:clear
+            php artisan view:clear
+            php artisan config:cache
+            php artisan migrate
           EOF
           rm deploy_key
           rm relationtrack.zip
