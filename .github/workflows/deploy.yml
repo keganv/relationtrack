@@ -51,6 +51,10 @@ jobs:
             sudo chmod -R 755 /var/www/html/relationtrack
             rm /tmp/relationtrack.zip
             cd /var/www/html/relationtrack/api
+            sudo chown www-data:www-data /var/www/html/relationtrack/api/storage/logs/laravel.log
+            sudo chmod 755 /var/www/html/relationtrack/api/storage/logs/laravel.log
+            sudo chown -R www-data:www-data storage bootstrap/cache
+            sudo chmod -R 775 storage bootstrap/cache
             php artisan cache:clear
             php artisan config:clear
             php artisan route:clear
