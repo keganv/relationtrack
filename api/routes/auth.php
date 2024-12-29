@@ -24,23 +24,23 @@ Route::post('/authenticated', [AuthenticatedSessionController::class, 'check'])
                 ->name('authenticated.check');
 
 Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])
-                ->middleware(['guest', 'throttle:6,1'])
+                ->middleware(['guest', 'throttle:10,1'])
                 ->name('password.email');
 
 Route::post('/reset-password', [NewPasswordController::class, 'store'])
-                ->middleware(['guest', 'throttle:5,1'])
+                ->middleware(['guest', 'throttle:10,1'])
                 ->name('password.store');
 
 Route::get('/verify-email/{id}/{hash}', VerifyEmailController::class)
-                ->middleware(['auth', 'signed', 'throttle:6,1'])
+                ->middleware(['auth', 'signed', 'throttle:10,1'])
                 ->name('verification.verify');
 
 Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
-                ->middleware(['auth', 'throttle:6,1'])
+                ->middleware(['auth', 'throttle:10,1'])
                 ->name('verification.send');
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-                ->middleware(['auth', 'throttle:6,1'])
+                ->middleware(['auth', 'throttle:10,1'])
                 ->name('logout');
 
 Route::put('/update-password', [NewPasswordController::class, 'update'])
