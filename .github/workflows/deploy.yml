@@ -38,7 +38,7 @@ jobs:
 
       - name: Create deployment archive
         run: |
-          zip -r relationtrack.zip . -x ".git/*" ".github/*" "api/vendor/*/test/*" "api/vendor/*/tests/*"
+          zip -r relationtrack.zip . -x ".git/*" ".github/*" "api/vendor/*/test/*" "api/vendor/*/tests/*" "app/node_modules"
 
       - name: Copy archive to server and set permissions
         run: |
