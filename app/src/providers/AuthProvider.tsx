@@ -45,9 +45,9 @@ const AuthProvider = ({children}: AuthProviderProps) => {
   const register = async ({...data}) => {
     setLoading(true);
     try {
+      await csrf();
       const response = await axios.post('/api/register', data);
-      // await getUser();
-      navigate('/dashboard');
+      navigate('/'); // Send them to the home page, they must verify their email first
       setStatus({ type: 'success', message: response.data?.message });
     } catch (e) {
       handleError(e, setErrors);
