@@ -48,7 +48,7 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
         }
       }
 
-      const url = data.id ? `/api/relationships/${data.id}` : '/api/relationships/';
+      const url = data.id ? `/api/relationships/${data.id}` : '/api/relationships';
       const response = await axios.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' }});
       setStatus({type: 'success', message: response.data.message});
       await all();
