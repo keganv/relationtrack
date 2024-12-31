@@ -32,6 +32,8 @@ jobs:
 
       - name: Install NPM dependencies and build React
         working-directory: app
+        env:
+          VITE_API_URL: http://www.relationtrack.com/api
         run: |
           npm install --legacy-peer-deps
           npm run build
