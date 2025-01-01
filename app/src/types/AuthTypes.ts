@@ -26,7 +26,7 @@ export type AuthFormErrors = {
   username?: string[];
   terms?: string[];
   email_verified_at?: string|boolean;
-} | { error: Array<string> }
+}
 
 export type LoginFields = {
   email: string;
