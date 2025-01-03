@@ -9,7 +9,7 @@ type ImageUploaderProps = {
   value: File[] | undefined;
   disabled?: boolean;
   accept?: string;
-  ref: React.Ref<HTMLInputElement>
+  ref: React.Ref<HTMLInputElement>;
 };
 
 export default function ImageUploader({
