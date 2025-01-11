@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
-import SortableTable, { Column } from '../../../components/ui/SortableTable'
+import SortableTable, { SortTableColumn } from '../../../components/ui/SortableTable'
 import Spinner from '../../../components/ui/Spinner';
 import useRelationshipContext from '../../../hooks/useRelationshipContext';
 
@@ -19,7 +19,7 @@ export default function RelationshipList() {
   const { relationships } = useRelationshipContext();
   const [loading, setLoading] = useState<boolean>(true);
   const [formatted, setFormatted] = useState<FormattedRelationshipTableRow[] | null>(null);
-  const columns: Column<FormattedRelationshipTableRow>[] = [
+  const columns: SortTableColumn<FormattedRelationshipTableRow>[] = [
     { key: 'primary_image', label: '', styles: { width: '50px' }, type: 'image', alt: 'name', className: 'relation-image' },
     {
       key: 'name', label: 'Name', type: 'format',

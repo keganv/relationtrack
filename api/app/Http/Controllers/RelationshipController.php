@@ -29,6 +29,9 @@ class RelationshipController extends Controller
         return response()->json($relationships, Response::HTTP_OK);
     }
 
+    /**
+     * @throws AuthorizationException
+     */
     public function store(Request $request)
     {
         $relationship = new Relationship();

@@ -7,7 +7,7 @@ import RelationshipForm from './components/RelationshipForm';
 import useRelationshipContext from '../../hooks/useRelationshipContext';
 import Spinner from '../../components/ui/Spinner';
 import RelationshipDetails from './components/RelationshipDetails';
-import ActionItems from '../../components/ui/action-items/ActionItems.tsx';
+import ActionItems from '../../components/action-items/ActionItems';
 import API_File from '../../types/ApiFile.ts';
 import '../../styles/relationship.scss';
 import Tooltip from "../../components/ui/Tooltip.tsx";
@@ -98,12 +98,13 @@ export default function RelationshipView() {
                 <RelationshipDetails relationship={selectedRelationship}/>
               </TabPanel>
               <TabPanel>
+                <h2>Notes will go here.</h2>
               </TabPanel>
               <TabPanel>
-                <h2>Any content 2</h2>
+                <h2>Reminders will go here.</h2>
               </TabPanel>
               <TabPanel>
-                <iframe style={{'display': 'block'}}
+                <iframe style={{'display': 'block', width: '100%'}}
                         src="https://open.spotify.com/embed/track/6vWu5uWlox5TVDPl3LvoG3?theme=0" width="100%"
                         height="80" frameBorder="0" allow="autoplay; encrypted-media;" loading="lazy"></iframe>
               </TabPanel>

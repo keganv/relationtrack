@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActionItem;
+use App\Models\Relationship;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,26 +19,31 @@ class ActionItemController extends Controller
         return $this->save($actionItem, $request);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, ActionItem $actionItem)
     {
         $this->validateRequest($request);
-
-        $actionItem = ActionItem::findOrFail($id);
 
         return $this->save($actionItem, $request);
     }
 
-    public function delete($id)
+    public function delete(ActionItem $actionItem)
     {
-        $actionItem = ActionItem::findOrFail($id);
-
         try {
+            $relationship = $actionItem->relationship;
+            $this->authorize('update', $relationship);
             $actionItem->delete();
 
-            return response([], 302);
+            return response()->json($relationship->actionItems, Response::HTTP_OK);
         } catch (\Exception $e) {
-            return response(['Could not delete the Action Item.'], 404);
+            return response(['error' => 'Could not delete the Action Item.'], 404);
         }
+    }
+
+    public function getByRelationship(Relationship $relationship)
+    {
+        $this->authorize('view', $relationship);
+
+        return response()->json($relationship->actionItems, Response::HTTP_OK);
     }
 
     /**
@@ -55,13 +61,17 @@ class ActionItemController extends Controller
             'relationship_id' => ['required', 'string']
         ], [
             'action.min' => 'The action item must be at least 10 characters.',
-            'action.max' => 'Action items must be less than 100 characters.',
+            'action.max' => 'Action items must be less than 50 characters.',
             'relationship_id' => 'There was no relationship provided for the action item.'
         ]);
     }
 
     private function save(ActionItem $actionItem, Request $request)
     {
+        $relationship = Relationship::findOrFail($request->get('relationship_id'));
+
+        $this->authorize('update', $relationship);
+
         $actionItem->action = $request->get('action');
         $actionItem->complete = $request->get('complete') ?? false;
         $actionItem->user_id = Auth::id();
@@ -70,7 +80,10 @@ class ActionItemController extends Controller
         try {
             $actionItem->save();
 
-            return response()->json(['message' => 'Successfully saved Action Item.'], 201);
+            return response()->json([
+                'message' => 'Successfully saved Action Item.',
+                'data' => $relationship->actionItems,
+            ], 201);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }

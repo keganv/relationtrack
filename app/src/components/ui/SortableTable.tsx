@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-export type BaseRow = {
+export type SortTableBaseRow = {
   key: string | number;
   [k: string]: string | number | boolean | object | null;
 }
-export type Column<T extends BaseRow = BaseRow> = {
+export type SortTableColumn<T extends SortTableBaseRow = SortTableBaseRow> = {
   alt?: string,
   className?: string,
   key: string | number,
@@ -14,7 +14,7 @@ export type Column<T extends BaseRow = BaseRow> = {
   format?: (data: T) => React.ReactNode
 }
 
-const sortData = <T extends BaseRow>(data: T[], key: string | number, order: 'asc' | 'desc', type: string) => {
+const sortData = <T extends SortTableBaseRow>(data: T[], key: string | number, order: 'asc' | 'desc', type: string) => {
   return [...data].sort((a, b) => {
     let aValue = a[key];
     let bValue = b[key];
@@ -41,25 +41,28 @@ const sortData = <T extends BaseRow>(data: T[], key: string | number, order: 'as
 
 type SortConfigType = { key: string | number, order: 'asc' | 'desc', type: string } | null;
 
-interface SortableTableProps<T extends BaseRow> {
-  columns: Column<T>[],
+interface SortableTableProps<T extends SortTableBaseRow> {
+  columns: SortTableColumn<T>[],
   data: T[],
 }
 
-export default function SortableTable<T extends BaseRow>({columns, data}: SortableTableProps<T>) {
+export default function SortableTable<T extends SortTableBaseRow>({columns, data}: SortableTableProps<T>) {
   const [sortConfig, setSortConfig] = useState<SortConfigType>(null);
   const [sortedData, setSortedData] = useState<T[]>(data);
 
   const handleSort = useCallback((key: string | number, type: string) => {
-    setSortConfig(() => {
-      return { key, order: sortConfig?.order === 'asc' ? 'desc' : 'asc', type };
-    })
-  }, [sortConfig]);
+    const orderBy = sortConfig?.order === 'asc' ? 'desc' : 'asc';
+    const sorted = sortData(data, key, orderBy, type);
+    setSortConfig(() => ({ key, order: orderBy, type }));
+    setSortedData(sorted);
+  }, [data, sortConfig?.order]);
 
   useEffect(() => {
     if (sortConfig) {
       const sorted = sortData(data, sortConfig.key, sortConfig.order, sortConfig.type);
       setSortedData(sorted);
+    } else {
+      setSortedData(data);
     }
   }, [data, sortConfig]);
 
@@ -67,7 +70,7 @@ export default function SortableTable<T extends BaseRow>({columns, data}: Sortab
     <table className="sortable">
       <thead>
         <tr>
-          {columns.map((col: Column<T>) => (
+          {columns.map((col: SortTableColumn<T>) => (
             <th key={col.key} style={col.styles} data-key={col.key}
                 className={`${col.className ?? ''}${col.key === sortConfig?.key ? ` sorted ${sortConfig.order}` : ''}`.trim()}
                 {...(col.type !== 'image' && { onClick: () => handleSort(col.key, col.type) })}>
@@ -79,7 +82,7 @@ export default function SortableTable<T extends BaseRow>({columns, data}: Sortab
       <tbody>
         {sortedData.map((row) => (
           <tr key={`${row.id ?? row.key}`}>
-            {columns.map((col: Column<T>, i: number) => (
+            {columns.map((col: SortTableColumn<T>, i: number) => (
               <td key={`${row[col.key]}-${i}`} data-key={col.key} data-type={col.type} data-value={row[col.key]} style={col.styles} className={col.className}>
                 {col.type === 'image' && row[col.key] ?
                   <div className="table-image">

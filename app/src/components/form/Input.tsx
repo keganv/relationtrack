@@ -43,7 +43,7 @@ function Checkbox ({ className, type, apiErrors, fieldErrors, id, label, require
         />
         {label}{required && <span className="required">*</span>}
       </label>
-      {apiErrors && apiErrors.map((error, i) => (
+      {Array.isArray(apiErrors) && apiErrors.map((error, i) => (
         <div className="error" key={error.replace(/\s+/g, '').substring(0, 5) + i} role="alert">
           {error}
         </div>)

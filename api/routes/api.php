@@ -12,6 +12,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('/action-items', [ActionItemController::class, 'store']);
     Route::post('/action-items/{actionItem}', [ActionItemController::class, 'update']);
     Route::delete('/action-items/{actionItem}', [ActionItemController::class, 'delete']);
+    Route::get('/action-items/{relationship}', [ActionItemController::class, 'getByRelationship']);
 
     // ADMIN ROUTES
     Route::get('/user', fn (Request $request) => Auth::user()->load('profileImage'));

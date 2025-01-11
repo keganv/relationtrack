@@ -28,9 +28,11 @@ class RelationshipPolicy
     /**
      * Determine whether the user can update the Relationship.
      */
-    public function update(User $user, Relationship $relationship): bool
+    public function update(User $user, Relationship $relationship): Response
     {
-        return $user->id === $relationship->user_id;
+        return $user->id === $relationship->user_id
+            ? Response::allow()
+            : Response::deny('You are not authorized to update this relationship.');
     }
 
     /**
