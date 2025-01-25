@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// https://laravel.com/docs/11.x/sanctum#protecting-routes
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     // ACTION ITEM ROUTES
     Route::post('/action-items', [ActionItemController::class, 'store']);

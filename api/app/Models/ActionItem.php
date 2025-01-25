@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @phpstan-require-extends Model
+ * @property User $user
+ * @property Relationship $relationship
+ * @property string $action
+ * @property boolean $complete
  */
 class ActionItem extends Model
 {
