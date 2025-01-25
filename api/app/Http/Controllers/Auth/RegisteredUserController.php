@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Symfony\Component\HttpFoundation\Response;
 
 class RegisteredUserController extends Controller
 {
@@ -41,6 +42,9 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return response()->json(['message' => 'Successfully registered! Check your inbox to finish signing up!']);
+        return response()->json(
+            ['message' => 'Successfully registered! Check your inbox to finish signing up!'],
+            Response::HTTP_CREATED
+        );
     }
 }
