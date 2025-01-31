@@ -12,9 +12,6 @@ class EmailVerificationNotificationController extends Controller
 {
     /**
      * Send a new email verification notification.
-     *
-     * @param Request $request
-     * @return JsonResponse|RedirectResponse
      */
     public function store(Request $request): JsonResponse|RedirectResponse
     {
@@ -24,7 +21,7 @@ class EmailVerificationNotificationController extends Controller
                 return response()->json(['message' => $message]);
             }
 
-            return redirect()->to(config('app.frontend_url') . RouteServiceProvider::DASHBOARD)
+            return redirect()->to(config('app.frontend_url').RouteServiceProvider::DASHBOARD)
                 ->with(['message' => $message]);
         }
 

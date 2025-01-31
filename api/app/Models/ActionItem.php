@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property User $user
  * @property Relationship $relationship
  * @property string $action
- * @property boolean $complete
+ * @property bool $complete
  */
 class ActionItem extends Model
 {
@@ -18,7 +18,7 @@ class ActionItem extends Model
     protected $fillable = [
         'action',
         'relationship',
-        'complete'
+        'complete',
     ];
 
     protected function casts(): array

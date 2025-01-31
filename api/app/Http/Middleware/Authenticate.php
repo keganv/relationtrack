@@ -13,6 +13,6 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
-        return config('app.frontend_url') . RouteServiceProvider::LOGIN . '?authenticated=0';
+        return config('app.frontend_url').RouteServiceProvider::LOGIN.'?authenticated=0';
     }
 }

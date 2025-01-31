@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property integer $id
+ * @property int $id
  * @property User $user
  * @property Relationship $relationship
  * @property string $name
  * @property string $path
- * @property string $exention
- * @property integer $size
+ * @property string $extension
+ * @property int $size
  */
 class File extends Model
 {

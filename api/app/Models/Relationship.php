@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property string $id
  * @property File $primaryImage
- * @property File[] $files
+ * @property Collection<File> $files
  * @property string $name
  * @property string $title
  * @property string $type
@@ -22,7 +23,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Relationship extends Model
 {
-    use HasFactory, HasUuids, SoftDeletes;
+    use HasFactory;
+    use HasUuids;
+    use SoftDeletes;
 
     public $incrementing = false;
 
@@ -38,7 +41,7 @@ class Relationship extends Model
         'birthday',
         'description',
         'health',
-        'primary_image_id'
+        'primary_image_id',
     ];
 
     /**

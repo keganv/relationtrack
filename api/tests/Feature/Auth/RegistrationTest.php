@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
@@ -20,7 +19,7 @@ class RegistrationTest extends TestCase
             'email' => 'test@example.com',
             'password' => env('TEST_PASSWORD'),
             'password_confirmation' => env('TEST_PASSWORD'),
-            'terms' => true
+            'terms' => true,
         ]);
 
         $this->assertAuthenticated();

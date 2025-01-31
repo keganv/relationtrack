@@ -11,7 +11,9 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasFactory, HasUuids, Notifiable;
+    use HasFactory;
+    use HasUuids;
+    use Notifiable;
 
     // UUID does not auto-increment
     public $incrementing = false;
@@ -31,7 +33,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'profile_image',
-        'email_verified_at'
+        'email_verified_at',
     ];
 
     /**
@@ -72,7 +74,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return Attribute::make(
             get: function (mixed $value, array $attributes) {
-                return ucfirst($attributes['first_name'] ?? '') . ' ' . ucfirst($attributes['last_name'] ?? '');
+                return ucfirst($attributes['first_name'] ?? '').' '.ucfirst($attributes['last_name'] ?? '');
             }
         );
     }

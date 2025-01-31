@@ -3,8 +3,8 @@
 use App\Http\Controllers\ActionItemController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\RelationshipController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // https://laravel.com/docs/11.x/sanctum#protecting-routes

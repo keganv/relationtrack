@@ -33,7 +33,7 @@ class EmailVerificationTest extends TestCase
         Event::assertDispatched(Verified::class);
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
         $response->assertRedirectContains(
-            config('app.frontend_url') . RouteServiceProvider::DASHBOARD,
+            config('app.frontend_url').RouteServiceProvider::DASHBOARD,
         );
     }
 

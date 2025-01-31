@@ -15,13 +15,12 @@ use Illuminate\Support\Facades\Storage;
 class AdminController extends Controller
 {
     public function __construct(private FileService $fileService)
-    {}
+    {
+    }
 
     /**
      * Updates or adds the profile image for the authenticated user.
      *
-     * @param Request $request
-     * @return JsonResponse
      * @throws AuthorizationException
      */
     public function updateProfileImage(Request $request): JsonResponse
@@ -32,10 +31,10 @@ class AdminController extends Controller
         $this->authorize('update', $user);
 
         $request->validate([
-            'profile_image' => 'required|file|image|max:2048'
+            'profile_image' => 'required|file|image|max:2048',
         ], [
             'profile_image.required' => 'You must provide an image.',
-            'profile_image.max' => 'The file is too large.'
+            'profile_image.max' => 'The file is too large.',
         ]);
 
         /** @var File $previous */
@@ -74,8 +73,7 @@ class AdminController extends Controller
 
     /**
      * @route '/uploads/users/{user}/{path}'
-     * @param User $user
-     * @param string $path
+     *
      * @return \Symfony\Component\HttpFoundation\StreamedResponse|null
      */
     public function getPrivateFile(User $user, string $path)
@@ -84,7 +82,7 @@ class AdminController extends Controller
         $s3 = Storage::disk('s3');
 
         if (Auth::id() === $user->id) {
-            $fullpath = '/uploads/users/' . $user->id . '/' . $path;
+            $fullpath = '/uploads/users/'.$user->id.'/'.$path;
 
             if ($s3->exists($fullpath)) {
                 $file = $s3->response($fullpath);

@@ -49,8 +49,6 @@ class ActionItemController extends Controller
     /**
      * Validate the given request with the given rules.
      *
-     * @param Request $request
-     * @return array
      * @throws \Illuminate\Validation\ValidationException
      */
     private function validateRequest(Request $request): array
@@ -58,11 +56,11 @@ class ActionItemController extends Controller
         return $request->validate([
             'action' => 'required|min:10|max:50',
             'complete' => 'boolean',
-            'relationship_id' => ['required', 'string']
+            'relationship_id' => ['required', 'string'],
         ], [
             'action.min' => 'The action item must be at least 10 characters.',
             'action.max' => 'Action items must be less than 50 characters.',
-            'relationship_id' => 'There was no relationship provided for the action item.'
+            'relationship_id' => 'There was no relationship provided for the action item.',
         ]);
     }
 

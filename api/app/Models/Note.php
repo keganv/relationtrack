@@ -12,7 +12,7 @@ class Note extends Model
     protected $fillable = [
         'relationship',
         'content',
-        'action_item'
+        'action_item',
     ];
 
     public function user()

@@ -75,7 +75,7 @@ class NewPasswordController extends Controller
         $user = $request->user();
 
         $user->fill([
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ])->save();
 
         event(new PasswordReset($user));

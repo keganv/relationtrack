@@ -4,7 +4,6 @@ namespace database\factories;
 
 use App\Models\File;
 use App\Models\User;
-
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -12,7 +11,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class FileFactory extends Factory
 {
-
     protected $model = File::class;
 
     /**

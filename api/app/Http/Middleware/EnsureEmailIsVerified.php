@@ -23,7 +23,7 @@ class EnsureEmailIsVerified
                 'errors' => [
                     'email_verified_at' => false,
                 ],
-                'message' => 'Your email address is not verified.'
+                'message' => 'Your email address is not verified.',
             ];
 
             return response()->json($errorArray, Response::HTTP_CONFLICT);

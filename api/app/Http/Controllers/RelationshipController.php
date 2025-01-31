@@ -45,7 +45,7 @@ class RelationshipController extends Controller
     {
         // Check for both the relationship and a security test to make sure that
         // the requested relationship belongs to the user.
-        if (!$relationship || !$this->authorize('update', $relationship)) {
+        if (! $relationship || ! $this->authorize('update', $relationship)) {
             return response()->json(
                 ['message' => 'The requested relationship does not exist.'],
                 Response::HTTP_NOT_FOUND
@@ -70,14 +70,14 @@ class RelationshipController extends Controller
             'title' => 'required|max:55',
             'health' => 'required|numeric|min:0|max:10',
             'birthday' => 'nullable|date|before:today',
-            'images' => 'nullable|array|max:10'
+            'images' => 'nullable|array|max:10',
         ], [
             'images.max' => 'You may not upload more than 10 images per relationship.',
             'images.*.image' => 'The file :attribute must be a valid image (jpg, jpeg, png, bmp, gif, svg, or webp).',
         ]);
 
         // Remove the id to pass fillable mass assignment
-        $data = array_filter($request->request->all(), fn($key) => $key !== 'id', ARRAY_FILTER_USE_KEY);
+        $data = array_filter($request->request->all(), fn ($key) => $key !== 'id', ARRAY_FILTER_USE_KEY);
         $relationship->fill([...$data]);
 
         try {
@@ -87,7 +87,7 @@ class RelationshipController extends Controller
 
             $relationship->user_id = Auth::id(); //
             $relationship->save();
-            $successMessage = "Your relationship was saved successfully!";
+            $successMessage = 'Your relationship was saved successfully!';
 
             return response()->json(['message' => $successMessage], Response::HTTP_CREATED);
         } catch (\Exception $e) {
@@ -99,15 +99,13 @@ class RelationshipController extends Controller
     }
 
     /**
-     * @param Relationship $relationship
-     * @return JsonResponse
      * @throws AuthorizationException
      */
     public function delete(Relationship $relationship): JsonResponse
     {
         // Check for both the relationship and a security test to make sure that
         // the requested relationship belongs to the user.
-        if (!$relationship || !$this->authorize('delete', $relationship)) {
+        if (! $relationship || ! $this->authorize('delete', $relationship)) {
             return response()->json(
                 ['message' => 'The requested relationship does not exist.'],
                 Response::HTTP_NOT_FOUND
@@ -133,9 +131,9 @@ class RelationshipController extends Controller
 
         // Check for both the relationship and a security test to make sure that
         // the requested relationship belongs to the user.
-        if (!$relationship || ($relationship?->user_id !== $user->id)) {
+        if (! $relationship || ($relationship?->user_id !== $user->id)) {
             return response()->json([
-                'message' => 'The requested relationship does not exist.', Response::HTTP_NOT_FOUND
+                'message' => 'The requested relationship does not exist.', Response::HTTP_NOT_FOUND,
             ]);
         }
 
@@ -149,7 +147,8 @@ class RelationshipController extends Controller
         }
     }
 
-    private function handlePrimaryImage(Relationship $relationship, UploadedFile $file) {
+    private function handlePrimaryImage(Relationship $relationship, UploadedFile $file)
+    {
         $previous = $relationship->primaryImage;
         try {
             /** @var File $previous */
@@ -159,6 +158,7 @@ class RelationshipController extends Controller
                     Storage::delete($previous->path);
                 }
             }
+
             return true;
         } catch (\Exception $e) {
             return false;

@@ -14,13 +14,12 @@ class VerifyEmailController extends Controller
     /**
      * Mark the authenticated user's email address as verified.
      *
-     * @param EmailVerificationRequest $request
      * @return RedirectResponse
      */
     public function __invoke(EmailVerificationRequest $request)
     {
         if ($request->user()->hasVerifiedEmail()) {
-             return $this->redirectTheUserToLogin($request->user());
+            return $this->redirectTheUserToLogin($request->user());
         }
 
         if ($request->user()->markEmailAsVerified()) {
@@ -33,7 +32,7 @@ class VerifyEmailController extends Controller
     private function redirectTheUserToLogin(User $user): RedirectResponse
     {
         return redirect()->intended(
-            config('app.frontend_url') . RouteServiceProvider::DASHBOARD . '?verified=1'
+            config('app.frontend_url').RouteServiceProvider::DASHBOARD.'?verified=1'
         );
     }
 }

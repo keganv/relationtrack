@@ -32,7 +32,7 @@ class AuthenticationTest extends TestCase
         $response->assertStatus(Response::HTTP_OK);
         $response->assertJsonStructure([
             'user' => array_keys($this->user->toArray()),
-            'message'
+            'message',
         ]);
     }
 
