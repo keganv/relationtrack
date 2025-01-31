@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActionItemController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\RelationshipActionItemController;
 use App\Http\Controllers\RelationshipController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,10 +11,8 @@ use Illuminate\Support\Facades\Route;
 // https://laravel.com/docs/11.x/sanctum#protecting-routes
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     // ACTION ITEM ROUTES
-    Route::post('/action-items', [ActionItemController::class, 'store']);
-    Route::post('/action-items/{actionItem}', [ActionItemController::class, 'update']);
-    Route::delete('/action-items/{actionItem}', [ActionItemController::class, 'delete']);
-    Route::get('/action-items/{relationship}', [ActionItemController::class, 'getByRelationship']);
+    Route::apiResource('action-items', ActionItemController::class)->except(['index', 'show']);
+    Route::get('/relationships/{relationship}/action-items', RelationshipActionItemController::class);
 
     // ADMIN ROUTES
     Route::get('/user', fn (Request $request) => Auth::user()->load('profileImage'));
@@ -25,6 +24,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/relationships/types', [RelationshipController::class, 'getTypes']);
     Route::post('/relationships', [RelationshipController::class, 'store']);
     Route::post('/relationships/{relationship}', [RelationshipController::class, 'update']);
-    Route::post('/relationships/{id}/primary-image', [RelationshipController::class, 'updatePrimaryImage']);
+    Route::post('/relationships/{relationship}/primary-image', [RelationshipController::class, 'updatePrimaryImage']);
     Route::delete('/relationships/{relationship}', [RelationshipController::class, 'delete']);
 });
