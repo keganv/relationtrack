@@ -1,43 +1,49 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
+import Modal from 'react-modal';
+
 import { Relationship } from '../../types/Relationship';
 import ActionItem from '../../types/ActionItem';
-import SortableTable, { SortTableColumn } from '../ui/SortableTable';
-import Modal from 'react-modal';
 import ActionItemForm from './ActionItemForm';
+import SortableTable, { SortTableColumn } from '../ui/SortableTable';
 import useApiHook from '../../hooks/useApiHook.ts';
+import useGlobalContext from '../../hooks/useGlobalContext.ts';
 
 type ActionItemRow = { key: number | string } & ActionItem;
 type ActionItemProps = { relationship: Relationship };
 
+function formatActionItems(items: ActionItem[] = []) {
+  return items.map((item: ActionItem) => ({ key: item.id, ...item }));
+}
+
 export default function ActionItems({relationship}: ActionItemProps) {
-  const [actionItems, setActionItems] = useState<ActionItemRow[]>([]);
-  const [selectedAction, setSelectedAction] = useState<ActionItem>();
+  const [actionItems, setActionItems] = useState<ActionItemRow[]>(formatActionItems(relationship.action_items));
+  const [selectedActionItem, setSelectedActionItem] = useState<ActionItem>();
   const [formOpen, setFormOpen] = useState(false);
-  const { deleteData } = useApiHook();
+  const { setStatus } = useGlobalContext();
+  const { deleteData, getData } = useApiHook();
 
   const handleActionItems = useCallback((items: ActionItem[] = relationship.action_items ?? []) => {
     relationship.action_items = items;
-    setSelectedAction(undefined); // Reset the selected action
-    setActionItems(items.map((item: ActionItem) => ({ key: item.id, ...item }))); // Update the action items
+    setSelectedActionItem(undefined); // Reset the selected action
+    setActionItems(formatActionItems(items)); // Update the action items
   }, [relationship]);
 
   const handleSelectedAction = (row: ActionItemRow) => {
-    setSelectedAction(row);
+    setSelectedActionItem(row);
     setFormOpen(true);
   };
 
   const handleDeleteAction = async (id: number) => {
     const confirmed = confirm('Are you sure you want to delete this action item?');
     if (confirmed) {
-      const { data } = await deleteData(`/api/action-items/${id}`);
-      console.log(data);
-      handleActionItems(data);
+      const result = await deleteData(`/api/action-items/${id}`);
+      if (result) {
+        setStatus({ type: 'success', message: result?.data.message ?? 'Successfully deleted Action Item!' });
+        const actionItems = await getData(`/api/relationships/${relationship.id}/action-items`);
+        handleActionItems(actionItems);
+      }
     }
   };
-
-  useEffect(() => {
-    handleActionItems();
-  }, [handleActionItems]);
 
   const columns: SortTableColumn<ActionItemRow>[] = [
     {
@@ -83,7 +89,7 @@ export default function ActionItems({relationship}: ActionItemProps) {
           relationship={relationship}
           close={() => setFormOpen(false)}
           updateActionItems={handleActionItems}
-          actionItem={selectedAction}
+          actionItem={selectedActionItem}
         />
       </Modal>
     </>
