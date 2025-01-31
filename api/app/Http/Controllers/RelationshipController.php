@@ -121,10 +121,8 @@ class RelationshipController extends Controller
         return response()->json(['message' => 'Successfully deleted the Relationship.'], 201);
     }
 
-    public function updatePrimaryImage(Request $request, $id)
+    public function updatePrimaryImage(Request $request, Relationship $relationship)
     {
-        /** @var Relationship|null $relationship */
-        $relationship = Relationship::findOrFail($id);
         /** @var User $user */
         $user = Auth::user();
         $data = $request->getPayload();
