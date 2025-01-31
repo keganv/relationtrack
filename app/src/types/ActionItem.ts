@@ -10,8 +10,6 @@ type ActionItem = {
   user_id: string;
 }
 
-export default ActionItem;
-
 export const actionItemFormSchema = z.object({
   id: z.number().nullish(),
   action: z.string().min(10, 'The action item must be at least 10 characters.').max(100),
@@ -19,3 +17,5 @@ export const actionItemFormSchema = z.object({
 });
 
 export type ActionItemFormData = z.infer<typeof actionItemFormSchema>;
+
+export default ActionItem;
