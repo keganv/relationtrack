@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ActionItemRequest;
 use App\Models\ActionItem;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
 
 class ActionItemController extends Controller
 {
