@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import axios from '../lib/axios';
 import useGlobalContext from './useGlobalContext.ts';
 
@@ -7,9 +7,9 @@ export default function useApiHook() {
   const [apiErrors, setApiErrors] = useState<Record<string, string[]>>();
   const { handleError } = useGlobalContext();
 
-  const postData = useCallback(async <T extends object>(url: string, payload: T) => {
+  const sendData = useCallback(async <T extends object>(url: string, payload: T, method: 'POST' | 'PUT') => {
     try {
-      const { data } = await axios.post(url, payload);
+      const { data } = await axios({ method: method, url: url, data: payload });
       return data;
     } catch (e) {
       handleError(e, setApiErrors);
@@ -27,12 +27,11 @@ export default function useApiHook() {
 
   const deleteData = useCallback(async (url: string) => {
     try {
-      const { data } = await axios.delete(url);
-      return data;
+      return await axios.delete(url);
     } catch (e) {
       handleError(e, setApiErrors);
     }
   }, [handleError]);
 
-  return { apiErrors, deleteData, postData, getData };
+  return { apiErrors, deleteData, sendData, getData };
 }
