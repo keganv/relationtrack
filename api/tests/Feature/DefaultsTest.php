@@ -14,6 +14,6 @@ class DefaultsTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertRedirect(config('app.frontend_url'));
     }
 }
