@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router';
 import axios from '../lib/axios';
 
 import AuthContext from '../contexts/AuthContext';
-import { AuthFormErrors, AuthState, LoginFields, NewPasswordFields } from "../types/AuthTypes";
+import { AuthFormErrors, AuthState, LoginFields, NewPasswordFields } from '../types/AuthTypes';
 import { authReducer } from '../reducers/authReducer';
-
 import useGlobalContext from '../hooks/useGlobalContext';
 
 const defaultAuthState: AuthState = {

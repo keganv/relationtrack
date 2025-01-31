@@ -10,7 +10,7 @@ import RelationshipDetails from './components/RelationshipDetails';
 import ActionItems from '../../components/action-items/ActionItems';
 import API_File from '../../types/ApiFile.ts';
 import '../../styles/relationship.scss';
-import Tooltip from "../../components/ui/Tooltip.tsx";
+import Tooltip from '../../components/ui/Tooltip';
 
 export default function RelationshipView() {
   const apiUrl = `${import.meta.env.VITE_API_URL}/api/`;
