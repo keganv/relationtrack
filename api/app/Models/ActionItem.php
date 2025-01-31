@@ -17,7 +17,8 @@ class ActionItem extends Model
 
     protected $fillable = [
         'action',
-        'relationship',
+        'relationship_id',
+        'user_id',
         'complete',
     ];
 
@@ -35,6 +36,6 @@ class ActionItem extends Model
 
     public function relationship()
     {
-        return $this->belongsTo(Relationship::class);
+        return $this->belongsTo(Relationship::class, 'relationship_id');
     }
 }
