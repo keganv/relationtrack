@@ -13,6 +13,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return ['RelationTrack' => app()->version()];
-});
+Route::get('/', fn () => redirect(config('app.frontend_url')));
