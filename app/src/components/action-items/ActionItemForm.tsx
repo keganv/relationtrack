@@ -19,7 +19,7 @@ type ActionItemFormProps = {
 const defaultForm = { id: null, action: '' }
 
 const ActionItemForm = ({relationship, actionItem, close, updateActionItems}: ActionItemFormProps) => {
-  const { apiErrors, getData, postData } = useApiHook();
+  const { apiErrors, getData, sendData } = useApiHook();
   const { setStatus } = useGlobalContext();
 
   const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<ActionItemFormData>({
@@ -29,12 +29,13 @@ const ActionItemForm = ({relationship, actionItem, close, updateActionItems}: Ac
 
   const handleFormSubmit: SubmitHandler<ActionItemFormData> = async (formData: ActionItemFormData) => {
     const cleaned = removeUndefined<ActionItemFormData>(formData);
-    const url = formData?.id ? `/api/action-items/${formData.id}` : '/api/action-items';
-    const result = await postData(url, {...cleaned, relationship_id: relationship.id});
+    const method = formData?.id ? 'PUT' : 'POST';
+    const url = method === 'PUT' ? `/api/action-items/${formData.id}` : '/api/action-items';
+    const result = await sendData(url, {...cleaned, relationship_id: relationship.id}, method);
 
     if (result) {
       setStatus({ type: 'success', message: result?.message ?? 'Successfully saved Action Item!' });
-      const actionItems = result.data ?? await getData(`/api/action-items/${relationship.id}`);
+      const actionItems = result.data ?? await getData(`/api/relationships/${relationship.id}/action-items`);
       updateActionItems(actionItems); // Update the parent component ActionItems list
     }
     close(); // Close the form after saving
