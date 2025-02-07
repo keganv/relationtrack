@@ -1,6 +1,6 @@
-import ApiFile from './ApiFile';
+import { ApiFile } from './ApiFile';
 
-export default interface User {
+type User = {
   first_name?: string;
   last_name?: string;
   full_name?: string;
@@ -12,3 +12,5 @@ export default interface User {
   email_verified_at?: string;
   profile_image?: ApiFile;
 }
+
+export default User;

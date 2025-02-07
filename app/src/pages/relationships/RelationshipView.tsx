@@ -1,24 +1,31 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Modal from 'react-modal';
+import { useLocation } from 'react-router';
+import { Tab, TabList, TabPanel,Tabs } from 'react-tabs';
 
-import RelationshipForm from './components/RelationshipForm';
-import useRelationshipContext from '../../hooks/useRelationshipContext';
-import Spinner from '../../components/ui/Spinner';
-import RelationshipDetails from './components/RelationshipDetails';
 import ActionItems from '../../components/action-items/ActionItems';
-import API_File from '../../types/ApiFile.ts';
-import '../../styles/relationship.scss';
+import Spinner from '../../components/ui/Spinner';
 import Tooltip from '../../components/ui/Tooltip';
+import useRelationshipContext from '../../hooks/useRelationshipContext';
+import { ApiFile } from '../../types/ApiFile.ts';
+import RelationshipDetails from './components/RelationshipDetails';
+import RelationshipForm from './components/RelationshipForm';
+
+import '../../styles/relationship.scss';
 
 export default function RelationshipView() {
-  const apiUrl = `${import.meta.env.VITE_API_URL}/api/`;
+  const {
+    selectedRelationship,
+    setSelectedRelationship,
+    setRelationshipById,
+    setPrimaryImageForRelationship
+  } = useRelationshipContext();
   const location = useLocation();
   const primaryImageRef = useRef<HTMLImageElement>(null);
-  const { selectedRelationship, setSelectedRelationship, setRelationshipById, setPrimaryImageForRelationship } = useRelationshipContext();
   const [formIsOpen, setFormIsOpen] = useState<boolean>(false);
   const [imageModal, setImageModal] = useState<boolean>(false);
+
+  const apiUrl = `${import.meta.env.VITE_API_URL}/api/`;
   const setPrimaryImage = (path: string, id: string) => {
     if (primaryImageRef.current) {
       primaryImageRef.current.src = path;
@@ -32,6 +39,7 @@ export default function RelationshipView() {
 
   useEffect(() => {
     setUpRelationshipData();
+    // Reset the selected relationship when the component unmounts
     return () => setSelectedRelationship(null);
   }, [setUpRelationshipData, setSelectedRelationship]);
 
@@ -75,7 +83,7 @@ export default function RelationshipView() {
           </div>
           <div className="section mt-3">
             <ul className="flex -mx-1">
-              {selectedRelationship.files?.map((file: API_File) => (
+              {selectedRelationship.files?.map((file: ApiFile) => (
                 <li key={file.id} className="w-1/3 px-1">
                   <img src={`${apiUrl}${file.path}`} alt={file.name}
                        className="profile-image" data-id={file.id} loading="lazy"

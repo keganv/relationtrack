@@ -1,4 +1,4 @@
-export default interface ApiFile {
+export type ApiFile = {
   created_at: string;
   extension: string;
   id: number;
