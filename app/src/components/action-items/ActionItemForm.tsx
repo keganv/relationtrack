@@ -1,13 +1,14 @@
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import ActionItem, { actionItemFormSchema, ActionItemFormData } from '../../types/ActionItem';
-import { Checkbox, Input } from '../form/Input.tsx';
-import { removeUndefined } from '../../lib/helpers';
-import useApiHook from '../../hooks/useApiHook';
 import { useEffect } from 'react';
-import Spinner from '../ui/Spinner.tsx';
-import { Relationship } from '../../types/Relationship';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+
+import useApi from '../../hooks/useApi.ts';
 import useGlobalContext from '../../hooks/useGlobalContext';
+import { removeUndefined } from '../../lib/helpers';
+import ActionItem, { ActionItemFormData, actionItemFormSchema } from '../../types/ActionItem';
+import { Relationship } from '../../types/Relationship';
+import { Checkbox, Input } from '../form/Input.tsx';
+import Spinner from '../ui/Spinner.tsx';
 
 type ActionItemFormProps = {
   relationship: Relationship;
@@ -18,8 +19,8 @@ type ActionItemFormProps = {
 
 const defaultForm = { id: null, action: '' }
 
-const ActionItemForm = ({relationship, actionItem, close, updateActionItems}: ActionItemFormProps) => {
-  const { apiErrors, getData, sendData } = useApiHook();
+export default function ActionItemForm({relationship, actionItem, close, updateActionItems}: ActionItemFormProps) {
+  const { apiErrors, getData, sendData, isLoading } = useApi();
   const { setStatus } = useGlobalContext();
 
   const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<ActionItemFormData>({
@@ -79,14 +80,14 @@ const ActionItemForm = ({relationship, actionItem, close, updateActionItems}: Ac
                   fieldErrors={errors?.complete}
                   label="Completed"
                   value="complete"
-                  // apiErrors={apiErrors?.name}
+                  apiErrors={apiErrors?.name}
                   className={`${errors?.complete && 'error'}`}
                 />
             )}/>
         </fieldset>
         <div className="mt-3 flex justify-between">
           <button type="submit" className="primary angle-right" onClick={handleSubmit(handleFormSubmit)}>
-            Save <Spinner loading={isSubmitting} className="ml-2"/>
+            Save <Spinner loading={isSubmitting || isLoading} className="ml-2"/>
           </button>
           <button className="transparent angle-left text-white" onClick={close}>Cancel</button>
         </div>
@@ -94,5 +95,3 @@ const ActionItemForm = ({relationship, actionItem, close, updateActionItems}: Ac
     </div>
   );
 }
-
-export default ActionItemForm;

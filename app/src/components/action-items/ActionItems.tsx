@@ -5,7 +5,7 @@ import { Relationship } from '../../types/Relationship';
 import ActionItem from '../../types/ActionItem';
 import ActionItemForm from './ActionItemForm';
 import SortableTable, { SortTableColumn } from '../ui/SortableTable';
-import useApiHook from '../../hooks/useApiHook.ts';
+import useApi from '../../hooks/useApi.ts';
 import useGlobalContext from '../../hooks/useGlobalContext.ts';
 
 type ActionItemRow = { key: number | string } & ActionItem;
@@ -20,7 +20,7 @@ export default function ActionItems({relationship}: ActionItemProps) {
   const [selectedActionItem, setSelectedActionItem] = useState<ActionItem>();
   const [formOpen, setFormOpen] = useState(false);
   const { setStatus } = useGlobalContext();
-  const { deleteData, getData } = useApiHook();
+  const { deleteData, getData } = useApi();
 
   const handleActionItems = useCallback((items: ActionItem[] = relationship.action_items ?? []) => {
     relationship.action_items = items;

@@ -1,12 +1,12 @@
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
-import { relationshipFormSchema, RelationshipFormData, Relationship } from '../../../types/Relationship';
-import useRelationshipContext from '../../../hooks/useRelationshipContext';
+import { Input } from '../../../components/form/Input';
 import ImageUploader from '../../../components/ui/ImageUploader';
 import Spinner from '../../../components/ui/Spinner';
-import { Input } from '../../../components/form/Input';
+import useRelationshipContext from '../../../hooks/useRelationshipContext';
 import { removeUndefined } from '../../../lib/helpers.ts';
+import { Relationship,RelationshipFormData, relationshipFormSchema } from '../../../types/Relationship';
 
 type RelationshipFormProps = {
   relationship?: Relationship;
@@ -53,7 +53,7 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                   <>
                     <label htmlFor="type">Type <span className="red">*</span></label>
                     <select id="type" className="block mt-1 w-full" autoFocus required aria-label="type" {...field}>
-                      <option value=''>Select</option>
+                      <option>Select</option>
                       {types && types.map((type) => (
                         <option key={type.id} value={type.id}>{type.type}</option>
                       ))}

@@ -14,6 +14,7 @@ export default function RelationshipIndex() {
         <button className="primary angle-right text-xs" onClick={() => setIsOpen(true)}>Add Relationship</button>
       </header>
       <Modal isOpen={modalIsOpen} onRequestClose={() => setIsOpen(false)}
+             appElement={document.getElementById('root') ?? undefined}
              className="react-modal center" overlayClassName="react-modal-overlay">
         <RelationshipForm cancel={() => setIsOpen(false)} />
       </Modal>

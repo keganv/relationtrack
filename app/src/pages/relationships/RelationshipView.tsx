@@ -33,7 +33,7 @@ export default function RelationshipView() {
     }
   };
   const setUpRelationshipData = useCallback(() => {
-    const id = location?.pathname.split('/')[2];
+    const id = location.pathname.split('/')[2];
     if (id) setRelationshipById(id);
   }, [location, setRelationshipById]);
 
