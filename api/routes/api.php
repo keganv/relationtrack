@@ -4,6 +4,7 @@ use App\Http\Controllers\ActionItemController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\RelationshipActionItemController;
 use App\Http\Controllers\RelationshipController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -13,6 +14,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     // ACTION ITEM ROUTES
     Route::apiResource('action-items', ActionItemController::class)->except(['index', 'show']);
     Route::get('/relationships/{relationship}/action-items', RelationshipActionItemController::class);
+
+    Route::apiResource('users', UserController::class)->except(['store']);
 
     // ADMIN ROUTES
     Route::get('/user', fn (Request $request) => Auth::user()->load('profileImage'));
