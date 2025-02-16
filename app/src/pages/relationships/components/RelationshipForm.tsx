@@ -108,7 +108,11 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
             </div>
             <div>
               <label htmlFor="description">Description</label>
-              <textarea id="description" className="block mt-1 w-full" {...register('description')} />
+              <textarea
+                id="description"
+                className="block mt-1 w-full max-h-[100px] [field-sizing:content]"
+                {...register('description')}
+              />
               {errors?.description && <div className="error">{errors.description.message}</div>}
               {apiErrors?.description && <span className="error">{apiErrors.description}</span>}
             </div>
@@ -133,7 +137,9 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
           <button type="submit" className="primary mt angle-right">
             {relationship ? 'Update' : 'Create'} <Spinner loading={isSubmitting} className="ml-2"/>
           </button>
-          <button id="cancel-edit-button" type="button" className="transparent angle-left text-white" onClick={cancel}>Cancel</button>
+          <button id="cancel-edit-button" type="button" className="transparent angle-left text-white" onClick={cancel}>
+            Cancel
+          </button>
         </div>
       </form>
     </>
