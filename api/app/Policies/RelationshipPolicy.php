@@ -48,7 +48,7 @@ class RelationshipPolicy
      */
     public function restore(User $user, Relationship $relationship): bool
     {
-        //
+        return $user->id === $relationship->user_id;
     }
 
     /**
@@ -56,6 +56,6 @@ class RelationshipPolicy
      */
     public function forceDelete(User $user, Relationship $relationship): bool
     {
-        //
+        return $user->id === $relationship->user_id;
     }
 }
