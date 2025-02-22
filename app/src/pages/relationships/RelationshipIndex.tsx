@@ -1,11 +1,23 @@
-import {useState} from 'react';
+import { useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FallbackProps } from 'react-error-boundary';
 import Modal from 'react-modal';
-import RelationshipList from './components/RelationshipList';
+
 import RelationshipForm from './components/RelationshipForm';
-import ErrorBoundary from '../../components/common/ErrorBoundary';
+import RelationshipList from './components/RelationshipList';
 
 export default function RelationshipIndex() {
   const [modalIsOpen, setIsOpen] = useState<boolean>(false);
+
+  function fallbackRender({ error }: FallbackProps) {
+    // TODO implement resetErrorBoundary, refer to docs
+
+    return (
+      <h1 className="bg-main-blue angle-right mt-[calc(80vh/2)] m-auto w-[400px] text-white text-center">
+        {error?.message || 'Could not load the relationships.'}
+      </h1>
+    );
+  }
 
   return (
     <>
@@ -18,7 +30,7 @@ export default function RelationshipIndex() {
              className="react-modal center" overlayClassName="react-modal-overlay">
         <RelationshipForm cancel={() => setIsOpen(false)} />
       </Modal>
-      <ErrorBoundary message="Could not load the relationships." styles="bg-main-blue">
+      <ErrorBoundary fallbackRender={fallbackRender}>
         <RelationshipList />
       </ErrorBoundary>
     </>
