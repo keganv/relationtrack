@@ -83,9 +83,9 @@ class AdminController extends Controller
 
         if (Auth::id() === $user->id) {
             $fullpath = '/uploads/users/'.$user->id.'/'.$path;
-
             if ($s3->exists($fullpath)) {
-                $file = $s3->response($fullpath);
+                // Tell the browser not to cache private files
+                $file = $s3->response($fullpath, null, ['Cache-Control' => 'private']);
             }
         }
 
