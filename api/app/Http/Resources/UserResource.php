@@ -3,10 +3,12 @@
 namespace App\Http\Resources;
 
 use App\Models\Relationship;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
+ * @mixin User
  * @property Relationship[] $relationships
  */
 class UserResource extends JsonResource
