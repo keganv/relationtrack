@@ -12,6 +12,7 @@ import RelationshipDetails from './components/RelationshipDetails';
 import RelationshipForm from './components/RelationshipForm';
 
 import '../../styles/relationship.scss';
+import Image from '../../components/ui/Image.tsx';
 
 export default function RelationshipView() {
   const {
@@ -84,10 +85,15 @@ export default function RelationshipView() {
           <div className="section mt-3">
             <ul className="flex -mx-1">
               {selectedRelationship.files?.map((file: ApiFile) => (
-                <li key={file.id} className="w-1/3 px-1">
-                  <img src={`${apiUrl}${file.path}`} alt={file.name}
-                       className="profile-image" data-id={file.id} loading="lazy"
-                       onClick={() => setPrimaryImage(`${apiUrl}${file.path}`, `${file.id}`)} />
+                <li key={file.id} className="w-1/3 h-full mx-1 relative bg-slate-400 animate-pulse">
+                  <Image
+                    alt={file.name}
+                    className="object-fit-fill"
+                    data-id={file.id}
+                    src={`${apiUrl}${file.path}`}
+                    onClick={() => setPrimaryImage(`${apiUrl}${file.path}`, `${file.id}`)}
+                    loading="lazy"
+                  />
                 </li>
               ))}
             </ul>

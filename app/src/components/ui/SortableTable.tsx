@@ -86,7 +86,7 @@ export default function SortableTable<T extends SortTableBaseRow>({columns, data
               <td key={`${row[col.key]}-${i}`} data-key={col.key} data-type={col.type} data-value={row[col.key]} style={col.styles} className={col.className}>
                 {col.type === 'image' && row[col.key] ?
                   <div className="table-image">
-                    <img src={`${import.meta.env.VITE_API_URL}/api/${row[col.key]}`} alt={col.alt ? row[col.alt] as string : ''} />
+                    <img src={`${import.meta.env.VITE_API_URL}/api/${row[col.key]}`} alt={col.alt ? row[col.alt] as string : ''} loading="lazy" />
                   </div> : ''
                 }
                 {col.type === 'text' && <>{String(row[col.key])}</>}
