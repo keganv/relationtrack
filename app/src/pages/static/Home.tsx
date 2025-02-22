@@ -1,10 +1,11 @@
-import { Link } from "react-router";
 import { useEffect } from "react";
-import Footer from "../../components/ui/Footer";
+import { Link } from "react-router";
+
 import ApplicationLogo from "../../components/ui/ApplicationLogo";
-import HomeNav from "../../components/ui/home/HomeNav";
+import Footer from "../../components/ui/Footer";
 import Banners from "../../components/ui/home/Banners";
 import HomeCards from "../../components/ui/home/HomeCards";
+import HomeNav from "../../components/ui/home/HomeNav";
 
 export default function Home() {
   useEffect(()=>{
