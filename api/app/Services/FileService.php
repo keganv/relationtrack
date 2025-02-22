@@ -17,9 +17,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FileService
 {
-    public function storeFileToStorage(User $user, UploadedFile $uploadedFile): string
+    public function storeFileToStorage(User $user, UploadedFile $uploadedFile, bool $private = false): string
     {
-        $path = $uploadedFile->store("uploads/users/$user->id", 'private');
+        $storageDisk = $private ? 'private' : 'public';
+        $path = $uploadedFile->store("uploads/users/$user->id", $storageDisk);
 
         if (! $path) {
             $message = sprintf('Failed to upload the image %s to storage.', $uploadedFile->getClientOriginalName());
@@ -94,7 +95,7 @@ class FileService
         return $file;
     }
 
-    public function servePrivateFile(User $user, string $path)
+    public function getS3FilePath(User $user, string $path): string
     {
         Gate::authorize('view', $user);
 
@@ -108,11 +109,11 @@ class FileService
     /**
      * Returns true if the Files are saved and stored or throws an Exception response error.
      *
-     * @param  UploadedFile[]  $images
+     * @param  UploadedFile[]  $uploads
      *
      * @throws FileException
      */
-    public function addFilesToRelationship(array $images, Relationship $relationship, User $user): bool
+    public function addFilesToRelationship(array $uploads, Relationship $relationship, User $user): bool
     {
         /**
          * We need a collection to keep a count of the total files and to prevent duplicate uploads
@@ -122,7 +123,7 @@ class FileService
         $files = $relationship->files ?? new Collection();
 
         // First check to see that the User is not over the 10 files per Relationship limit.
-        if ((count($images) + count($files)) > 10) {
+        if ((count($uploads) + count($files)) > 10) {
             throw new FileException(
                 'Sorry, only 10 images can be uploaded per relationship.',
                 Response::HTTP_UNPROCESSABLE_ENTITY
@@ -132,7 +133,7 @@ class FileService
         // Gather a list of existing file names associated with the Relationship.
         $existingFileNames = $files->pluck('name')->toArray();
 
-        foreach ($images as $upload) {
+        foreach ($uploads as $upload) {
             // Check if the user has already uploaded a file with the same name.
             if (in_array($upload->getClientOriginalName(), $existingFileNames)) {
                 throw new FileException(
