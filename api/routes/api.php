@@ -5,8 +5,6 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\RelationshipActionItemController;
 use App\Http\Controllers\RelationshipController;
 use App\Http\Controllers\UserController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // https://laravel.com/docs/11.x/sanctum#protecting-routes
@@ -15,10 +13,11 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::apiResource('action-items', ActionItemController::class)->except(['index', 'show']);
     Route::get('/relationships/{relationship}/action-items', RelationshipActionItemController::class);
 
+    // USER ROUTES
     Route::apiResource('users', UserController::class)->except(['store']);
+    Route::get('/user', [AdminController::class, 'getUser'])->name('user.show');
 
     // ADMIN ROUTES
-    Route::get('/user', fn (Request $request) => Auth::user()->load('profileImage'));
     Route::post('/update-profile-image', [AdminController::class, 'updateProfileImage']);
     Route::get('/uploads/users/{user}/{path}', [AdminController::class, 'getPrivateFile'])->where('path', '.*');
 

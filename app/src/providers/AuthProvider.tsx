@@ -1,11 +1,11 @@
-import { useCallback, useEffect, ReactNode, useReducer } from 'react';
+import { ReactNode, useCallback, useEffect, useReducer } from 'react';
 import { useNavigate } from 'react-router';
-import axios from '../lib/axios';
 
 import AuthContext from '../contexts/AuthContext';
-import { AuthFormErrors, AuthState, LoginFields, NewPasswordFields } from '../types/AuthTypes';
-import { authReducer } from '../reducers/authReducer';
 import useGlobalContext from '../hooks/useGlobalContext';
+import axios from '../lib/axios';
+import { authReducer } from '../reducers/authReducer';
+import { AuthFormErrors, AuthState, LoginFields, NewPasswordFields } from '../types/AuthTypes';
 
 const defaultAuthState: AuthState = {
   authenticated: false,
@@ -42,15 +42,13 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     try {
       await csrf();
       const response = await axios.post('/api/login', data);
-      response.data.user ?
-        dispatch({ type: 'LOGIN_SUCCESS', payload: response.data.user }) :
-        await getUser();
+      response.data.user ? dispatch({ type: 'LOGIN_SUCCESS', payload: response.data.user }) : await getUser();
       navigate('/dashboard');
       setStatus({type: 'success', message: 'Successfully Logged In!'});
     } catch (e) {
       handleError(e, dispatchErrors);
     }
-  }, [getUser, setStatus, navigate, handleError]);
+  }, [navigate, setStatus, getUser, handleError]);
 
   const register = async ({...data}) => {
     dispatch({ type: 'SET_LOADING', payload: true })

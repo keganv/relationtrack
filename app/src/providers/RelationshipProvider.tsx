@@ -1,8 +1,9 @@
-import { ReactNode, useState, useEffect, useCallback } from 'react';
-import axios from '../lib/axios';
+import { ReactNode, useCallback,useEffect, useState } from 'react';
+
 import RelationshipContext from '../contexts/RelationshipContext';
-import { Relationship, RelationshipFormData, RelationshipFormErrors } from '../types/Relationship';
 import useGlobalContext from '../hooks/useGlobalContext.ts';
+import axios from '../lib/axios';
+import { Relationship, RelationshipFormData, RelationshipFormErrors } from '../types/Relationship';
 
 type RelationshipProviderProps = {
   children: ReactNode;
@@ -15,7 +16,7 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
   const [types, setTypes] = useState(null);
   const [formErrors, setFormErrors] = useState<RelationshipFormErrors>(null);
 
-  const all = useCallback(async () => {
+  const getRelationships = useCallback(async () => {
     try {
       const response = await axios.get('/api/relationships');
       setRelationships(response.data);
@@ -51,7 +52,7 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
       const url = data.id ? `/api/relationships/${data.id}` : '/api/relationships';
       const response = await axios.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' }});
       setStatus({type: 'success', message: response.data.message});
-      await all();
+      await getRelationships();
     } catch (error) {
       handleError(error, setFormErrors);
     }
@@ -90,19 +91,24 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
     }
   }, [relationships, setStatus]);
 
+  let count = 0;
   useEffect(() => {
     if (!relationships) {
-      all();
+      // console.log(++count);
+      // console.log('call relationships');
+      // getRelationships();
     }
     if (!types) {
       getTypes();
     }
-  }, [all, getTypes, relationships, types]);
+  }, [getRelationships, count, getTypes, relationships, types]);
 
   return (
     <RelationshipContext.Provider value={{
       save,
+      getRelationships,
       relationships,
+      setRelationships,
       types,
       formErrors,
       convertRelationshipToFormData,

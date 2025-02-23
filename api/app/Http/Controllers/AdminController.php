@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\File;
 use App\Models\User;
 use App\Services\FileService;
@@ -16,6 +17,19 @@ class AdminController extends Controller
 {
     public function __construct(private FileService $fileService)
     {
+    }
+
+    public function getUser()
+    {
+        $user = Auth::user()->load([
+            'profileImage',
+            'relationships.actionItems',
+            'relationships.primaryImage',
+            'relationships.files',
+            'relationships.relationshipType'
+        ])->loadCount('relationships');
+
+        return response()->json(new UserResource($user), Response::HTTP_OK);
     }
 
     /**

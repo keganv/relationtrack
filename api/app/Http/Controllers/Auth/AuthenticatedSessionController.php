@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -20,10 +21,10 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): JsonResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
+        $user = $request->user();
 
-        if ($request->user() instanceof MustVerifyEmail && ! $request->user()->hasVerifiedEmail()) {
+        if ($user instanceof MustVerifyEmail && !$user->hasVerifiedEmail()) {
             $errorArray = [
                 'errors' => [
                     'email_verified_at' => false,
@@ -34,8 +35,16 @@ class AuthenticatedSessionController extends Controller
             return response()->json($errorArray, Response::HTTP_CONFLICT);
         }
 
+        $user->load([
+            'profileImage',
+            'relationships.actionItems',
+            'relationships.primaryImage',
+            'relationships.relationshipType',
+            'relationships.files'
+        ])->loadCount('relationships');
+
         return response()->json([
-            'user' => $request->user()->toArray(),
+            'user' => new UserResource($user),
             'message' => 'Successfully logged in.',
         ]);
     }

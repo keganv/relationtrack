@@ -19,7 +19,7 @@ export default function App() {
   return (
     <>
       <GlobalProvider>
-      <AuthProvider>
+        <AuthProvider>
           <ErrorBoundary fallbackRender={fallbackRender}>
             <Outlet />
             <Toaster position='bottom-right' toastOptions={{ duration: 5000 }} />

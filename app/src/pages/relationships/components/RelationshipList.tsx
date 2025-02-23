@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
+
 import SortableTable, { SortTableColumn } from '../../../components/ui/SortableTable'
 import Spinner from '../../../components/ui/Spinner';
+import useAuthContext from '../../../hooks/useAuthContext.ts';
 import useRelationshipContext from '../../../hooks/useRelationshipContext';
+import { Relationship } from '../../../types/Relationship.ts';
 
 type FormattedRelationshipTableRow = {
   id: string;
@@ -16,9 +19,9 @@ type FormattedRelationshipTableRow = {
 }
 
 export default function RelationshipList() {
-  const { relationships } = useRelationshipContext();
+  const { user } = useAuthContext();
+  const { relationships, getRelationships, setRelationships } = useRelationshipContext();
   const [loading, setLoading] = useState<boolean>(true);
-  const [formatted, setFormatted] = useState<FormattedRelationshipTableRow[] | null>(null);
   const columns: SortTableColumn<FormattedRelationshipTableRow>[] = [
     { key: 'primary_image', label: '', styles: { width: '50px' }, type: 'image', alt: 'name', className: 'relation-image' },
     {
@@ -38,24 +41,30 @@ export default function RelationshipList() {
     { key: 'updated_at', label: 'Last Update', className: 'hide-sm', type: 'date' },
   ];
 
+  const formattedRows = useMemo(() => {
+    return relationships?.map((r: Relationship): FormattedRelationshipTableRow => ({
+        id: r.id || '',
+        key: r.id || '',
+        primary_image: r.primary_image?.path ?? '',
+        name: r.name,
+        type: r.type.type,
+        title: r.title,
+        health: r.health,
+        updated_at: r.updated_at ?? '',
+      })) ?? []
+  }, [relationships]);
+
   useEffect(() => {
-    if (relationships) {
-      const rows: FormattedRelationshipTableRow[] = relationships.map((r) => {
-        return {
-          'id': r.id || '',
-          'key': r.id || '',
-          'primary_image': r.primary_image?.path ?? '',
-          'name': r.name,
-          'type': r.type.type,
-          'title': r.title,
-          'health': r.health,
-          'updated_at': r.updated_at ?? '',
-        };
-      });
-      setFormatted(rows);
+    if (user) {
+      user.relationships ? setRelationships(user.relationships) : getRelationships();
+    }
+  }, [user, getRelationships, setRelationships]);
+
+  useEffect(() => {
+    if (formattedRows) {
       setLoading(false);
     }
-  }, [relationships]);
+  }, [formattedRows]);
 
   if (loading) {
     return (
@@ -65,14 +74,14 @@ export default function RelationshipList() {
     );
   }
 
-  if (!formatted?.length) {
+  if (!formattedRows?.length && !loading) {
     return <div className="alert message">No Relationships Found.</div>;
   }
 
   return (
     <>
       <section className="section">
-        <SortableTable columns={columns} data={formatted} />
+        <SortableTable columns={columns} data={formattedRows} />
       </section>
     </>
   );
