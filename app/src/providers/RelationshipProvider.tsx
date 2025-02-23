@@ -91,17 +91,11 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
     }
   }, [relationships, setStatus]);
 
-  let count = 0;
   useEffect(() => {
-    if (!relationships) {
-      // console.log(++count);
-      // console.log('call relationships');
-      // getRelationships();
-    }
     if (!types) {
       getTypes();
     }
-  }, [getRelationships, count, getTypes, relationships, types]);
+  }, [getTypes, types]);
 
   return (
     <RelationshipContext.Provider value={{
