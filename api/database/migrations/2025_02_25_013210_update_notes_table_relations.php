@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('notes', function (Blueprint $table) {
+            $table->dropForeign(['action_item_id']);
             $table->foreignId('action_item_id')->change()->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('reminder_id')->after('action_item_id')->nullable()->constrained()->cascadeOnDelete();
         });
