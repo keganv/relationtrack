@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 import { checkFileType } from '../lib/helpers';
-import ActionItem from './ActionItem.ts';
-import { ApiFile } from './ApiFile.ts';
+import type { ActionItem } from './ActionItem.ts';
+import type { ApiFile } from './ApiFile.ts';
 
 export interface Relationship {
   action_items?: ActionItem[];

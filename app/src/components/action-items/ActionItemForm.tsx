@@ -1,12 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 
 import useApi from '../../hooks/useApi.ts';
 import useGlobalContext from '../../hooks/useGlobalContext';
 import { removeUndefined } from '../../lib/helpers';
-import ActionItem, { ActionItemFormData, actionItemFormSchema } from '../../types/ActionItem';
-import { Relationship } from '../../types/Relationship';
+import { type ActionItem, type ActionItemFormData, actionItemFormSchema } from '../../types/ActionItem';
+import { type Relationship } from '../../types/Relationship';
 import { Checkbox, Input } from '../form/Input.tsx';
 import Spinner from '../ui/Spinner.tsx';
 
@@ -41,12 +40,6 @@ export default function ActionItemForm({relationship, actionItem, close, updateA
     }
     close(); // Close the form after saving
   }
-
-  useEffect(() => {
-    if (apiErrors) {
-      console.log(apiErrors);
-    }
-  }, [apiErrors]);
 
   return (
     <div className="flex flex-col h-full">
