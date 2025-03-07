@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { FallbackProps } from 'react-error-boundary';
+import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import Modal from 'react-modal';
 
 import RelationshipForm from './components/RelationshipForm';

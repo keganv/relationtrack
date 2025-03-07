@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 
-import { AuthFormErrors, LoginFields, NewPasswordFields, RegisterFields } from '../types/AuthTypes';
-import User from '../types/User';
+import type { AuthFormErrors, LoginFields, NewPasswordFields, RegisterFields } from '../types/AuthTypes';
+import type { User } from '../types/User';
 
 export interface AuthContextValues {
   authenticated: boolean;

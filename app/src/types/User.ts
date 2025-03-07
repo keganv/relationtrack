@@ -1,7 +1,7 @@
-import { ApiFile } from './ApiFile';
-import { Relationship } from './Relationship.ts';
+import type { ApiFile } from './ApiFile';
+import type { Relationship } from './Relationship';
 
-type User = {
+export type User = {
   first_name?: string;
   last_name?: string;
   full_name?: string;
@@ -14,5 +14,3 @@ type User = {
   profile_image?: ApiFile;
   relationships?: Relationship[];
 }
-
-export default User;

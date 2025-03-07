@@ -1,13 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MouseEvent } from 'react';
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import type { MouseEvent } from 'react';
+import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router";
 import { z } from "zod";
 
 import { Input } from "../components/form/Input";
 import Spinner from "../components/ui/Spinner";
 import useAuthContext from "../hooks/useAuthContext";
-import { LoginFields } from "../types/AuthTypes";
+import type { LoginFields } from "../types/AuthTypes";
 
 const schema = z.object({
   email: z.string().email('Email address is not valid.'),

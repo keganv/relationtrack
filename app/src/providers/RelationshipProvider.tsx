@@ -1,9 +1,11 @@
-import { ReactNode, useCallback,useEffect, useState } from 'react';
+import { AxiosError } from 'axios';
+import { type ReactNode, useCallback,useEffect, useState } from 'react';
 
 import RelationshipContext from '../contexts/RelationshipContext';
+import useAuthContext from '../hooks/useAuthContext.ts';
 import useGlobalContext from '../hooks/useGlobalContext.ts';
 import axios from '../lib/axios';
-import { Relationship, RelationshipFormData, RelationshipFormErrors } from '../types/Relationship';
+import type { Relationship, RelationshipFormData, RelationshipFormErrors } from '../types/Relationship';
 
 type RelationshipProviderProps = {
   children: ReactNode;
@@ -11,19 +13,24 @@ type RelationshipProviderProps = {
 
 function RelationshipProvider ({ children }: RelationshipProviderProps) {
   const { handleError, setStatus } = useGlobalContext();
+  const { user } = useAuthContext();
   const [relationships, setRelationships] = useState<Relationship[]|null>(null);
   const [selectedRelationship, setSelectedRelationship] = useState<Relationship|null>(null);
   const [types, setTypes] = useState(null);
   const [formErrors, setFormErrors] = useState<RelationshipFormErrors>(null);
 
   const getRelationships = useCallback(async () => {
-    try {
-      const response = await axios.get('/api/relationships');
-      setRelationships(response.data);
-    } catch (e) {
-      handleError(e);
+    if (user?.relationships) {
+      setRelationships(user.relationships);
+    } else {
+      try {
+        const response = await axios.get('/api/relationships');
+        setRelationships(response.data);
+      } catch (e) {
+        handleError(e);
+      }
     }
-  }, [handleError]);
+  }, [handleError, user?.relationships]);
 
   const getTypes = useCallback(async () => {
     try {
@@ -52,9 +59,13 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
       const url = data.id ? `/api/relationships/${data.id}` : '/api/relationships';
       const response = await axios.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' }});
       setStatus({type: 'success', message: response.data.message});
-      await getRelationships();
+
+      return response.data;
+      // await getRelationships();
     } catch (error) {
       handleError(error, setFormErrors);
+
+      return error as AxiosError;
     }
   };
 
@@ -81,6 +92,9 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
   };
 
   const setRelationshipById = useCallback((id: string) => {
+    if (!relationships) {
+      getRelationships();
+    }
     if (relationships) {
       const relationship = relationships?.find(r => r.id === id);
       if (relationship) {
@@ -89,13 +103,17 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
         setStatus({type: 'error', message: 'No relationship found.'})
       }
     }
-  }, [relationships, setStatus]);
+  }, [getRelationships, relationships, setStatus]);
 
   useEffect(() => {
     if (!types) {
       getTypes();
     }
   }, [getTypes, types]);
+
+  useEffect(() => {
+    return () => setFormErrors(null);
+  }, [selectedRelationship]);
 
   return (
     <RelationshipContext.Provider value={{
@@ -105,6 +123,7 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
       setRelationships,
       types,
       formErrors,
+      setFormErrors,
       convertRelationshipToFormData,
       selectedRelationship,
       setSelectedRelationship,

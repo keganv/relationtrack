@@ -1,11 +1,11 @@
-import { ReactNode, useCallback, useEffect, useReducer } from 'react';
+import { type ReactNode, useCallback, useEffect, useReducer } from 'react';
 import { useNavigate } from 'react-router';
 
 import AuthContext from '../contexts/AuthContext';
 import useGlobalContext from '../hooks/useGlobalContext';
 import axios from '../lib/axios';
 import { authReducer } from '../reducers/authReducer';
-import { AuthFormErrors, AuthState, LoginFields, NewPasswordFields } from '../types/AuthTypes';
+import type { AuthFormErrors, AuthState, LoginFields, NewPasswordFields } from '../types/AuthTypes';
 
 const defaultAuthState: AuthState = {
   authenticated: false,

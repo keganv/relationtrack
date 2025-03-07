@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-type ActionItem = {
+export type ActionItem = {
   action: string;
   complete?: boolean;
   created_at: string;
@@ -17,5 +17,3 @@ export const actionItemFormSchema = z.object({
 });
 
 export type ActionItemFormData = z.infer<typeof actionItemFormSchema>;
-
-export default ActionItem;

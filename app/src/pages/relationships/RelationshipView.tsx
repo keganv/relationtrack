@@ -4,15 +4,15 @@ import { useLocation } from 'react-router';
 import { Tab, TabList, TabPanel,Tabs } from 'react-tabs';
 
 import ActionItems from '../../components/action-items/ActionItems';
+import Image from '../../components/ui/Image.tsx';
 import Spinner from '../../components/ui/Spinner';
 import Tooltip from '../../components/ui/Tooltip';
 import useRelationshipContext from '../../hooks/useRelationshipContext';
-import { ApiFile } from '../../types/ApiFile.ts';
+import type { ApiFile } from '../../types/ApiFile.ts';
 import RelationshipDetails from './components/RelationshipDetails';
 import RelationshipForm from './components/RelationshipForm';
 
 import '../../styles/relationship.scss';
-import Image from '../../components/ui/Image.tsx';
 
 export default function RelationshipView() {
   const {
@@ -29,6 +29,7 @@ export default function RelationshipView() {
   const apiUrl = `${import.meta.env.VITE_API_URL}/api/`;
   const setPrimaryImage = (path: string, id: string) => {
     if (primaryImageRef.current) {
+      console.log(primaryImageRef.current);
       primaryImageRef.current.src = path;
       primaryImageRef.current.setAttribute('data-id', id);
     }
@@ -39,6 +40,7 @@ export default function RelationshipView() {
   }, [location, setRelationshipById]);
 
   useEffect(() => {
+    console.log(selectedRelationship);
     setUpRelationshipData();
     // Reset the selected relationship when the component unmounts
     return () => setSelectedRelationship(null);
@@ -63,7 +65,7 @@ export default function RelationshipView() {
       <div className="flex flex-wrap">
         <div id="relationship-images-container">
           <div id="primary-image-container" className="section">
-            {selectedRelationship.primary_image &&
+            {selectedRelationship.primary_image ?
               <>
                 <img ref={primaryImageRef}
                      src={`${apiUrl}${selectedRelationship.primary_image?.path}`}
@@ -76,13 +78,11 @@ export default function RelationshipView() {
                   <i className="fa-solid fa-file-arrow-up"></i>
                 </button>
                 <Tooltip elId="primary-image-button" message={`Make this the primary image For ${selectedRelationship?.name}.`} position="right" />
-              </>
-            }
-            {!selectedRelationship.primary_image &&
+              </> :
               <img ref={primaryImageRef} src="/images/generic-user.jpg" alt="No Primary Image"/>
             }
           </div>
-          <div className="section mt-3">
+          <div className="section mt-3 mb-3">
             <ul className="flex -mx-1">
               {selectedRelationship.files?.map((file: ApiFile) => (
                 <li key={file.id} className="w-1/3 h-full mx-1 relative bg-slate-400 animate-pulse">

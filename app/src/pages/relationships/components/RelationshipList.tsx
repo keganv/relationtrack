@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router';
 
-import SortableTable, { SortTableColumn } from '../../../components/ui/SortableTable'
+import SortableTable, { type SortTableColumn } from '../../../components/ui/SortableTable'
 import Spinner from '../../../components/ui/Spinner';
 import useAuthContext from '../../../hooks/useAuthContext.ts';
 import useRelationshipContext from '../../../hooks/useRelationshipContext';
-import { Relationship } from '../../../types/Relationship.ts';
+import { type Relationship } from '../../../types/Relationship.ts';
 
 type FormattedRelationshipTableRow = {
   id: string;

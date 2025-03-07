@@ -1,12 +1,12 @@
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 
+import { Input } from '../components/form/Input';
 import Spinner from '../components/ui/Spinner';
 import useAuthContext from '../hooks/useAuthContext';
-import { Input } from '../components/form/Input';
-import { NewPasswordFields } from '../types/AuthTypes.ts';
+import type { NewPasswordFields } from '../types/AuthTypes.ts';
 
 
 const schema = z.object({

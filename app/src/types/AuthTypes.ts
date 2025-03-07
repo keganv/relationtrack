@@ -1,4 +1,4 @@
-import User from './User.ts';
+import type { User } from './User.ts';
 
 export type AuthState = {
   authenticated: boolean; // Defaults to false for initial page loads

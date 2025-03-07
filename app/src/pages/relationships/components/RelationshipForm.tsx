@@ -1,12 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import { AxiosError } from 'axios';
+import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 
 import { Input } from '../../../components/form/Input';
 import ImageUploader from '../../../components/ui/ImageUploader';
 import Spinner from '../../../components/ui/Spinner';
 import useRelationshipContext from '../../../hooks/useRelationshipContext';
 import { removeUndefined } from '../../../lib/helpers.ts';
-import { Relationship,RelationshipFormData, relationshipFormSchema } from '../../../types/Relationship';
+import { type Relationship, type RelationshipFormData, relationshipFormSchema } from '../../../types/Relationship';
 
 type RelationshipFormProps = {
   relationship?: Relationship;
@@ -29,8 +30,8 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
 
   const handleFormSubmit: SubmitHandler<RelationshipFormData> = async (data: RelationshipFormData) => {
     const cleaned = removeUndefined<RelationshipFormData>(data);
-    await save(cleaned);
-    if (!apiErrors) {
+    const response = await save(cleaned);
+    if (!(response instanceof AxiosError)) {
       cancel(); // Close the form after a successful save.
     }
   }

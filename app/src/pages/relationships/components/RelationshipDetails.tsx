@@ -1,5 +1,5 @@
-import { Relationship } from '../../../types/Relationship';
 import Tooltip from '../../../components/ui/Tooltip.tsx';
+import type { Relationship } from '../../../types/Relationship';
 
 type RelationshipDetailsProps = { relationship: Relationship; }
 export default function RelationshipDetails({relationship}: RelationshipDetailsProps) {
