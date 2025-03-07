@@ -1,9 +1,10 @@
-import { createContext } from 'react';
+import { AxiosError } from 'axios';
+import React, { createContext } from 'react';
 
-import { Relationship, RelationshipFormData, RelationshipFormErrors } from '../types/Relationship';
+import type { Relationship, RelationshipFormData, RelationshipFormErrors } from '../types/Relationship';
 
 export type RelationshipContextValues = {
-  save: (data: RelationshipFormData) => void;
+  save: (data: RelationshipFormData) => Promise<{message: string, data: Relationship}|AxiosError>;
   relationships: Relationship[]|null;
   getRelationships: () => Promise<void>;
   setRelationships: React.Dispatch<React.SetStateAction<Relationship[] | null>>;
@@ -13,6 +14,7 @@ export type RelationshipContextValues = {
   setPrimaryImageForRelationship: (id: string) => void;
   types: { id: number, type: string }[]|null;
   formErrors: RelationshipFormErrors|null;
+  setFormErrors: React.Dispatch<React.SetStateAction<RelationshipFormErrors | null>>;
   convertRelationshipToFormData: (data: Relationship) => RelationshipFormData;
 }
 

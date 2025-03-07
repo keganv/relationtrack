@@ -1,19 +1,20 @@
-import { createBrowserRouter, RouteObject } from 'react-router';
+import { createBrowserRouter, type RouteObject } from 'react-router';
+
+import App from './App.tsx';
+import AuthLayout from './components/layouts/AuthLayout.tsx';
+import GuestLayout from './components/layouts/GuestLayout.tsx';
 import Dashboard from './pages/Dashboard';
-import Home from './pages/static/Home';
+import ForgotPassword from './pages/ForgotPassword.tsx';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import AuthLayout from './components/layouts/AuthLayout.tsx';
-import RelationshipOutlet from './pages/relationships/RelationshipOutlet.tsx';
 import RelationshipIndex from './pages/relationships/RelationshipIndex.tsx';
+import RelationshipOutlet from './pages/relationships/RelationshipOutlet.tsx';
 import RelationshipView from './pages/relationships/RelationshipView.tsx';
-import GuestLayout from './components/layouts/GuestLayout.tsx';
-import ForgotPassword from './pages/ForgotPassword.tsx';
 import ResetPassword from './pages/ResetPassword.tsx';
 import CookiePolicy from './pages/static/CookiePolicy.tsx';
-import Terms from './pages/static/Terms.tsx';
+import Home from './pages/static/Home';
 import NotFound from './pages/static/NotFound.tsx';
-import App from './App.tsx';
+import Terms from './pages/static/Terms.tsx';
 
 const routes: RouteObject[] = [
   {

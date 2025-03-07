@@ -1,7 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import Register from '../pages/Register';
+import { MemoryRouter } from 'react-router';
+
 import useAuthContext from '../hooks/useAuthContext';
+import Register from '../pages/Register';
 import AuthProvider from '../providers/AuthProvider';
 
 // Mock the Spinner component and useAuthContext hook

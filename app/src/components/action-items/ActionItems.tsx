@@ -1,12 +1,12 @@
 import { useCallback, useState } from 'react';
 import Modal from 'react-modal';
 
-import { Relationship } from '../../types/Relationship';
-import ActionItem from '../../types/ActionItem';
-import ActionItemForm from './ActionItemForm';
-import SortableTable, { SortTableColumn } from '../ui/SortableTable';
 import useApi from '../../hooks/useApi.ts';
 import useGlobalContext from '../../hooks/useGlobalContext.ts';
+import type { ActionItem } from '../../types/ActionItem';
+import type { Relationship } from '../../types/Relationship';
+import SortableTable, { type SortTableColumn } from '../ui/SortableTable';
+import ActionItemForm from './ActionItemForm';
 
 type ActionItemRow = { key: number | string } & ActionItem;
 type ActionItemProps = { relationship: Relationship };

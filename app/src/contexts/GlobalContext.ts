@@ -1,6 +1,7 @@
-import { createContext } from 'react';
 import { AxiosError } from 'axios';
-import { Status } from '../types/Status.ts';
+import { createContext } from 'react';
+
+import type { Status } from '../types/Status.ts';
 
 export interface GlobalContextType {
   doLogout: boolean;

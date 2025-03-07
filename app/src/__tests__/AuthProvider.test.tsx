@@ -1,8 +1,8 @@
 import { render, screen, act } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import AuthProvider from "../providers/AuthProvider";
-import axios from "../lib/axios"
-import useAuthContext from "../hooks/useAuthContext.ts";
+import axios from "../lib/axios";
+import useAuthContext from "../hooks/useAuthContext";
 
 jest.mock('../lib/axios');
 

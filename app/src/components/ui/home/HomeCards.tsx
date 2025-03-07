@@ -28,7 +28,7 @@ export default function HomeCards() {
         <img src="/images/child-swing.jpg" alt="Child on swing set" loading="lazy" />
         <p className="reveal">
           There are no second chances to raise your kids.
-          New born, or fully grown, your children are a precious gift.
+          Newborn, or fully grown, your children are a precious gift.
         </p>
       </div>
       <div className="home-card">

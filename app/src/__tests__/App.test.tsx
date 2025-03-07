@@ -1,8 +1,9 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import { routes } from '../routes.ts';
+
 import axios from "../lib/axios";
+import { routes } from '../routes.ts';
 
 jest.mock('../lib/axios');
 
@@ -18,7 +19,7 @@ describe('App', () => {
 
       const router = createBrowserRouter(routes);
       render(<RouterProvider router={router} />);
-      
+
       // Wait for the AuthProvider Context to be called
       // and avoid the "test was not wrapped in act(...)" errors
       await waitFor(() => expect(mockAxios.get).toHaveBeenCalled());

@@ -1,4 +1,4 @@
-import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
+import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { Toaster } from 'react-hot-toast';
 import { Outlet } from 'react-router';
 
