@@ -5,7 +5,7 @@ import RelationshipContext, { type RelationshipContextValues } from '../contexts
 export default function useRelationshipContext(): RelationshipContextValues {
   const context = useContext(RelationshipContext);
 
-  if (context === undefined) {
+  if (!Object.keys(context).length) {
     throw new Error("useRelationshipContext must be used within a RelationshipProvider.");
   }
 
