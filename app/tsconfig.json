@@ -6,6 +6,7 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
+    "removeComments": true,
 
     /* Bundler mode */
     "esModuleInterop": true,
