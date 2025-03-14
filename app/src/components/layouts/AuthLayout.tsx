@@ -1,15 +1,24 @@
-import { useState } from 'react';
-import { Navigate, Outlet } from 'react-router';
-import MainNav from '../ui/MainNav';
+import { useEffect, useState } from 'react';
+import { useNavigate, Outlet } from 'react-router';
+
 import useAuthContext from '../../hooks/useAuthContext';
 import useGlobalContext from '../../hooks/useGlobalContext';
 import RelationshipProvider from '../../providers/RelationshipProvider';
+import MainNav from '../ui/MainNav';
 import Spinner from '../ui/Spinner.tsx';
 
 export default function AuthLayout() {
   const { authenticated, checkingAuth, doAuthCheck } = useAuthContext();
   const { setStatus } = useGlobalContext();
   const [navOpen, setNavToggle] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!checkingAuth && !authenticated && doAuthCheck) {
+      setStatus({ type: 'error', message: 'You must be logged in.' });
+      navigate('/login');
+    }
+  }, [checkingAuth, authenticated, doAuthCheck, setStatus, navigate]);
 
   if (checkingAuth && !authenticated) {
     return (
@@ -19,16 +28,7 @@ export default function AuthLayout() {
     );
   }
 
-  if (!checkingAuth && !authenticated && doAuthCheck) {
-    setStatus({type: 'error', message: 'You must be logged in.'});
-    return (
-      <div className="flex h-screen justify-center items-center">
-        <Navigate to="/login" />
-      </div>
-    );
-  }
-
-  return authenticated && (
+  return authenticated ? (
     <RelationshipProvider>
       <div className="admin">
         <MainNav navToggled={navOpen} setNavToggle={setNavToggle} />
@@ -37,5 +37,5 @@ export default function AuthLayout() {
         </main>
       </div>
     </RelationshipProvider>
-  )
+  ) : null
 }
