@@ -13,4 +13,5 @@ export type User = {
   email_verified_at?: string;
   profile_image?: ApiFile;
   relationships?: Relationship[];
+  remember?: boolean;
 }
