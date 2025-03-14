@@ -40,7 +40,7 @@ const AuthProvider = ({children}: AuthProviderProps) => {
 
   const login = useCallback(async (data: LoginFields) => {
     try {
-      await csrf();
+      await csrf(); // DO NOT REMOVE - Must receive/set CSRF Cookie
       const response = await axios.post('/api/login', data);
       response.data.user ? dispatch({ type: 'LOGIN_SUCCESS', payload: response.data.user }) : await getUser();
       navigate('/dashboard');
@@ -101,9 +101,12 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     }
   }
 
-  const logout = useCallback(async () => {
+  /**
+   * If clearRemember is passed as <boolean> true, then send remember as false to the API
+   */
+  const logout = useCallback(async (clearRemember?: boolean) => {
     try {
-      await axios.post('/api/logout');
+      await axios.post('/api/logout', null, clearRemember ? { params: { remember: false } } : undefined);
       dispatch({type: 'LOGOUT'});
       document.cookie = "XSRF-TOKEN=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/"; // Remove XSRF-TOKEN cookie
       navigate('/');
@@ -120,7 +123,6 @@ const AuthProvider = ({children}: AuthProviderProps) => {
       const url = "/api/update-profile-image";
       formData.append('profile_image', image as File);
       const response = await axios.post(url, formData, {headers: {'Content-Type': 'multipart/form-data'}});
-      // await getUser();
       setStatus({ type: 'success', message: response.data?.message });
     } catch (error) {
       handleError(error);
