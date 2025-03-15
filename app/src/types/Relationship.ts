@@ -32,7 +32,7 @@ export const relationshipFormSchema = z.object({
     .optional(),
   description: z.string().max(500, 'Maximum of 500 characters.').nullable(),
   images: z.array(z.instanceof(File))
-    .refine((files) => files.every((f) => f.size < 250_000_000), { message: 'Max 250 kB upload size.' })
+    .refine((files) => files.every((f) => f.size < 250_000_000), { message: 'Max 1MB upload size.' })
     .refine((files) => files.every(checkFileType))
     .optional()
 });
@@ -47,4 +47,5 @@ export type RelationshipFormErrors = {
   health?: string[];
   title?: string[];
   images?: string[];
+  [key: `images.${number}`]: string[] | undefined;
 } | null
