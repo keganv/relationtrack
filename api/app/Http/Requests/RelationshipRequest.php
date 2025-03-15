@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Relationship;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Gate;
 
 final class RelationshipRequest extends FormRequest
 {
@@ -14,11 +16,31 @@ final class RelationshipRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        if (!$relationship = $this->route('relationship')) {
-            return false;
+        $relationship = $this->route('relationship');
+
+        if (!$relationship) {
+            $this->user->can('create', Relationship::class);
         }
 
-        return $this->user()->can('view', $relationship);
+        $method = $this->method();
+        $action = 'view';
+
+        if ($method === 'PUT' || $method === 'PATCH') {
+            $action = 'update';
+        } elseif ($method === 'DELETE') {
+            $action = 'delete';
+        }
+
+        /**
+         * @see https://laravel.com/docs/12.x/authorization#policy-responses
+         */
+        $response = Gate::inspect($action, $relationship);
+
+        if ($response->denied()) {
+            throw new AuthorizationException($response->message());
+        }
+
+        return $response->allowed();
     }
 
     /**

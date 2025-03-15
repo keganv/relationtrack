@@ -11,7 +11,7 @@ export default function useApi() {
   const sendData = useCallback(async <T extends object>(url: string, payload: T, method: 'POST' | 'PUT') => {
     setIsLoading(true);
     try {
-      const { data } = await axios({ method: method, url: url, data: payload });
+      const { data } = await axios({ url: url, method: method, data: payload });
       setApiErrors(undefined);
       return data;
     } catch (e) {

@@ -11,9 +11,11 @@ class RelationshipPolicy
     /**
      * Determine whether the user can view the Relationship.
      */
-    public function view(User $user, Relationship $relationship): bool
+    public function view(User $user, Relationship $relationship): Response
     {
-        return $user->id === $relationship->user_id;
+        return $user->id === $relationship->user_id
+            ? Response::allow()
+            : Response::deny('You are not authorized to view this relationship.');
     }
 
     /**

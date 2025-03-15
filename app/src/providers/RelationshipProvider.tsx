@@ -57,7 +57,12 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
       }
 
       const url = data.id ? `/api/relationships/${data.id}` : '/api/relationships';
-      const response = await axios.post(url, formData, { headers: { 'Content-Type': 'multipart/form-data' }});
+      const response = await axios({
+        url: url,
+        data: formData,
+        method: data.id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       setStatus({type: 'success', message: response.data.message});
 
       return response.data;

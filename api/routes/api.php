@@ -25,7 +25,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/relationships', [RelationshipController::class, 'index']);
     Route::get('/relationships/types', [RelationshipController::class, 'getTypes']);
     Route::post('/relationships', [RelationshipController::class, 'store']);
-    Route::post('/relationships/{relationship}', [RelationshipController::class, 'update']);
+    Route::put('/relationships/{relationship}', [RelationshipController::class, 'update']);
     Route::post('/relationships/{relationship}/primary-image', [RelationshipController::class, 'updatePrimaryImage']);
     Route::delete('/relationships/{relationship}', [RelationshipController::class, 'delete']);
 });
