@@ -1,5 +1,6 @@
-import { FormEvent, useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import { Link } from 'react-router';
+
 import Spinner from '../components/ui/Spinner';
 import useAuthContext from '../hooks/useAuthContext';
 

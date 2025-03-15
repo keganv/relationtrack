@@ -1,4 +1,5 @@
-import { FormEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
+
 import Spinner from "../components/ui/Spinner";
 import useAuthContext from "../hooks/useAuthContext";
 

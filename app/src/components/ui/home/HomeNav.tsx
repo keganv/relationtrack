@@ -1,5 +1,6 @@
-import { FormEvent } from "react";
+import type { FormEvent } from "react";
 import { Link } from "react-router";
+
 import useAuthContext from "../../../hooks/useAuthContext.ts";
 
 export default function HomeNav() {

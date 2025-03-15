@@ -1,6 +1,7 @@
+import type { FormEvent } from "react";
 import { Link } from "react-router";
+
 import useAuthContext from "../../../hooks/useAuthContext.ts";
-import {FormEvent} from "react";
 
 export default function Banners() {
   const { logout, user } = useAuthContext();

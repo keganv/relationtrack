@@ -1,5 +1,6 @@
-import { FormEvent, useState } from 'react';
-import { NavLink, Link } from 'react-router';
+import { type FormEvent, useState } from 'react';
+import { Link,NavLink } from 'react-router';
+
 import useAuthContext from '../../hooks/useAuthContext';
 
 type MainNavProps = {
