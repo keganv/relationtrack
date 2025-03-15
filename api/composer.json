@@ -23,9 +23,9 @@
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.1",
         "phpstan/phpstan": "^2.0",
-        "phpunit/phpunit": "^11.2",
+        "phpunit/phpunit": "^11.5",
         "spatie/laravel-ignition": "^2.0",
-        "symfony/console": "^7.0"
+        "symfony/console": "^7.2"
     },
     "autoload": {
         "psr-4": {
