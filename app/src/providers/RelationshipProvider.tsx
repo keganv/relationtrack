@@ -44,7 +44,9 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
   const save = async (data: RelationshipFormData) => {
     setFormErrors(null);
     try {
+      const url = data.id ? `/api/relationships/${data.id}` : '/api/relationships';
       const formData = new FormData();
+      if (data.id) formData.append('_method', 'PUT'); // THIS IS CRUCIAL TO WORK WITH API
 
       for (const [key, value] of Object.entries(data)) {
         if (key === 'images' && value && data.images) {
@@ -56,13 +58,13 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
         }
       }
 
-      const url = data.id ? `/api/relationships/${data.id}` : '/api/relationships';
       const response = await axios({
         url: url,
         data: formData,
-        method: data.id ? 'PUT' : 'POST',
+        method: 'POST',
         headers: { 'Content-Type': 'multipart/form-data' }
       });
+
       setStatus({type: 'success', message: response.data.message});
 
       return response.data;

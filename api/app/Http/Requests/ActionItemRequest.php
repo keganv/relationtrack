@@ -35,7 +35,7 @@ final class ActionItemRequest extends FormRequest
         return [
             'action' => 'required|min:10|max:50',
             'complete' => 'boolean',
-            'relationship_id' => ['required', 'string'],
+            'relationship_id' => 'required|string',
         ];
     }
 

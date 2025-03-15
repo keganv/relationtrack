@@ -31,16 +31,9 @@ class RelationshipController extends Controller
         return response()->json($relationships, Response::HTTP_OK);
     }
 
-    /**
-     * @throws AuthorizationException
-     */
     public function store(RelationshipRequest $request)
     {
-        $relationship = new Relationship();
-
-        $this->authorize('create', $relationship);
-
-        return $this->save($request, $relationship);
+        return $this->save($request, new Relationship());
     }
 
     public function update(RelationshipRequest $request, Relationship $relationship)
@@ -66,9 +59,11 @@ class RelationshipController extends Controller
 
     private function save(RelationshipRequest $request, Relationship $relationship)
     {
+        $validated = $request->validated();
+
         // Remove the id to pass fillable mass assignment
-        $data = array_filter($request->request->all(), fn ($key) => $key !== 'id', ARRAY_FILTER_USE_KEY);
-        $relationship->fill([...$data]);
+        // $data = array_filter($request->request->all(), fn ($key) => $key !== 'id', ARRAY_FILTER_USE_KEY);
+        $relationship->fill([...$validated]);
 
         try {
             if ($request->file('images')) {
