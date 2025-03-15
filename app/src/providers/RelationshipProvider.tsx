@@ -46,7 +46,9 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
     try {
       const url = data.id ? `/api/relationships/${data.id}` : '/api/relationships';
       const formData = new FormData();
-      if (data.id) formData.append('_method', 'PUT'); // THIS IS CRUCIAL TO WORK WITH API
+
+      // THIS IS CRUCIAL TO WORK WITH API - Updates must be PUT
+      if (data.id) formData.append('_method', 'PUT');
 
       for (const [key, value] of Object.entries(data)) {
         if (key === 'images' && value && data.images) {
@@ -98,9 +100,9 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
     }
   };
 
-  const setRelationshipById = useCallback((id: string) => {
+  const setRelationshipById = useCallback(async (id: string) => {
     if (!relationships) {
-      getRelationships();
+      await getRelationships();
     }
     if (relationships) {
       const relationship = relationships?.find(r => r.id === id);
