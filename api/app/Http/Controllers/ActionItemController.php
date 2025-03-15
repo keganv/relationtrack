@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ActionItemRequest;
 use App\Models\ActionItem;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class ActionItemController extends Controller
@@ -31,7 +33,7 @@ class ActionItemController extends Controller
         return response()->noContent();
     }
 
-    private function save(ActionItem $actionItem, array $validData)
+    private function save(ActionItem $actionItem, array $validData): JsonResponse
     {
         $actionItem->fill([
             'action' => $validData['action'],
@@ -43,6 +45,6 @@ class ActionItemController extends Controller
         return response()->json([
             'message' => 'Successfully saved Action Item.',
             'data' => ActionItem::where('relationship_id', $validData['relationship_id'])->get(),
-        ], 201);
+        ], Response::HTTP_CREATED);
     }
 }
