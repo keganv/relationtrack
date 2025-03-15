@@ -125,7 +125,7 @@ export default function ImageUploader({
       {/* Error messages */}
       {errors && errors.map((error, i) => (
         <div
-          className="text-red-500 text-sm"
+          className="text-red-500 text-sm mt-1"
           key={error.replace(/\s+/g, '').substring(0, 5) + i}
           role="alert"
         >
