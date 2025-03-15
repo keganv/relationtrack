@@ -31,11 +31,12 @@ class FileService
     }
 
     /**
-     * @param  File[]  $files
+     * @param Collection<File> $files
      *
+     * @return bool
      * @throws UploadException
      */
-    public function removeFilesFromStorage(array $files): bool
+    public function removeFilesFromStorage(Collection $files): bool
     {
         foreach ($files as $file) {
             $file->delete(); // Delete the database record
@@ -109,7 +110,7 @@ class FileService
     /**
      * Returns true if the Files are saved and stored or throws an Exception response error.
      *
-     * @param  UploadedFile[]  $uploads
+     * @param  UploadedFile[] $uploads
      *
      * @throws FileException
      */
@@ -142,7 +143,8 @@ class FileService
                 );
             }
 
-            if ($upload->getSize() > 2097152) {
+            // Only allow 1MB for file size
+            if ($upload->getSize() > 1048576) {
                 throw new FileException(
                     sprintf('The file %s is too large.', $upload->getClientOriginalName()),
                     Response::HTTP_UNPROCESSABLE_ENTITY
