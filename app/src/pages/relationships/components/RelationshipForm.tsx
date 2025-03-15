@@ -128,7 +128,15 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                   ref={ref}
                   onChange={onChange}
                   value={value}
-                  errors={[...(apiErrors?.images ?? []), fieldState.error?.message ?? '']}
+                  errors={[
+                    ...(apiErrors?.images ?? []),
+                    ...(
+                      Object.keys(apiErrors ?? {})
+                        .filter((key: string) => key.startsWith('images.'))
+                        .flatMap((key: string) => apiErrors?.[key as keyof typeof apiErrors] ?? [])
+                    ),
+                    fieldState.error?.message ?? ''
+                  ]}
                 />
               )}
             />
