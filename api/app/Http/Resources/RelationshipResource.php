@@ -20,7 +20,7 @@ class RelationshipResource extends JsonResource
     {
         return [
             'action_items' => $this->whenLoaded('actionItems'),
-            'birthday' => $this->birthday->format('Y-m-d H:i:s'),
+            'birthday' => $this->birthday->format('Y-d-m'),
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
             'deleted_at' => $this->deleted_at?->format('Y-m-d H:i:s'),
             'description' => $this->description,

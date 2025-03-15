@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RelationshipRequest;
+use App\Http\Resources\RelationshipResource;
 use App\Models\File;
 use App\Models\Relationship;
 use App\Models\User;
@@ -32,7 +34,7 @@ class RelationshipController extends Controller
     /**
      * @throws AuthorizationException
      */
-    public function store(Request $request)
+    public function store(RelationshipRequest $request)
     {
         $relationship = new Relationship();
 
@@ -41,7 +43,7 @@ class RelationshipController extends Controller
         return $this->save($request, $relationship);
     }
 
-    public function update(Request $request, Relationship $relationship)
+    public function update(RelationshipRequest $request, Relationship $relationship)
     {
         // Check for both the relationship and a security test to make sure that
         // the requested relationship belongs to the user.
@@ -62,20 +64,8 @@ class RelationshipController extends Controller
         return response()->json($types, Response::HTTP_OK);
     }
 
-    private function save(Request $request, Relationship $relationship)
+    private function save(RelationshipRequest $request, Relationship $relationship)
     {
-        $request->validate([
-            'type' => 'required|exists:relationship_types,id',
-            'name' => 'required|max:55',
-            'title' => 'required|max:55',
-            'health' => 'required|numeric|min:0|max:10',
-            'birthday' => 'nullable|date|before:today',
-            'images' => 'nullable|array|max:10',
-        ], [
-            'images.max' => 'You may not upload more than 10 images per relationship.',
-            'images.*.image' => 'The file :attribute must be a valid image (jpg, jpeg, png, bmp, gif, svg, or webp).',
-        ]);
-
         // Remove the id to pass fillable mass assignment
         $data = array_filter($request->request->all(), fn ($key) => $key !== 'id', ARRAY_FILTER_USE_KEY);
         $relationship->fill([...$data]);
@@ -85,15 +75,19 @@ class RelationshipController extends Controller
                 $this->fileService->addFilesToRelationship($request->file('images'), $relationship, Auth::user());
             }
 
-            $relationship->user_id = Auth::id(); //
+            $relationship->user_id = Auth::id();
             $relationship->save();
             $successMessage = 'Your relationship was saved successfully!';
+            $relationship->load(['files', 'actionItems', 'primaryImage', 'relationshipType']);
 
-            return response()->json(['message' => $successMessage], Response::HTTP_CREATED);
+            return response()->json([
+                'data' => new RelationshipResource($relationship),
+                'message' => $successMessage
+            ], Response::HTTP_CREATED);
         } catch (\Exception $e) {
             return response()->json(
                 ['message' => $e->getMessage()],
-                $e->getCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR
+                Response::HTTP_INTERNAL_SERVER_ERROR
             );
         }
     }
