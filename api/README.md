@@ -9,7 +9,7 @@
 `vendor/bin/phpstan analyse database/ --memory-limit=1G`
 
 - Entire routes Directory:<br/>
-  `vendor/bin/phpstan analyse routes/ --memory-limit=1G`
+`vendor/bin/phpstan analyse routes/ --memory-limit=1G`
 
 - Controllers:<br/>
 `vendor/bin/phpstan analyse app/Http/Controllers --memory-limit=1G`
