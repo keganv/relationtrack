@@ -67,10 +67,16 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      setStatus({type: 'success', message: response.data.message});
+      const updatedRelationship = response.data.data;
 
-      return response.data;
-      // await getRelationships();
+      setSelectedRelationship(updatedRelationship);
+      setStatus({type: 'success', message: response.data.message});
+      setRelationships((prevRelationships) => {
+        const filteredRelations = prevRelationships?.filter((r: Relationship) => r.id !== updatedRelationship.id);
+        return [...(filteredRelations ?? []), updatedRelationship];
+      });
+
+      return updatedRelationship;
     } catch (error) {
       handleError(error, setFormErrors);
 
@@ -121,6 +127,7 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
   }, [getTypes, types]);
 
   useEffect(() => {
+    // Reset the form errors when the selected relationship changes
     return () => setFormErrors(null);
   }, [selectedRelationship]);
 

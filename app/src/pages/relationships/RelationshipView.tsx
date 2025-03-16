@@ -27,24 +27,24 @@ export default function RelationshipView() {
   const [imageModal, setImageModal] = useState<boolean>(false);
 
   const apiUrl = `${import.meta.env.VITE_API_URL}/api/`;
+
   const setPrimaryImage = (path: string, id: string) => {
     if (primaryImageRef.current) {
-      console.log(primaryImageRef.current);
       primaryImageRef.current.src = path;
       primaryImageRef.current.setAttribute('data-id', id);
     }
   };
+
   const setUpRelationshipData = useCallback(() => {
     const id = location.pathname.split('/')[2];
     if (id) setRelationshipById(id);
   }, [location, setRelationshipById]);
 
   useEffect(() => {
-    console.log(selectedRelationship);
     setUpRelationshipData();
     // Reset the selected relationship when the component unmounts
     return () => setSelectedRelationship(null);
-  }, [setUpRelationshipData, setSelectedRelationship]);
+  }, [setUpRelationshipData, setSelectedRelationship, selectedRelationship]);
 
   if (!selectedRelationship) {
     return (
@@ -83,13 +83,13 @@ export default function RelationshipView() {
             }
           </div>
           <div className="section mt-3 mb-3">
-            <ul className="flex -mx-1">
+            <ul className="grid grid-cols-3 gap-3">
               {selectedRelationship.files?.map((file: ApiFile) => (
-                <li key={file.id} className="w-1/3 h-full mx-1 relative bg-slate-400 animate-pulse">
+                <li key={file.id} className="flex justify-center items-center overflow-hidden aspect-square relative bg-slate-400 animate-pulse">
                   <Image
                     alt={file.name}
-                    className="object-fit-fill"
-                    data-id={file.id}
+                    className="object-cover"
+                    dataId={file.id}
                     src={`${apiUrl}${file.path}`}
                     onClick={() => setPrimaryImage(`${apiUrl}${file.path}`, `${file.id}`)}
                     loading="lazy"
