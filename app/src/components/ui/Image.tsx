@@ -3,6 +3,7 @@ type ImageProps = {
   className?: string;
   onClick?: () => void;
   dataId?: string | number;
+  id?: string;
   loading?: 'eager' | 'lazy';
   src: string;
 }
@@ -16,10 +17,15 @@ export default function Image(props: ImageProps) {
 
   return (
     <img
-      {...props}
-      {...(props.dataId && { 'data-id': props.dataId })}
-      {...(props.onClick && { onClick: props.onClick })}
+      src={props.src}
+      id={props.id}
+      data-id={props.dataId}
+      alt={props.alt}
+      className={props.className}
+      loading={props.loading ?? 'lazy'}
+      onClick={props.onClick}
       onLoad={removeLoadingPulse}
+      onError={removeLoadingPulse}
     />
   );
 }
