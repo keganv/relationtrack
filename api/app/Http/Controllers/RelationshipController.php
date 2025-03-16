@@ -16,6 +16,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class RelationshipController extends Controller
 {
@@ -38,15 +39,6 @@ class RelationshipController extends Controller
 
     public function update(RelationshipRequest $request, Relationship $relationship)
     {
-        // Check for both the relationship and a security test to make sure that
-        // the requested relationship belongs to the user.
-        if (! $relationship || ! $this->authorize('update', $relationship)) {
-            return response()->json(
-                ['message' => 'The requested relationship does not exist.'],
-                Response::HTTP_NOT_FOUND
-            );
-        }
-
         return $this->save($request, $relationship);
     }
 
@@ -57,16 +49,19 @@ class RelationshipController extends Controller
         return response()->json($types, Response::HTTP_OK);
     }
 
-    private function save(RelationshipRequest $request, Relationship $relationship)
+    private function save(RelationshipRequest $request, Relationship $relationship): JsonResponse
     {
-        $validated = $request->validated();
+        // Remove fields that should be excluded from mass assignment
+        $data = array_filter(
+            $request->all(),
+            fn ($key) => !in_array($key, ['images', 'id', '_method']),
+            ARRAY_FILTER_USE_KEY
+        );
 
-        // Remove the id to pass fillable mass assignment
-        // $data = array_filter($request->request->all(), fn ($key) => $key !== 'id', ARRAY_FILTER_USE_KEY);
-        $relationship->fill([...$validated]);
+        $relationship->fill([...$data]);
 
         try {
-            if ($request->file('images')) {
+            if ($request->hasFile('images')) {
                 $this->fileService->addFilesToRelationship($request->file('images'), $relationship, Auth::user());
             }
 
@@ -80,6 +75,13 @@ class RelationshipController extends Controller
                 'message' => $successMessage
             ], Response::HTTP_CREATED);
         } catch (\Exception $e) {
+            if ($e instanceof FileException) {
+                return response()->json(
+                    ['errors' => ['images' => [$e->getMessage()]]],
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
+            }
+
             return response()->json(
                 ['message' => $e->getMessage()],
                 Response::HTTP_INTERNAL_SERVER_ERROR

@@ -36,6 +36,7 @@ class Relationship extends Model
      */
     protected $fillable = [
         'type',
+        'type_id',
         'name',
         'title',
         'birthday',

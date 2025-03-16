@@ -26,7 +26,7 @@ const GlobalProvider = ({ children }: GlobalProviderProps) => {
         return setStatus({ type: 'error', message: 'Your session has ended. Please log back in.'});
       }
       if (setErrorsCallback) {
-        setErrorsCallback(e.response?.data?.errors || {error: [e.message]});
+        setErrorsCallback(e.response?.data?.errors || {errors: [message]});
       }
       setStatus({ type: 'error', message: message ?? 'Uh oh! Something went wrong.' });
     }

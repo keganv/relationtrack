@@ -19,6 +19,7 @@ export default function ImageUploader({
 
   const handleFileChange = useCallback((newFiles: FileList | null) => {
     if (!newFiles || !onChange) return;
+    errors = []; // Reset the errors;
     // Convert FileList to File array and combine with existing files if multiple
     const fileArray = Array.from(newFiles);
     const newFileList = multiple ? [...value, ...fileArray] : fileArray;
@@ -88,7 +89,7 @@ export default function ImageUploader({
               <p className="mb-2 text-xs text-gray-500">
                 Click to upload or drag and drop
               </p>
-              <p className="text-xs text-gray-500">Max File Size: 250KB</p>
+              <p className="text-xs text-gray-500">Max File Size: 1MB</p>
             </div>
             <input
               {...props}

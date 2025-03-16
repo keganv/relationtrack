@@ -17,7 +17,7 @@ type RelationshipFormProps = {
 const defaultForm = { type: '', name: '', title: '', health: 6, description: '' };
 
 export default function RelationshipForm({ relationship, cancel }: RelationshipFormProps) {
-  const { types, save, formErrors: apiErrors, convertRelationshipToFormData } = useRelationshipContext();
+  const { types, save, formErrors: apiErrors, convertRelationshipToFormData, setFormErrors } = useRelationshipContext();
 
   const initialForm: RelationshipFormData = relationship ?
     { ...convertRelationshipToFormData(relationship) } :
@@ -31,7 +31,7 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
   const handleFormSubmit: SubmitHandler<RelationshipFormData> = async (data: RelationshipFormData) => {
     const cleaned = removeUndefined<RelationshipFormData>(data);
     const response = await save(cleaned);
-    if (!(response instanceof AxiosError)) {
+    if (!(response instanceof AxiosError) && !apiErrors) {
       cancel(); // Close the form after a successful save.
     }
   }
@@ -46,14 +46,14 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
             onSubmit={handleSubmit(handleFormSubmit)} noValidate>
         <fieldset>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div>
+            <div className="flex flex-col items-start">
               <Controller
                 name="type"
                 control={control}
                 render={({field}) => (
                   <>
                     <label htmlFor="type">Type <span className="red">*</span></label>
-                    <select id="type" className="block mt-1 w-full" autoFocus required aria-label="type" {...field}>
+                    <select id="type" className="block w-full" autoFocus required aria-label="type" {...field}>
                       <option>Select</option>
                       {types && types.map((type) => (
                         <option key={type.id} value={type.id}>{type.type}</option>
@@ -126,7 +126,12 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                 <ImageUploader
                   {...field}
                   ref={ref}
-                  onChange={onChange}
+                  onChange={(files) => {
+                    onChange(files);
+                    setFormErrors((prev) => {
+                      return Object.fromEntries(Object.entries(prev ?? {}).filter(([key]) => !key.startsWith('images')));
+                    });
+                  }}
                   value={value}
                   errors={[
                     ...(apiErrors?.images ?? []),

@@ -83,7 +83,7 @@ export default function RelationshipView() {
             }
           </div>
           <div className="section mt-3 mb-3">
-            <ul className="grid grid-cols-3 gap-3">
+            <ul className="grid grid-cols-5 gap-3">
               {selectedRelationship.files?.map((file: ApiFile) => (
                 <li key={file.id} className="flex justify-center items-center overflow-hidden aspect-square relative bg-slate-400 animate-pulse">
                   <Image
