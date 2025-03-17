@@ -74,14 +74,12 @@ class RelationshipController extends Controller
                 'data' => new RelationshipResource($relationship),
                 'message' => $successMessage
             ], Response::HTTP_CREATED);
+        } catch (FileException $e) {
+            return response()->json(
+                ['errors' => ['images' => [$e->getMessage()]]],
+                Response::HTTP_UNPROCESSABLE_ENTITY
+            );
         } catch (\Exception $e) {
-            if ($e instanceof FileException) {
-                return response()->json(
-                    ['errors' => ['images' => [$e->getMessage()]]],
-                    Response::HTTP_UNPROCESSABLE_ENTITY
-                );
-            }
-
             return response()->json(
                 ['message' => $e->getMessage()],
                 Response::HTTP_INTERNAL_SERVER_ERROR
