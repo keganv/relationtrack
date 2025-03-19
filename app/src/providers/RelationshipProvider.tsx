@@ -99,8 +99,22 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
   const setPrimaryImageForRelationship = async (id: string) => {
     try {
       const url = `/api/relationships/${selectedRelationship?.id}/primary-image`;
-      const response = await axios.post(url, {id: id});
+      const response = await axios.patch(url, {id: id});
+      const newPrimaryImage = response.data.data;
+
       setStatus({type: 'success', message: response.data.message});
+      setSelectedRelationship((prevState: Relationship|null) => {
+        return prevState ? {...prevState, primary_image: newPrimaryImage, primary_image_id: newPrimaryImage.id } : null;
+      });
+      setRelationships((prevRelationships: Relationship[]|null) => {
+        const updatedRelationships = prevRelationships?.map((r: Relationship) => {
+          if (r.id === selectedRelationship?.id) {
+            return { ...r, primary_image: newPrimaryImage, primary_image_id: newPrimaryImage.id }
+          }
+          return r;
+        });
+        return updatedRelationships ?? [];
+      });
     } catch (error) {
       handleError(error, setFormErrors);
     }
