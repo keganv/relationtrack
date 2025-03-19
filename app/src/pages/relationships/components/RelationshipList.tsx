@@ -55,10 +55,10 @@ export default function RelationshipList() {
   }, [relationships]);
 
   useEffect(() => {
-    if (user) {
+    if (user && !relationships) {
       user.relationships ? setRelationships(user.relationships) : getRelationships();
     }
-  }, [user, getRelationships, setRelationships]);
+  }, [user, relationships, getRelationships, setRelationships]);
 
   useEffect(() => {
     if (formattedRows) {
