@@ -88,7 +88,7 @@ export default function RelationshipView() {
                 <li key={file.id} className="flex justify-center items-center overflow-hidden aspect-square relative bg-slate-400 animate-pulse">
                   <Image
                     alt={file.name}
-                    className="object-cover"
+                    className="object-cover cursor-pointer"
                     dataId={file.id}
                     src={`${apiUrl}${file.path}`}
                     onClick={() => setPrimaryImage(`${apiUrl}${file.path}`, `${file.id}`)}
