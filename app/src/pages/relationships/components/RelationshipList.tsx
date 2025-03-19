@@ -55,7 +55,7 @@ export default function RelationshipList() {
   }, [relationships]);
 
   useEffect(() => {
-    if (user && !relationships) {
+    if (user?.relationships && !relationships) {
       user.relationships ? setRelationships(user.relationships) : getRelationships();
     }
   }, [user, relationships, getRelationships, setRelationships]);
