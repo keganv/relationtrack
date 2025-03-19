@@ -6,7 +6,6 @@ use App\Http\Requests\RelationshipRequest;
 use App\Http\Resources\RelationshipResource;
 use App\Models\File;
 use App\Models\Relationship;
-use App\Models\User;
 use App\Services\FileService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -15,6 +14,7 @@ use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
@@ -112,26 +112,32 @@ class RelationshipController extends Controller
 
     public function updatePrimaryImage(Request $request, Relationship $relationship)
     {
-        /** @var User $user */
-        $user = Auth::user();
-        $data = $request->getPayload();
+        // Rate Limit this action since it would be easy to SPAM
+        $saved = RateLimiter::attempt(
+            'update_primary_image:'.$request->user()->id,
+            10, // Allow 3 updates every 30 seconds
+            function () use ($request, $relationship) {
+                $this->authorize('update', $relationship);
+                $relationship->primary_image_id = $request->get('id');
+                $relationship->save();
+            },
+            30 // Decay Rate
+        );
 
-        // Check for both the relationship and a security test to make sure that
-        // the requested relationship belongs to the user.
-        if (! $relationship || ($relationship?->user_id !== $user->id)) {
-            return response()->json([
-                'message' => 'The requested relationship does not exist.', Response::HTTP_NOT_FOUND,
-            ]);
+        if (!$saved) {
+            return response()->json(
+                ['message' => 'Too many attempts to update primary image.'],
+                Response::HTTP_TOO_MANY_REQUESTS
+            );
         }
 
-        try {
-            $relationship->primary_image_id = $data->get('id');
-            $relationship->save();
-
-            return response()->json(['message' => 'Successfully updated primary image.'], 201);
-        } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], $e->getCode());
-        }
+        return response()->json(
+            [
+                'data' => $relationship->primaryImage,
+                'message' => 'Successfully updated primary image.'
+            ],
+            Response::HTTP_OK
+        );
     }
 
     private function handlePrimaryImage(Relationship $relationship, UploadedFile $file)
