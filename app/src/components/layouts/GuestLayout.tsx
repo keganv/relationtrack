@@ -1,4 +1,5 @@
 import { Link, Outlet } from 'react-router';
+
 import ApplicationLogo from '../ui/ApplicationLogo.tsx';
 
 export default function GuestLayout() {
