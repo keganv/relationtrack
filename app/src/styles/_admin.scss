@@ -39,11 +39,11 @@
     }
 
     .main-sidebar-btn {
-        @apply text-white sm:hidden !p-0 hover:shadow-none;
+        @apply text-white lg:hidden !p-0 hover:shadow-none;
     }
 
     #main-sidebar {
-        @apply -translate-x-full fixed left-0 z-40 h-screen mt-12 pt-3 transition-transform sm:translate-x-0;
+        @apply -translate-x-full fixed left-0 z-40 h-screen mt-12 pt-3 transition-transform lg:translate-x-0;
         background-color: var(--darker-gray);
         width: 250px;
 

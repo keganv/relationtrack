@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Outlet } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 
 import useAuthContext from '../../hooks/useAuthContext';
 import useGlobalContext from '../../hooks/useGlobalContext';
@@ -32,7 +32,7 @@ export default function AuthLayout() {
     <RelationshipProvider>
       <div className="admin">
         <MainNav navToggled={navOpen} setNavToggle={setNavToggle} />
-        <main role="main" id="main" className={navOpen ? 'ml-0 sm:ml-[250px]' : 'sm:ml-[250px]'}>
+        <main role="main" id="main" className={navOpen ? 'ml-0 lg:ml-[250px]' : 'lg:ml-[250px]'}>
           <Outlet />
         </main>
       </div>
