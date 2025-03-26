@@ -16,9 +16,11 @@ function Input ({ className, type, apiErrors, fieldErrors, id, label, required, 
         {label}{required && <span className="required">*</span>}
       </label>
       <input
+        id={id}
         ref={ref}
         type={type}
         className={className}
+        required={required}
         {...props}
       />
       {Array.isArray(apiErrors) && apiErrors.map((error, i) => (
