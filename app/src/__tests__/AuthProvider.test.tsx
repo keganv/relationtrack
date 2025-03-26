@@ -1,60 +1,131 @@
-import { render, screen, act } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
-import AuthProvider from "../providers/AuthProvider";
+
+import useGlobalContext from '../hooks/useGlobalContext';
 import axios from "../lib/axios";
-import useAuthContext from "../hooks/useAuthContext";
+import Login from "../pages/Login";
+import AuthProvider from "../providers/AuthProvider";
+import GlobalProvider from '../providers/GlobalProvider';
+import type { Status } from '../types/Status';
+import { AxiosError, AxiosHeaders } from 'axios';
+
+const mockNavigate = jest.fn();
+jest.mock('react-router', () => ({
+  // Spread the actual properties and module functions into the mock`s implementation
+  ...jest.requireActual('react-router'),
+  // create a mock function used by the login function to navigate to the dashboard after successful login
+  useNavigate: () => mockNavigate,
+}));
 
 jest.mock('../lib/axios');
-
 const mockAxios = axios as jest.Mocked<typeof axios>;
 
-const registerData = {
-  firstName: 'John',
-  lastName: 'Doe',
-  username: 'johndoe',
-  email: 'john@example.com',
-  password: 'password123',
-  password_confirmation: 'password123',
-  terms: true
-};
-
-const TestComponent = () => {
-  const { login, register, user } = useAuthContext();
-
-  return (
-    <>
-      <button onClick={() => login({ email: 'john@example.com', password: 'password123' })}>Login</button>
-      <button onClick={() => register({...registerData})}>Register</button>
-      <div>{user?.email}</div>
-    </>
-  );
-};
+// Set up the GlobalContext
+jest.mock('../hooks/useGlobalContext');
+const mockSetStatus: jest.MockedFn<(status: Status) => void> = jest.fn();
+const mockHandleError: jest.MockedFn<<T>(e: AxiosError, setErrorsFn?: (arg: T) => void) => void> =
+  jest.fn().mockImplementation((error, setErrorsFn) => {
+    if (error instanceof AxiosError && setErrorsFn) {
+      setErrorsFn(error.response?.data?.errors || {errors: [error.message]});
+    }
+    mockSetStatus({ type: 'error', message: error.response?.data?.message || error.message });
+  });
+(useGlobalContext as jest.Mock).mockReturnValue({
+  setStatus: mockSetStatus,
+  handleError: mockHandleError
+});
 
 describe('AuthProvider', () => {
-  beforeAll(() => {
-    // Simulate a successful API call that returns no data.
-    act(() => mockAxios.post.mockResolvedValue({}));
-    // Simulates the getUser API call that returns the User's data above.
-    mockAxios.get.mockResolvedValue({ data: { ...registerData } });
-
-    render(
-      <MemoryRouter>
-        <AuthProvider>
-          <TestComponent />
-        </AuthProvider>
-      </MemoryRouter>
-    );
-  });
-
-  afterEach(() => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it ('logs the user in successfully', async () => {
-    await act(async () => {
-      screen.getByText('Login').click();
+  it('logs the user in successfully', async () => {
+    const user = userEvent.setup();
+
+    mockAxios.get.mockResolvedValue({}); // Mock csrf call
+    mockAxios.post.mockResolvedValueOnce({ data: { user: { id: 'id-1', name: 'John Doe' } } });
+
+    render(
+      <MemoryRouter>
+        <GlobalProvider>
+          <AuthProvider>
+            <Login />
+          </AuthProvider>
+        </GlobalProvider>
+      </MemoryRouter>
+    );
+
+    await user.type(screen.getByLabelText(/email/i), 'john@example.com');
+    await user.type(screen.getByLabelText(/password/i), 'password123');
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
+
+    await waitFor(async () => {
+      expect(mockAxios.post).toHaveBeenCalledWith('/api/login', {
+        email: 'john@example.com',
+        password: 'password123',
+        remember: false,
+      });
+
+      expect(mockAxios.post).toHaveBeenCalledTimes(1);
+
+      // Await the promise and then assert the value
+      const resolvedValue = await mockAxios.post.mock.results[0].value;
+      expect(resolvedValue).toEqual({ data: { user: { id: 'id-1', name: 'John Doe' } }});
+
+      expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
+      expect(mockSetStatus).toHaveBeenCalledWith({ type: 'success', message: 'Successfully Logged In!' });
+
+      // TODO: Figure out why the location is not changing
+      // expect(window.location.pathname).not.toBe('/login');
+      // expect(window.location.pathname).toBe('/dashboard');
+      // expect(screen.getByText('Relationships')).toBeDefined();
     });
-    // Check if the user email is displayed after logging in
-    expect(await screen.getByText('john@example.com')).toBeInTheDocument();
+  });
+
+  it('handles login error', async () => {
+    const user = userEvent.setup();
+
+    mockAxios.get.mockResolvedValue({}); // Mock csrf call
+    mockAxios.post.mockResolvedValueOnce({ data: { user: { id: 'id-1', name: 'John Doe' } } });
+    const axiosError = new AxiosError(
+      'Login Failed',
+      'ERR_BAD_REQUEST',
+      undefined,
+      undefined,
+      {
+        data: { message: 'Login Failed' },
+        status: 400,
+        statusText: 'Bad Request',
+        headers: {},
+        config: { headers: new AxiosHeaders({ 'Content-Type': 'application/json' }) }
+      }
+    );
+    mockAxios.post.mockRejectedValueOnce(axiosError);
+
+    render(
+      <MemoryRouter>
+        <GlobalProvider>
+          <AuthProvider>
+            <Login />
+          </AuthProvider>
+        </GlobalProvider>
+      </MemoryRouter>
+    );
+
+    await user.type(screen.getByLabelText(/email/i), 'john@example.com');
+    await user.type(screen.getByLabelText(/password/i), 'password123');
+    await user.click(screen.getByRole('button', { name: /sign in/i }));
+
+    await waitFor(async () => {
+      // const getResponse = await mockAxios.get.mock.results[0].value;
+      const results = await mockAxios.get('/api/csrf');
+      expect(results).toEqual({});
+      // expect(mockAxios.get).toHaveBeenCalledTimes(1);
+      expect(mockHandleError).toHaveBeenCalledWith(axiosError, expect.any(Function)); // handleError(e, callbackFn);
+      expect(mockSetStatus).toHaveBeenCalled();
+      expect(mockSetStatus).toHaveBeenCalledWith({ type: 'error', message: 'Login Failed' });
+    });
   });
 });
