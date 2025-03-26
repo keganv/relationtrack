@@ -77,10 +77,12 @@ export default function ActionItems({relationship}: ActionItemProps) {
         <h4>Action Items</h4>
         <button className="primary angle-left text-[12px]" onClick={() => setFormOpen(true)}>Add Action</button>
       </header>
-      { actionItems.length ?
-        <SortableTable columns={columns} data={actionItems} /> :
-        <p className="text-sm">No action items.</p>
-      }
+      <div className="max-h-[300px] w-full overflow-auto">
+        { actionItems.length ?
+          <SortableTable columns={columns} data={actionItems} /> :
+          <p className="text-sm">No action items.</p>
+        }
+      </div>
       <Modal isOpen={formOpen} onRequestClose={() => setFormOpen(false)}
              appElement={document.getElementById('root') ?? undefined}
              className="react-modal center h-max max-w-[400px] m-auto" overlayClassName="react-modal-overlay">
