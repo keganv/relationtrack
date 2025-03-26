@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Storage;
 
 class AdminController extends Controller
@@ -90,17 +91,41 @@ class AdminController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\StreamedResponse|null
      */
-    public function getPrivateFile(User $user, string $path)
+    public function getPrivateFile(Request $request, User $user, string $path)
     {
+        // Auth guard the files
+        if (Auth::id() !== $user->id) {
+            return null;
+        }
+
         $file = null;
         $s3 = Storage::disk('s3');
+        $fullpath = '/uploads/users/'.$user->id.'/'.$path;
 
-        if (Auth::id() === $user->id) {
-            $fullpath = '/uploads/users/'.$user->id.'/'.$path;
-            if ($s3->exists($fullpath)) {
-                // Tell the browser not to cache private files
-                $file = $s3->response($fullpath, null, ['Cache-Control' => 'private']);
+        if ($s3->exists($fullpath)) {
+            // Check if the user has the 'remember me' token and if it is
+            // valid and matches the database remember_token (same browser/device).
+            $rememberCookie = array_filter(
+                Cookie::get(),
+                fn($key) => strpos($key, 'remember_web') === 0,
+                ARRAY_FILTER_USE_KEY
+            );
+            $useRememberCache = false;
+
+            if ($rememberCookie) {
+                $rememberToken = explode('|', reset($rememberCookie))[1];
+                $useRememberCache = hash_equals($rememberToken, $user->getRememberToken());
             }
+
+            // Check if the user has the 'remember me' token and set the cache
+            // to 1 month or use the default session lifetime configuration.
+            $cacheDuration = $useRememberCache ? 2592000 : config('session.lifetime') * 60;
+            $mimeType = $s3->mimeType($fullpath);
+            $file = $s3->response($fullpath, null, [
+                // cache for 1 month
+                'Cache-Control' => 'private, max-age='.$cacheDuration.', immutable',
+                'Content-Type' => $mimeType
+            ]);
         }
 
         return $file;
