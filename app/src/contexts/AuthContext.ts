@@ -17,6 +17,7 @@ export interface AuthContextValues {
   newPassword: (data: NewPasswordFields) => Promise<void>;
   sendEmailVerificationLink: () => Promise<void>;
   setProfileImage: (image: File) => Promise<void>;
+  updateUserField: <K extends keyof User>(field: K, value: User[K]) => void;
 }
 
 const AuthContext = createContext<AuthContextValues>({} as AuthContextValues);

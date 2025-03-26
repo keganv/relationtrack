@@ -6,6 +6,7 @@ import useGlobalContext from '../hooks/useGlobalContext';
 import axios from '../lib/axios';
 import { authReducer } from '../reducers/authReducer';
 import type { AuthFormErrors, AuthState, LoginFields, NewPasswordFields } from '../types/AuthTypes';
+import type { User } from '../types/User';
 
 const defaultAuthState: AuthState = {
   authenticated: false,
@@ -38,11 +39,16 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     }
   }, [handleError]);
 
+  const updateUserField = useCallback(<K extends keyof User>(field: K, value: User[K]) => {
+    const updatedUser = { ...state.user, [field]: value };
+    dispatch({ type: 'SET_USER', payload: updatedUser });
+  }, [state.user, dispatch]);
+
   const login = useCallback(async (data: LoginFields) => {
     try {
       await csrf(); // DO NOT REMOVE - Must receive/set CSRF Cookie
       const response = await axios.post('/api/login', data);
-      response.data.user ? dispatch({ type: 'LOGIN_SUCCESS', payload: response.data.user }) : await getUser();
+      response?.data?.user ? dispatch({ type: 'LOGIN_SUCCESS', payload: response.data.user }) : await getUser();
       navigate('/dashboard');
       setStatus({type: 'success', message: 'Successfully Logged In!'});
     } catch (e) {
@@ -136,7 +142,7 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     dispatch({ type: 'SET_CHECKING_AUTH', payload: true });
     await csrf();
     const response = await axios.post('/api/authenticated');
-    const auth = response.data?.authenticated;
+    const auth = response?.data?.authenticated;
     dispatch({ type: 'SET_AUTHENTICATED', payload: auth ?? false });
   }, []);
 
@@ -158,7 +164,8 @@ const AuthProvider = ({children}: AuthProviderProps) => {
   return (
     <AuthContext.Provider value={{
       ...state,
-      login, register, logout, sendPasswordResetLink, newPassword, sendEmailVerificationLink, setProfileImage
+      login, register, logout, sendPasswordResetLink, newPassword,
+      sendEmailVerificationLink, setProfileImage, updateUserField
     }}>
       {children}
     </AuthContext.Provider>

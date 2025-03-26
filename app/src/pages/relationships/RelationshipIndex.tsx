@@ -24,14 +24,14 @@ export default function RelationshipIndex() {
         <h2>My Relationships</h2>
         <button className="primary angle-right text-xs" onClick={() => setIsOpen(true)}>Add Relationship</button>
       </header>
+      <ErrorBoundary fallbackRender={fallbackRender}>
+        <RelationshipList />
+      </ErrorBoundary>
       <Modal isOpen={modalIsOpen} onRequestClose={() => setIsOpen(false)}
              appElement={document.getElementById('root') ?? undefined}
              className="react-modal center" overlayClassName="react-modal-overlay">
         <RelationshipForm cancel={() => setIsOpen(false)} />
       </Modal>
-      <ErrorBoundary fallbackRender={fallbackRender}>
-        <RelationshipList />
-      </ErrorBoundary>
     </>
   );
 }

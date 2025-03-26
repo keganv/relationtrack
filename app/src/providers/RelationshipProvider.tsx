@@ -7,13 +7,14 @@ import useGlobalContext from '../hooks/useGlobalContext.ts';
 import axios from '../lib/axios';
 import type { Relationship, RelationshipFormData, RelationshipFormErrors } from '../types/Relationship';
 
+
 type RelationshipProviderProps = {
   children: ReactNode;
 }
 
 function RelationshipProvider ({ children }: RelationshipProviderProps) {
   const { handleError, setStatus } = useGlobalContext();
-  const { user } = useAuthContext();
+  const { user, updateUserField } = useAuthContext();
   const [relationships, setRelationships] = useState<Relationship[]|null>(null);
   const [selectedRelationship, setSelectedRelationship] = useState<Relationship|null>(null);
   const [types, setTypes] = useState(null);
@@ -68,13 +69,15 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
       });
 
       const updatedRelationship = response.data.data;
+      const updatedRelationships = relationships?.map((r: Relationship) => {
+          return r.id === updatedRelationship.id ? updatedRelationship : r;
+      }) || [];
 
-      setSelectedRelationship(updatedRelationship);
       setStatus({type: 'success', message: response.data.message});
-      setRelationships((prevRelationships) => {
-        const filteredRelations = prevRelationships?.filter((r: Relationship) => r.id !== updatedRelationship.id);
-        return [...(filteredRelations ?? []), updatedRelationship];
-      });
+      setSelectedRelationship(updatedRelationship);
+      setRelationships(updatedRelationships);
+      // Update the `relationships` property on the User in the AuthProvider Context
+      updateUserField('relationships', updatedRelationships ?? []);
 
       return updatedRelationship;
     } catch (error) {
@@ -101,20 +104,21 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
       const url = `/api/relationships/${selectedRelationship?.id}/primary-image`;
       const response = await axios.patch(url, {id: id});
       const newPrimaryImage = response.data.data;
+      const updatedRelationships = relationships?.map((r: Relationship) => {
+        if (r.id === selectedRelationship?.id) {
+          return { ...r, primary_image: newPrimaryImage, primary_image_id: newPrimaryImage.id }
+        }
+        return r;
+      }) || [];
 
       setStatus({type: 'success', message: response.data.message});
       setSelectedRelationship((prevState: Relationship|null) => {
         return prevState ? {...prevState, primary_image: newPrimaryImage, primary_image_id: newPrimaryImage.id } : null;
       });
-      setRelationships((prevRelationships: Relationship[]|null) => {
-        const updatedRelationships = prevRelationships?.map((r: Relationship) => {
-          if (r.id === selectedRelationship?.id) {
-            return { ...r, primary_image: newPrimaryImage, primary_image_id: newPrimaryImage.id }
-          }
-          return r;
-        });
-        return updatedRelationships ?? [];
-      });
+      setRelationships(updatedRelationships);
+      // Update the `relationships` property on the User in the AuthProvider Context
+      updateUserField('relationships', updatedRelationships ?? []);
+
     } catch (error) {
       handleError(error, setFormErrors);
     }
