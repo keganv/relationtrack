@@ -1,6 +1,6 @@
-import RelationshipList from './relationships/components/RelationshipList';
-import useAuthContext from '../hooks/useAuthContext.ts';
 import Spinner from '../components/ui/Spinner.tsx';
+import useAuthContext from '../hooks/useAuthContext.ts';
+import RelationshipList from './relationships/components/RelationshipList';
 
 export default function Dashboard() {
   const { user } = useAuthContext();
