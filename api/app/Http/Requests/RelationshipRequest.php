@@ -22,7 +22,7 @@ final class RelationshipRequest extends FormRequest
             $this->user->can('create', Relationship::class);
         }
 
-        $method = $this->method();
+        $method = strtoupper($this->method());
         $action = 'view';
 
         if ($method === 'PUT' || $method === 'PATCH') {
