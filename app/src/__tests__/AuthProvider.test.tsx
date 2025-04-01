@@ -68,7 +68,8 @@ describe('AuthProvider', () => {
         remember: false,
       });
 
-      expect(mockAxios.post).toHaveBeenCalledTimes(1);
+      // Once for the authenticated request, once for the mocked POST
+      expect(mockAxios.post).toHaveBeenCalledTimes(2);
 
       // Await the promise and then assert the value
       const resolvedValue = await mockAxios.post.mock.results[0].value;
