@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActionItemController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\RelationshipActionItemController;
 use App\Http\Controllers\RelationshipController;
 use App\Http\Controllers\UserController;
@@ -14,12 +15,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::get('/relationships/{relationship}/action-items', RelationshipActionItemController::class);
 
     // USER ROUTES
+    Route::get('/user', [UserController::class, 'getUser'])->name('user.show');
     Route::apiResource('users', UserController::class)->except(['store']);
-    Route::get('/user', [AdminController::class, 'getUser'])->name('user.show');
 
     // ADMIN ROUTES
     Route::post('/update-profile-image', [AdminController::class, 'updateProfileImage']);
-    Route::get('/uploads/users/{user}/{path}', [AdminController::class, 'getPrivateFile'])->where('path', '.*');
+    Route::get('/uploads/users/{user}/{path}', [AdminController::class, 'getPrivateFile'])
+        ->whereUuid('user')->where('path', '.*');
 
     // RELATIONSHIP ROUTES
     Route::get('/relationships', [RelationshipController::class, 'index']);
@@ -28,4 +30,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::put('/relationships/{relationship}', [RelationshipController::class, 'update']);
     Route::patch('/relationships/{relationship}/primary-image', [RelationshipController::class, 'updatePrimaryImage']);
     Route::delete('/relationships/{relationship}', [RelationshipController::class, 'delete']);
+
+    // FILE ROUTES
+    Route::delete('/files/{file}', [FileController::class, 'destroy'])->whereNumber('file');
 });
