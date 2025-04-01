@@ -38,7 +38,7 @@ export default function ActionItems({relationship}: ActionItemProps) {
     if (confirmed) {
       const result = await deleteData(`/api/action-items/${id}`);
       if (result) {
-        setStatus({ type: 'success', message: result?.data.message ?? 'Successfully deleted Action Item!' });
+        setStatus({ type: 'success', message: result?.data?.message ?? 'Successfully deleted Action Item!' });
         const actionItems = await getData(`/api/relationships/${relationship.id}/action-items`);
         handleActionItems(actionItems);
       }
