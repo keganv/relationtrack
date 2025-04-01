@@ -34,23 +34,36 @@ class FileService
      * @param Collection<File> $files
      *
      * @return bool
-     * @throws UploadException
+     * @throws FileException
      */
     public function removeFilesFromStorage(Collection $files): bool
     {
         foreach ($files as $file) {
-            $file->delete(); // Delete the database record
+            $this->removeFileFromStorage($file);
+        }
 
-            if (Storage::disk('s3')->exists($file->path)) {
-                // Remove the actual file from S3
-                $deleteSuccess = Storage::disk('s3')->delete($file->path);
+        return true;
+    }
 
-                // Important to Log the file that didn't get deleted for audits and removing from S3
-                if (! $deleteSuccess) {
-                    $message = "Failed to remove the file {$file->path} from storage.";
-                    Log::channel('single')->error($message); // TODO: Write to custom FileLogger
-                    throw new UploadException($message, Response::HTTP_INTERNAL_SERVER_ERROR);
-                }
+    /**
+     * @param File $file
+     *
+     * @return bool
+     * @throws FileException
+     */
+    public function removeFileFromStorage(File $file): bool
+    {
+        $file->delete(); // Delete the database record
+
+        if (Storage::disk('s3')->exists($file->path)) {
+            // Remove the actual file from S3
+            $deleteSuccess = Storage::disk('s3')->delete($file->path);
+
+            // Important to Log the file that didn't get deleted for audits and removing from S3
+            if (! $deleteSuccess) {
+                $message = "Failed to remove the file {$file->path} from storage.";
+                Log::channel('single')->error($message); // TODO: Write to custom FileLogger
+                throw new FileException($message, Response::HTTP_UNPROCESSABLE_ENTITY);
             }
         }
 
