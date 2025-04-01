@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 
 import axios from '../lib/axios';
 import useGlobalContext from './useGlobalContext.ts';
+import type { AxiosResponse } from 'axios';
 
 export default function useApi() {
   const [apiErrors, setApiErrors] = useState<Record<string, string[]>>();
@@ -36,7 +37,7 @@ export default function useApi() {
     }
   }, [handleError]);
 
-  const deleteData = useCallback(async (url: string) => {
+  const deleteData = useCallback(async (url: string): Promise<AxiosResponse | null> => {
     setIsLoading(true);
     try {
       return await axios.delete(url);
