@@ -7,12 +7,26 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     public function index()
     {
         // Future use of displaying paginated users, SuperAdmin permission
+    }
+
+    public function getUser()
+    {
+        $user = Auth::user()->load([
+            'profileImage',
+            'relationships.actionItems',
+            'relationships.primaryImage',
+            'relationships.files',
+            'relationships.relationshipType'
+        ])->loadCount('relationships');
+
+        return response()->json(new UserResource($user), Response::HTTP_OK);
     }
 
     public function show(User $user): JsonResponse
