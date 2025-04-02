@@ -2,7 +2,6 @@ type ImageProps = {
   alt: string;
   className?: string;
   onClick?: () => void;
-  dataId?: string | number;
   id?: string;
   loading?: 'eager' | 'lazy';
   src: string;
@@ -19,7 +18,6 @@ export default function Image(props: ImageProps) {
     <img
       src={props.src}
       id={props.id}
-      data-id={props.dataId}
       alt={props.alt}
       className={props.className}
       loading={props.loading ?? 'lazy'}
