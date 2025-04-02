@@ -4,15 +4,18 @@ import { useLocation } from 'react-router';
 import { Tab, TabList, TabPanel,Tabs } from 'react-tabs';
 
 import ActionItems from '../../components/action-items/ActionItems';
-import Image from '../../components/ui/Image.tsx';
+import Image from '../../components/ui/Image';
 import Spinner from '../../components/ui/Spinner';
 import Tooltip from '../../components/ui/Tooltip';
+import useApi from '../../hooks/useApi.ts';
+import useGlobalContext from '../../hooks/useGlobalContext.ts';
 import useRelationshipContext from '../../hooks/useRelationshipContext';
-import type { ApiFile } from '../../types/ApiFile.ts';
+import type { ApiFile } from '../../types/ApiFile';
 import RelationshipDetails from './components/RelationshipDetails';
 import RelationshipForm from './components/RelationshipForm';
 
 import '../../styles/relationship.scss';
+
 
 export default function RelationshipView() {
   const {
@@ -22,16 +25,40 @@ export default function RelationshipView() {
     setPrimaryImageForRelationship
   } = useRelationshipContext();
   const location = useLocation();
+  const { setStatus } = useGlobalContext();
+  const { deleteData } = useApi();
   const primaryImageRef = useRef<HTMLImageElement>(null);
   const [formIsOpen, setFormIsOpen] = useState<boolean>(false);
   const [imageModal, setImageModal] = useState<boolean>(false);
+  const [relationshipImages, setRelationshipImages] = useState<ApiFile[]>([]);
 
   const apiUrl = `${import.meta.env.VITE_API_URL}/api/`;
 
   const setPrimaryImage = (path: string, id: string) => {
     if (primaryImageRef.current) {
       primaryImageRef.current.src = path;
-      primaryImageRef.current.setAttribute('data-id', id);
+      primaryImageRef.current.id = id;
+    }
+  };
+
+  const handleDelete = async () => {
+    const confirmed = confirm('Are you sure you want to delete this image?');
+    if (!confirmed) return;
+    const url = `/api/files/${primaryImageRef?.current?.id}`;
+    const result = await deleteData(url);
+    if (result) {
+      setStatus({type: 'success', message: 'Successfully deleted image.'});
+      const filteredFiles = relationshipImages.filter((file: ApiFile) => {
+        return file.id !== Number(primaryImageRef?.current?.id)
+      }) || [];
+      setRelationshipImages(filteredFiles);
+      if (filteredFiles.length) {
+        setPrimaryImage(`${apiUrl}${filteredFiles[0].path}`, filteredFiles[0].id.toString());
+      } else {
+        setSelectedRelationship((prev) => {
+          return prev ? {...prev, primary_image: null, files: []} : null;
+        });
+      }
     }
   };
 
@@ -41,10 +68,16 @@ export default function RelationshipView() {
   }, [location, setRelationshipById]);
 
   useEffect(() => {
+    if (!selectedRelationship) return;
+    console.log(selectedRelationship.files);
+    setRelationshipImages(selectedRelationship.files ?? []);
+  }, [selectedRelationship, selectedRelationship?.files]);
+
+  useEffect(() => {
     setUpRelationshipData();
     // Reset the selected relationship when the component unmounts
     return () => setSelectedRelationship(null);
-  }, [setUpRelationshipData, setSelectedRelationship, selectedRelationship]);
+  }, [setUpRelationshipData, setSelectedRelationship]);
 
   if (!selectedRelationship) {
     return (
@@ -70,26 +103,32 @@ export default function RelationshipView() {
                 <img ref={primaryImageRef}
                      src={`${apiUrl}${selectedRelationship.primary_image?.path}`}
                      alt={selectedRelationship.name}
-                     data-id={selectedRelationship.primary_image?.id}
+                     id={selectedRelationship.primary_image?.id.toString()}
                      onClick={() => setImageModal(true)}
                 />
-                <button id="primary-image-button" className="text-xs white right" type="button"
-                        onClick={() => setPrimaryImageForRelationship(primaryImageRef.current?.getAttribute('data-id') ?? '')}>
-                  <i className="fa-solid fa-file-arrow-up"></i>
-                </button>
-                <Tooltip elId="primary-image-button" message={`Make this the primary image For ${selectedRelationship?.name}.`} position="right" />
+                <menu>
+                  <button id="primary-image-button" className="left"
+                          onClick={() => setPrimaryImageForRelationship(primaryImageRef.current?.id ?? '')}>
+                    <i className="fa-solid fa-file-arrow-up"/>
+                  </button>
+                  <button className="black !text-red-700" onClick={handleDelete}>
+                    <i className="fa fa-trash"/>
+                  </button>
+                  <Tooltip elId="primary-image-button"
+                           message={`Make this the primary image For ${selectedRelationship?.name}.`} position="right"/>
+                </menu>
               </> :
               <img ref={primaryImageRef} src="/images/generic-user.jpg" alt="No Primary Image"/>
             }
           </div>
           <div className="section mt-3 mb-3">
             <ul className="grid grid-cols-5 gap-3">
-              {selectedRelationship.files?.map((file: ApiFile) => (
+              {relationshipImages?.map((file: ApiFile) => (
                 <li key={file.id} className="flex justify-center items-center overflow-hidden aspect-square relative bg-slate-400 animate-pulse">
                   <Image
                     alt={file.name}
                     className="object-cover cursor-pointer"
-                    dataId={file.id}
+                    id={file.id.toString()}
                     src={`${apiUrl}${file.path}`}
                     onClick={() => setPrimaryImage(`${apiUrl}${file.path}`, `${file.id}`)}
                     loading="lazy"
