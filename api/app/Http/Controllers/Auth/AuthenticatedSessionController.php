@@ -56,9 +56,8 @@ class AuthenticatedSessionController extends Controller
     {
         Auth::guard('web')->logout();
 
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
+        $request->session()->invalidate(); // DO NOT REMOVE
+        $request->session()->regenerateToken(); // DO NOT REMOVE - Prevent CSRF attacks!
 
         return response()->noContent();
     }
