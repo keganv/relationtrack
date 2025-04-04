@@ -128,9 +128,7 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                   ref={ref}
                   onChange={(files) => {
                     onChange(files);
-                    setFormErrors((prev) => {
-                      return Object.fromEntries(Object.entries(prev ?? {}).filter(([key]) => !key.startsWith('images')));
-                    });
+                    setFormErrors(null); // Reset the API Errors when the images are changed
                   }}
                   value={value}
                   errors={[
