@@ -69,7 +69,6 @@ export default function RelationshipView() {
 
   useEffect(() => {
     if (!selectedRelationship) return;
-    console.log(selectedRelationship.files);
     setRelationshipImages(selectedRelationship.files ?? []);
   }, [selectedRelationship, selectedRelationship?.files]);
 
