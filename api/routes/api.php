@@ -3,6 +3,7 @@
 use App\Http\Controllers\ActionItemController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FileController;
+use App\Http\Controllers\PrivateFileController;
 use App\Http\Controllers\RelationshipActionItemController;
 use App\Http\Controllers\RelationshipController;
 use App\Http\Controllers\UserController;
@@ -20,8 +21,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     // ADMIN ROUTES
     Route::post('/update-profile-image', [AdminController::class, 'updateProfileImage']);
-    Route::get('/uploads/users/{user}/{path}', [AdminController::class, 'getPrivateFile'])
-        ->whereUuid('user')->where('path', '.*');
 
     // RELATIONSHIP ROUTES
     Route::get('/relationships', [RelationshipController::class, 'index']);
@@ -33,4 +32,5 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
     // FILE ROUTES
     Route::delete('/files/{file}', [FileController::class, 'destroy'])->whereNumber('file');
+    Route::get('/files/users/{user}/{path}', PrivateFileController::class)->whereUuid('user')->where('path', '.*');
 });

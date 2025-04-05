@@ -20,7 +20,7 @@ class FileService
     public function storeFileToStorage(User $user, UploadedFile $uploadedFile, bool $private = false): string
     {
         $storageDisk = $private ? 'private' : 'public';
-        $path = $uploadedFile->store("uploads/users/$user->id", $storageDisk);
+        $path = $uploadedFile->store("files/users/$user->id", $storageDisk);
 
         if (! $path) {
             $message = sprintf('Failed to upload the image %s to storage.', $uploadedFile->getClientOriginalName());
@@ -165,7 +165,7 @@ class FileService
             }
 
             // Upload the UploadedFile to S3 and save the File (model) record to the database
-            if ($path = Storage::disk('s3')->putFile('/uploads/users/'.$user->id.'/relationships', $upload)) {
+            if ($path = Storage::disk('s3')->putFile('/files/users/'.$user->id.'/relationships', $upload)) {
                 $file = new File();
                 $file->user_id = $user->id;
                 $file->relationship_id = $relationship->id;

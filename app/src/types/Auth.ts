@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 import type { User } from './User.ts';
 
 export type AuthState = {
@@ -28,11 +30,13 @@ export type AuthFormErrors = {
   email_verified_at?: string|boolean;
 }
 
-export type LoginFields = {
-  email: string;
-  password: string;
-  remember?: boolean;
-}
+export const loginFormSchema = z.object({
+  email: z.string().email('Email address is not valid.'),
+  password: z.string().min(8, 'Password must be at least 8 characters long.'),
+  remember: z.boolean().nullable(),
+});
+
+export type LoginFields = z.infer<typeof loginFormSchema>;
 
 export type RegisterFields = {
   firstName: string;
