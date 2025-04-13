@@ -5,10 +5,8 @@ namespace App\Services;
 use App\Models\File;
 use App\Models\Relationship;
 use App\Models\User;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -53,25 +51,27 @@ class FileService
      */
     public function removeFileFromStorage(File $file): bool
     {
-        $file->delete(); // Delete the database record
-
-        if (Storage::disk('s3')->exists($file->path)) {
-            // Remove the actual file from S3
-            $deleteSuccess = Storage::disk('s3')->delete($file->path);
-
-            // Important to Log the file that didn't get deleted for audits and removing from S3
-            if (! $deleteSuccess) {
-                $message = "Failed to remove the file {$file->path} from storage.";
-                Log::channel('single')->error($message); // TODO: Write to custom FileLogger
-                throw new FileException($message, Response::HTTP_UNPROCESSABLE_ENTITY);
-            }
+        if (!Storage::disk('s3')->exists($file->path)) {
+            return false;
         }
+
+        // Remove the actual file from S3
+        $deleteSuccess = Storage::disk('s3')->delete($file->path);
+
+        // Important to Log the file that didn't get deleted for audits and removing from S3
+        if (!$deleteSuccess) {
+            $message = "Failed to remove the file {$file->path} from storage.";
+            Log::channel('single')->error($message); // TODO: Write to custom FileLogger
+            throw new FileException($message, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $file->delete(); // Delete the database record
 
         return true;
     }
 
     /**
-     * @throws \Exception
+     * @throws FileException
      */
     public function createNewUserFile(User $user, UploadedFile $uploadedFile, string $path): File
     {
@@ -88,7 +88,7 @@ class FileService
         }
 
         $message = sprintf('Failed to save the file %s.', $uploadedFile->getClientOriginalName());
-        throw new \Exception($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+        throw new FileException($message, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     /**
@@ -107,17 +107,6 @@ class FileService
         }
 
         return $file;
-    }
-
-    public function getS3FilePath(User $user, string $path): string
-    {
-        Gate::authorize('view', $user);
-
-        if (! Storage::disk('s3')->exists($path)) {
-            throw new FileNotFoundException($path, Response::HTTP_NOT_FOUND);
-        }
-
-        return Storage::disk('s3')->path($path);
     }
 
     /**
@@ -165,35 +154,41 @@ class FileService
             }
 
             // Upload the UploadedFile to S3 and save the File (model) record to the database
-            if ($path = Storage::disk('s3')->putFile('/files/users/'.$user->id.'/relationships', $upload)) {
-                $file = new File();
-                $file->user_id = $user->id;
-                $file->relationship_id = $relationship->id;
-                $file->name = $upload->getClientOriginalName();
-                $file->extension = $upload->extension();
-                $file->path = $path;
-                $file->size = $upload->getSize();
+            $path = Storage::disk('s3')->putFile('/files/users/'.$user->id.'/relationships', $upload);
 
-                if (! $file->save()) {
-                    throw new FileException(
-                        "The file {$upload->getClientOriginalName()} could not be saved.",
-                        Response::HTTP_INTERNAL_SERVER_ERROR
-                    );
-                }
-
-                $files->add($file); // Add to the temporary File Collection
-            } else {
-                // The File could not be uploaded or saved
+            // The File could not be uploaded or saved
+            if (!$path) {
                 throw new FileException(
                     "The file {$upload->getClientOriginalName()} could not be uploaded.",
                     Response::HTTP_INTERNAL_SERVER_ERROR
                 );
             }
+
+            $file = new File();
+            $file->user_id = $user->id;
+            $file->relationship_id = $relationship->id;
+            $file->name = $upload->getClientOriginalName();
+            $file->extension = $upload->extension();
+            $file->path = $path;
+            $file->size = $upload->getSize();
+
+            if (!$file->save()) {
+                throw new FileException(
+                    "The file {$upload->getClientOriginalName()} could not be saved.",
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
+            }
+
+            $files->add($file); // Add to the temporary File Collection
         }
 
-        // Set the Primary Image if the Relationship does not already have one
-        if (! $relationship->primary_image_id && $files->isNotEmpty()) {
-            $relationship->primary_image_id = $files->first()?->id;
+        /**
+         * Set the Primary Image if the Relationship does not already have one
+         *
+         * @var File $file
+         */
+        if (!$relationship->primary_image_id && ($file = $files->first())) {
+            $relationship->primary_image_id = $file->id;
         }
 
         return true;

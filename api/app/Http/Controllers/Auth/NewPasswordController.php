@@ -58,8 +58,6 @@ class NewPasswordController extends Controller
 
     /**
      * This route handles an incoming password update / change request from an authorized currently logged-in user.
-     *
-     * @throws ValidationException
      */
     public function update(Request $request): JsonResponse
     {
