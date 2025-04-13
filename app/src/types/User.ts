@@ -11,6 +11,8 @@ export type User = {
   id?: string;
   updated_at?: string;
   email_verified_at?: string;
-  profile_image?: ApiFile;
+  profile_image?: ApiFile|File; // ApiFile when fetched from the API, File when uploaded
   relationships?: Relationship[];
 }
+
+export type UserFormData = Partial<User> | Partial<User> & File;

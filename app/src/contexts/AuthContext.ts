@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 
-import type { AuthFormErrors, LoginFields, NewPasswordFields, RegisterFields } from '../types/AuthTypes';
-import type { User } from '../types/User';
+import type { AuthFormErrors, LoginFields, NewPasswordFields, RegisterFields } from '../types/Auth.ts';
+import type { User, UserFormData } from '../types/User';
 
 export interface AuthContextValues {
   authenticated: boolean;
@@ -18,6 +18,7 @@ export interface AuthContextValues {
   sendEmailVerificationLink: () => Promise<void>;
   setProfileImage: (image: File) => Promise<void>;
   updateUserField: <K extends keyof User>(field: K, value: User[K]) => void;
+  saveUser: (data: UserFormData) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValues>({} as AuthContextValues);

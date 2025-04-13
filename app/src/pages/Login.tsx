@@ -2,30 +2,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import type { MouseEvent } from 'react';
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router";
-import { z } from "zod";
 
 import { Input } from "../components/form/Input";
 import Spinner from "../components/ui/Spinner";
 import useAuthContext from "../hooks/useAuthContext";
-import type { LoginFields } from "../types/AuthTypes";
-
-const schema = z.object({
-  email: z.string().email('Email address is not valid.'),
-  password: z.string().min(8, 'Password must be at least 8 characters long.'),
-  remember: z.boolean().nullable(),
-});
-
-type Schema = z.infer<typeof schema> & LoginFields;
+import { type LoginFields, loginFormSchema } from "../types/Auth";
 
 export default function Login() {
   const {login, sendEmailVerificationLink, errors: apiErrors} = useAuthContext();
 
-  const {control, register, handleSubmit, formState: {errors, isSubmitting}} = useForm<Schema>({
+  const {control, register, handleSubmit, formState: {errors, isSubmitting}} = useForm<LoginFields>({
     defaultValues: {email: '', password: '', remember: false},
-    resolver: zodResolver(schema),
+    resolver: zodResolver(loginFormSchema),
   });
 
-  const handleLogin: SubmitHandler<Schema> = async (data) => {
+  const handleLogin: SubmitHandler<LoginFields> = async (data) => {
     await login(data);
   }
 

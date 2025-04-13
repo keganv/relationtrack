@@ -1,4 +1,4 @@
-import type { AuthAction, AuthState } from '../types/AuthTypes';
+import type { AuthAction, AuthState } from '../types/Auth.ts';
 
 export function authReducer(state: AuthState, action: AuthAction)
 {

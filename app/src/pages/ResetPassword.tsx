@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { Input } from '../components/form/Input';
 import Spinner from '../components/ui/Spinner';
 import useAuthContext from '../hooks/useAuthContext';
-import type { NewPasswordFields } from '../types/AuthTypes.ts';
+import type { NewPasswordFields } from '../types/Auth.ts';
 
 
 const schema = z.object({
