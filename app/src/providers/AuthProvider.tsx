@@ -5,8 +5,8 @@ import AuthContext from '../contexts/AuthContext';
 import useGlobalContext from '../hooks/useGlobalContext';
 import axios from '../lib/axios';
 import { authReducer } from '../reducers/authReducer';
-import type { AuthFormErrors, AuthState, LoginFields, NewPasswordFields } from '../types/AuthTypes';
-import type { User } from '../types/User';
+import type { AuthFormErrors, AuthState, LoginFields, NewPasswordFields } from '../types/Auth';
+import type { User, UserFormData } from '../types/User';
 
 const defaultAuthState: AuthState = {
   authenticated: false,
@@ -38,6 +38,29 @@ const AuthProvider = ({children}: AuthProviderProps) => {
       handleError(e, dispatchErrors);
     }
   }, [handleError]);
+
+  const saveUser = useCallback(async (userFormData: UserFormData) => {
+    try {
+      const formData = new FormData();
+      formData.append('_method', 'PATCH'); // Needed for Laravel API update route
+
+      if (Object.hasOwn(userFormData, 'profile_image')) {
+        formData.append('profile_image', userFormData.profile_image as File);
+      }
+
+      const { data } = await axios({
+        url: `/api/users/${userFormData.id}`,
+        data: formData,
+        method: 'POST',
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      dispatch({ type: 'SET_USER', payload: data });
+      setStatus({ type: 'success', message: 'Successfully updated user!' });
+    } catch (e) {
+      handleError(e, dispatchErrors);
+    }
+  }, [handleError, setStatus]);
 
   const updateUserField = useCallback(<K extends keyof User>(field: K, value: User[K]) => {
     const updatedUser = { ...state.user, [field]: value };
@@ -165,7 +188,7 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     <AuthContext.Provider value={{
       ...state,
       login, register, logout, sendPasswordResetLink, newPassword,
-      sendEmailVerificationLink, setProfileImage, updateUserField
+      sendEmailVerificationLink, setProfileImage, updateUserField, saveUser
     }}>
       {children}
     </AuthContext.Provider>
