@@ -37,14 +37,16 @@ export default function MainNav({ navToggled, setNavToggle }: MainNavProps) {
           <div id="user-dropdown-container" className="flex items-center">
             <button type="button" onClick={() => setUserDropdownOpen(!userDropdownOpen)} aria-expanded={userDropdownOpen ? 'true' : 'false'} data-dropdown-toggle="user-dropdown">
               <span className="sr-only">Open user menu</span>
-              {!user.profile_image ? (
-                // <i className="fa-solid fa-user avatar"></i>
-                <img src="https://www.keganv.com/wp-content/themes/keganv3.0/img/keganv-profile.png" className="avatar" />
+              {user.profile_image && 'path' in user.profile_image ? (
+                <img src={`${import.meta.env.VITE_API_URL}/api/${user.profile_image.path}`} alt={user.username}
+                     className="avatar"/>
               ) : (
-                <img src={`${import.meta.env.VITE_API_URL}/api/${user.profile_image.path}`} alt={user.username} className="avatar" />
+                <i className="fa-solid fa-user avatar"></i>
               )}
             </button>
-            <div id="user-dropdown" className={!userDropdownOpen ? 'hidden ' : ''} onMouseLeave={() => setUserDropdownOpen(false)}>
+            <div id="user-dropdown"
+                 className={!userDropdownOpen ? 'hidden ' : ''}
+                 onMouseLeave={() => setUserDropdownOpen(false)}>
               <div className="px-3 py-2 border-b border-gray-300" role="none">
                 <p className="text-sm text-gray-900" role="none">
                   { user.full_name }
@@ -55,7 +57,7 @@ export default function MainNav({ navToggled, setNavToggle }: MainNavProps) {
               </div>
               <ul role="none">
                 <li>
-                  <Link to="#" role="menuitem">Settings</Link>
+                  <Link to="/settings" role="menuitem">Settings</Link>
                 </li>
                 <li>
                   <Link to="#" role="menuitem" onClick={handleLogout}>Logout</Link>

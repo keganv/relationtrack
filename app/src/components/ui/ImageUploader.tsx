@@ -1,7 +1,9 @@
 import React, { useCallback, useState } from 'react';
+import type { RefCallBack } from 'react-hook-form';
 
 type ImageUploaderProps = {
   id?: string;
+  label?: string;
   className?: string;
   multiple?: boolean;
   errors: string[] | null;
@@ -9,7 +11,7 @@ type ImageUploaderProps = {
   value: File[] | undefined;
   disabled?: boolean;
   accept?: string;
-  ref: React.Ref<HTMLInputElement>;
+  ref?: RefCallBack;
 };
 
 export default function ImageUploader({
@@ -61,12 +63,12 @@ export default function ImageUploader({
 
   return (
     <>
-      <div className="flex flex-col">
+      <div className={`flex flex-col w-full ${className ?? ''}`.trim()}>
         <label htmlFor={props.id ?? 'images'} className="mb-1 text-sm font-medium">
-          Images {multiple && '(Max 10)'}
+          {props.label ?? `Images ${multiple ? '(Max 10)' : ''}`.trim()}
         </label>
         <div
-          className={`flex items-center justify-center w-full ${className}`}
+          className={`flex items-center justify-center w-full`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
@@ -74,8 +76,8 @@ export default function ImageUploader({
         >
           <label
             htmlFor={props.id ?? 'images'}
-            className={`flex flex-col items-center justify-center w-full h-32 
-              border-2 border-dashed rounded-lg cursor-pointer 
+            className={`flex flex-col items-center justify-center w-full h-32
+              border-2 border-dashed rounded-lg cursor-pointer
               ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:bg-gray-50'}`
             }
           >
@@ -109,6 +111,7 @@ export default function ImageUploader({
                 alt={`Preview ${file.name}`}
                 className="w-20 h-20 object-cover"
                 onLoad={(e) => {
+                  console.log('Image loaded:', file);
                   URL.revokeObjectURL((e.target as HTMLImageElement).src);
                 }}
               />
