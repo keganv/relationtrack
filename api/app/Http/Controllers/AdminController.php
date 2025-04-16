@@ -59,7 +59,7 @@ class AdminController extends Controller
                 $this->fileService->updateFile($previous, $data);
             } else {
                 // If there was no previous profile image, create a new File model
-                $file = $this->fileService->createNewUserFile($user, $uploadedFile, $path);
+                $file = $this->fileService->createNewFile($user, $uploadedFile, $path);
                 $user->profile_image_id = $file->id;
                 $user->save();
             }
