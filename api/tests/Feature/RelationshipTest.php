@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Relationship;
 use App\Models\User;
+use App\Services\FileService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
@@ -14,6 +15,7 @@ class RelationshipTest extends TestCase
 
     private User $user;
     private Relationship $relationship;
+    private $fileService;
 
     protected function setUp(): void
     {
@@ -21,6 +23,7 @@ class RelationshipTest extends TestCase
 
         $this->user = User::factory()->create();
         $this->relationship = Relationship::factory()->create(['user_id' => $this->user->id]);
+        $this->fileService = $this->app->make(FileService::class);
     }
 
     public function test_a_relationship_can_be_created(): void
@@ -37,18 +40,19 @@ class RelationshipTest extends TestCase
     public function test_files_can_be_attached_to_a_relationship(): void
     {
         $fakeFile = UploadedFile::fake()->image('image1.jpg', 100);
+        $path = '/files/users/'.$this->user->id.'/relationships';
+        $file = $this->fileService->createNewFile($this->user, $fakeFile, $path, $this->relationship);
+        $this->relationship->refresh(); // Necessary to get the latest state of the relationship with the file attached
 
-        $file = $this->relationship->files()->create([
-            'extension' => $fakeFile->extension(),
+        $this->assertDatabaseHas('files', [
+            'id' => $file->id,
             'name' => $fakeFile->getClientOriginalName(),
-            'path' => '/uploads/users/'.$this->user->id.'/relationships',
-            'type' => $fakeFile->getMimeType(),
-            'relationship_id' => $this->relationship->id,
-            'size' => $fakeFile->getSize(),
+            'path' => $path,
             'user_id' => $this->user->id,
+            'relationship_id' => $this->relationship->id
         ]);
-
-        $this->assertEquals($file->id, $this->relationship->files->first()->id);
+        $this->assertCount(1, $this->relationship->files);
+        $this->assertTrue($this->relationship->files->contains($file->id));
     }
 
     public function test_a_relationship_can_be_soft_deleted(): void
