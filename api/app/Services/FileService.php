@@ -73,22 +73,29 @@ class FileService
     /**
      * @throws FileException
      */
-    public function createNewUserFile(User $user, UploadedFile $uploadedFile, string $path): File
-    {
+    public function createNewFile(
+        User $user,
+        UploadedFile $uploadedFile,
+        string $path,
+        Relationship $relationship = null
+    ): File {
         $file = new File([
-            'user_id' => $user->id,
             'name' => $uploadedFile->getClientOriginalName(),
             'extension' => $uploadedFile->extension(),
             'path' => $path,
             'size' => $uploadedFile->getSize(),
         ]);
 
-        if ($file->save()) {
-            return $file;
+        // Set non-fillable attributes
+        $file->user_id = $user->id;
+        $file->relationship_id = $relationship?->id ?? null;
+
+        if (!$file->save()) {
+            $message = sprintf('Failed to save the file %s.', $uploadedFile->getClientOriginalName());
+            throw new FileException($message, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $message = sprintf('Failed to save the file %s.', $uploadedFile->getClientOriginalName());
-        throw new FileException($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+        return $file;
     }
 
     /**
@@ -164,21 +171,7 @@ class FileService
                 );
             }
 
-            $file = new File();
-            $file->user_id = $user->id;
-            $file->relationship_id = $relationship->id;
-            $file->name = $upload->getClientOriginalName();
-            $file->extension = $upload->extension();
-            $file->path = $path;
-            $file->size = $upload->getSize();
-
-            if (!$file->save()) {
-                throw new FileException(
-                    "The file {$upload->getClientOriginalName()} could not be saved.",
-                    Response::HTTP_INTERNAL_SERVER_ERROR
-                );
-            }
-
+            $file = $this->createNewFile($user, $upload, $path, $relationship);
             $files->add($file); // Add to the temporary File Collection
         }
 
