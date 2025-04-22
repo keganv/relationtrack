@@ -11,6 +11,7 @@ import RelationshipIndex from './pages/relationships/RelationshipIndex.tsx';
 import RelationshipOutlet from './pages/relationships/RelationshipOutlet.tsx';
 import RelationshipView from './pages/relationships/RelationshipView.tsx';
 import ResetPassword from './pages/ResetPassword.tsx';
+import Settings from './pages/Settings.tsx';
 import CookiePolicy from './pages/static/CookiePolicy.tsx';
 import Home from './pages/static/Home';
 import NotFound from './pages/static/NotFound.tsx';
@@ -32,7 +33,8 @@ const routes: RouteObject[] = [
               { index: true, Component: RelationshipIndex },
               { path: ':id', Component: RelationshipView }
             ]
-          }
+          },
+          { path: '/settings', Component: Settings },
         ]
       },
       {
