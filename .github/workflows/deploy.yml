@@ -48,23 +48,24 @@ jobs:
           chmod 600 deploy_key
           scp -i deploy_key -o StrictHostKeyChecking=no relationtrack.zip ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/
           ssh -i deploy_key -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-            sudo unzip -o /tmp/relationtrack.zip -d /var/www/html/relationtrack
-            sudo chown -R www-data:www-data /var/www/html/relationtrack
-            sudo chmod -R 755 /var/www/html/relationtrack
-            rm /tmp/relationtrack.zip
-            cd /var/www/html/relationtrack/api
-            sudo chown www-data:www-data /var/www/html/relationtrack/api/storage/logs/laravel.log
-            sudo chmod 755 /var/www/html/relationtrack/api/storage/logs/laravel.log
-            sudo chown -R www-data:www-data storage bootstrap/cache
-            sudo chmod -R 775 storage bootstrap/cache
-            php artisan cache:clear
-            php artisan config:clear
-            php artisan route:clear
-            php artisan view:clear
-            php artisan migrate
-            php artisan config:cache
-            php artisan event:cache
-            php artisan optimize:clear
+            sudo unzip -o /tmp/relationtrack.zip -d /docker-server/relationtrack/
+            rm /tmp/relationtrack.zip         
+            cd /docker-server/relationtrack/
+            docker cp ./app relationtrack:/var/www/html/app
+            docker cp ./api relationtrack:/var/www/html/api  
+            docker exec -i relationtrack bash -c "
+              cd /var/www/html/api && \
+              chown -R www-data:www-data . && \
+              find . -type d -exec chmod 755 {} \; && \
+              find . -type f -exec chmod 644 {} \; && \
+              chown -R www-data:www-data storage bootstrap/cache && \
+              chmod -R 775 storage bootstrap/cache && \
+              php artisan optimize:clear && \
+              php artisan migrate --force && \
+              php artisan optimize
+            "
           EOF
           rm deploy_key
           rm relationtrack.zip
+
+    ## TODO: add a step to rebuild the docker images
