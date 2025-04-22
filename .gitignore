@@ -37,19 +37,18 @@ app/.env.*
 app/*.local
 app/.gitattributes
 
-# Editor directories and files
-.vscode/
+# Root directories and files
 !.vscode/extensions.json
 .idea
+.vscode/
+.git
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-.git
 
-# Docker Storage
 .env
 data/
 logs/
