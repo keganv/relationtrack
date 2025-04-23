@@ -8,7 +8,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
-// All routes are prefixed with '/api' defined in the RouteServiceProvider.php
+// All routes are prefixed with '/api' defined in the bootstrap/app.php
 
 Route::post('/register', [RegisteredUserController::class, 'store'])
     ->middleware('guest')
