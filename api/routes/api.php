@@ -10,7 +10,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // https://laravel.com/docs/master/sanctum#protecting-routes
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware(['auth:sanctum', 'verified', 'throttle:api'])->group(function () {
     // ACTION ITEM ROUTES
     Route::apiResource('action-items', ActionItemController::class)->except(['index', 'show']);
     Route::get('/relationships/{relationship}/action-items', RelationshipActionItemController::class);
