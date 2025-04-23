@@ -51,9 +51,9 @@ jobs:
             sudo unzip -o /tmp/relationtrack.zip -d /docker-server/relationtrack/
             rm /tmp/relationtrack.zip         
             cd /docker-server/relationtrack/
-            docker cp ./app relationtrack:/var/www/html/app
-            docker cp ./api relationtrack:/var/www/html/api  
-            docker exec -i relationtrack bash -c "
+            sudo docker cp ./app relationtrack:/var/www/html/app
+            sudo docker cp ./api relationtrack:/var/www/html/api  
+            sudo docker exec -i relationtrack bash -c "
               cd /var/www/html/api && \
               chown -R www-data:www-data . && \
               find . -type d -exec chmod 755 {} \; && \
