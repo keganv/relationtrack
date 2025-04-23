@@ -47,7 +47,7 @@ class AdminController extends Controller
             // If there was no previous profile image, update it
             if ($previous) {
                 // First remove the old File from storage to keep things clean
-                $this->fileService->removeFilesFromStorage([$previous]);
+                $this->fileService->removeFileFromStorage($previous);
 
                 // Update the existing profile image File
                 $data = [
