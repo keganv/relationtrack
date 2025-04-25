@@ -30,10 +30,10 @@ RUN apt-get update && apt-get install -y \
     php8.4-dom \
     php8.4-fpm \
     libapache2-mod-php8.4 \
-    libapache2-mod-proxy-fcgi \
-    libapache2-mod-ssl \
     && echo "opcache.enable=1" >> /etc/php/8.4/cli/php.ini \
     && echo "opcache.enable_cli=1" >> /etc/php/8.4/cli/php.ini
+
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Enable required Apache modules
 RUN a2enmod rewrite proxy_fcgi setenvif
@@ -65,11 +65,10 @@ RUN chown -R www-data:www-data . && \
     chown -R www-data:www-data storage bootstrap/cache && \
     chmod -R 775 storage bootstrap/cache && \
     php artisan optimize:clear && \
-    php artisan migrate --force && \
     php artisan optimize
 
 # Expose port 80
 EXPOSE 80
 
 # Start Apache server
-CMD service php8.4-fpm start && apachectl -D FOREGROUND
+CMD ["bash", "-c", "service php8.4-fpm start && apachectl -D FOREGROUND"]
