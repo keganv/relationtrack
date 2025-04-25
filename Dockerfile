@@ -4,7 +4,7 @@ FROM ubuntu:22.04
 WORKDIR /var/www/html
 
 # Avoid interactive tzdata config
-# It never interacts with you  at  all, and  makes  the  default  answers  be used for all questions.
+# It never interacts with you at all, and makes the default answers be used for all questions.
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Add PHP 8.4 Server and Laravel dependencies https://laravel.com/docs/master/deployment
@@ -63,16 +63,14 @@ RUN chown -R www-data:www-data . && \
     find . -type d -exec chmod 755 {} \; && \
     find . -type f -exec chmod 644 {} \; && \
     chown -R www-data:www-data storage bootstrap/cache && \
-    chmod -R 775 storage bootstrap/cache
+    chmod -R 775 storage bootstrap/cache && \
+    php artisan optimize:clear && \
+    php artisan migrate --force && \
+    php artisan optimize
 
 # Expose port 80
 EXPOSE 80
 
 # Start Apache server
-CMD service php8.4-fpm start && \
-    apachectl -D FOREGROUND && \
-    cd /var/www/html/api && \
-    php artisan optimize:clear && \
-    php artisan migrate --force && \
-    php artisan optimize
+CMD service php8.4-fpm start && apachectl -D FOREGROUND
 
