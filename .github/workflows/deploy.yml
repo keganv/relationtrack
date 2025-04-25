@@ -64,6 +64,8 @@ jobs:
               php artisan migrate --force && \
               php artisan optimize
             "
+            # Reload Apache to apply changes
+            sudo docker exec -i relationtrack service apache2 reload
           EOF
           rm deploy_key
           rm relationtrack.zip

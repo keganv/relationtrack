@@ -7,7 +7,7 @@ WORKDIR /var/www/html
 # It never interacts with you  at  all, and  makes  the  default  answers  be used for all questions.
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Add PHP 8.4 Laravel dependencies https://laravel.com/docs/master/deployment
+# Add PHP 8.4 Server and Laravel dependencies https://laravel.com/docs/master/deployment
 RUN apt-get update && apt-get install -y \
     software-properties-common lsb-release apt-transport-https ca-certificates curl unzip \
     && add-apt-repository ppa:ondrej/php -y \
@@ -28,7 +28,17 @@ RUN apt-get update && apt-get install -y \
     php8.4-fileinfo \
     php8.4-ctype \
     php8.4-dom \
-    libapache2-mod-php8.4
+    libapache2-mod-php8.4 \
+    php8.4-fpm \
+    libapache2-mod-proxy-fcgi \
+    libapache2-mod-ssl \
+    && echo "opcache.enable=1" >> /etc/php/8.4/cli/php.ini \
+    && echo "opcache.enable_cli=1" >> /etc/php/8.4/cli/php.ini \
+
+# Enable required Apache modules
+RUN a2enmod proxy_fcgi setenvif
+RUN a2enconf php8.4-fpm
+RUN a2dismod php8.4
 
 # Copy the application files into the html directory from the host
 COPY app /var/www/html/app
@@ -42,7 +52,6 @@ RUN a2enmod rewrite
 
 # Enable the new site configuration and disable the default one
 RUN a2ensite 000-default.conf
-# RUN a2ensite relationtrack.conf
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
