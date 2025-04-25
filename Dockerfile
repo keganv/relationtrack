@@ -74,5 +74,5 @@ CMD service php8.4-fpm start && \
     cd /var/www/html/api && \
     php artisan optimize:clear && \
     php artisan migrate --force && \
-    php artisan optimize && \
+    php artisan optimize
 
