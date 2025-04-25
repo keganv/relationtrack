@@ -3,6 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
@@ -12,6 +13,8 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register(): void
     {
+        Notification::fake();
+
         $response = $this->postJson('/api/register', [
             'firstName' => 'Test',
             'lastName' => 'User',
@@ -26,5 +29,9 @@ class RegistrationTest extends TestCase
         $response
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson(['message' => 'Successfully registered! Check your inbox to finish signing up!']);
+        Notification::assertSentTimes(
+            \Illuminate\Auth\Notifications\VerifyEmail::class,
+            1
+        );
     }
 }
