@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserUpdateRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\FileService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    public function __construct(private FileService $fileService)
+    {
+    }
+
     public function index()
     {
         // Future use of displaying paginated users, SuperAdmin permission
@@ -57,8 +62,23 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, User $user)
     {
         $validated = $request->validated();
+        $previousFile = null;
+
+        if ($upload = $validated['profile_image']) {
+            $previousFile = $user->profileImage;
+            $path = $this->fileService->uploadFileToStorage($upload, '/files/users/'.$user->id);
+            $file = $this->fileService->createNewFile($user, $upload, $path);
+            $user->profile_image_id = $file->id; // Update the user's profile image ID
+        }
+
+        unset($validated['profile_image']); // profile_image is not mass assignable
 
         $user->fill($validated);
+        $user->save();
+
+        if ($previousFile) {
+            $this->fileService->removeFileFromStorage($previousFile);
+        }
 
         $user->load([
             'profileImage', 'relationships.actionItems', 'relationships.primaryImage', 'relationships.relationshipType'

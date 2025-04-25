@@ -12,6 +12,7 @@
             @apply text-white rounded-full;
             background-color: var(--darker-blue);
             box-shadow: none !important;
+            clip-path: border-box;
             font-size: 1em;
             height: 36px;
             line-height: 36px;
@@ -20,7 +21,10 @@
 
             .avatar {
                 @apply rounded-full;
-                max-width: 32px;
+                display: block;
+                height: 32px;
+                object-fit: cover;
+                aspect-ratio: 1/1;
             }
         }
 

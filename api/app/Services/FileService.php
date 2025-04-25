@@ -15,17 +15,19 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FileService
 {
-    public function storeFileToStorage(User $user, UploadedFile $uploadedFile, bool $private = false): string
+    public function uploadFileToStorage(UploadedFile $uploadedFile, string $path): string
     {
-        $storageDisk = $private ? 'private' : 'public';
-        $path = $uploadedFile->store("files/users/$user->id", $storageDisk);
+        $result = Storage::disk('s3')->putFile($path, $uploadedFile);
 
-        if (! $path) {
-            $message = sprintf('Failed to upload the image %s to storage.', $uploadedFile->getClientOriginalName());
-            throw new UploadException($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+        // The File could not be uploaded or saved
+        if (!$result) {
+            throw new UploadException(
+                "The file {$uploadedFile->getClientOriginalName()} could not be uploaded.",
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
         }
 
-        return $path;
+        return $result;
     }
 
     /**
@@ -45,14 +47,12 @@ class FileService
 
     /**
      * @param File $file
-     *
      * @return bool
-     * @throws FileException
      */
     public function removeFileFromStorage(File $file): bool
     {
         if (!Storage::disk('s3')->exists($file->path)) {
-            return false;
+            return false; // If the file does not exist, don't worry about it
         }
 
         // Remove the actual file from S3
@@ -65,7 +65,7 @@ class FileService
             throw new FileException($message, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $file->delete(); // Delete the database record
+        $file->delete(); // Always delete the database record, because the actual file has been removed
 
         return true;
     }
@@ -99,7 +99,7 @@ class FileService
     }
 
     /**
-     * @throws \Exception
+     * @throws FileException
      */
     public function updateFile(File $file, array $data): File
     {
@@ -110,7 +110,7 @@ class FileService
 
         if (! $file->save()) {
             $message = sprintf('Failed to update the file %s.', $file->name);
-            throw new \Exception($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+            throw new FileException($message, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return $file;
@@ -160,17 +160,10 @@ class FileService
                 );
             }
 
-            // Upload the UploadedFile to S3 and save the File (model) record to the database
-            $path = Storage::disk('s3')->putFile('/files/users/'.$user->id.'/relationships', $upload);
+            // Upload the UploadedFile to S3
+            $path = $this->uploadFileToStorage($upload, '/files/users/'.$user->id.'/relationships');
 
-            // The File could not be uploaded or saved
-            if (!$path) {
-                throw new FileException(
-                    "The file {$upload->getClientOriginalName()} could not be uploaded.",
-                    Response::HTTP_INTERNAL_SERVER_ERROR
-                );
-            }
-
+            // Save the File (model) record to the database
             $file = $this->createNewFile($user, $upload, $path, $relationship);
             $files->add($file); // Add to the temporary File Collection
         }
