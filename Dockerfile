@@ -73,4 +73,3 @@ EXPOSE 80
 
 # Start Apache server
 CMD service php8.4-fpm start && apachectl -D FOREGROUND
-
