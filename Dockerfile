@@ -33,10 +33,10 @@ RUN apt-get update && apt-get install -y \
     libapache2-mod-proxy-fcgi \
     libapache2-mod-ssl \
     && echo "opcache.enable=1" >> /etc/php/8.4/cli/php.ini \
-    && echo "opcache.enable_cli=1" >> /etc/php/8.4/cli/php.ini \
+    && echo "opcache.enable_cli=1" >> /etc/php/8.4/cli/php.ini
 
 # Enable required Apache modules
-RUN a2enmod proxy_fcgi setenvif
+RUN a2enmod rewrite proxy_fcgi setenvif
 RUN a2enconf php8.4-fpm
 RUN a2dismod php8.4
 
@@ -46,9 +46,6 @@ COPY api /var/www/html/api
 
 # Copy the custom Apache configuration
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
-
-# Enable Apache mod_rewrite module, essential for Laravel routing to work
-RUN a2enmod rewrite
 
 # Enable the new site configuration and disable the default one
 RUN a2ensite 000-default.conf
@@ -66,13 +63,16 @@ RUN chown -R www-data:www-data . && \
     find . -type d -exec chmod 755 {} \; && \
     find . -type f -exec chmod 644 {} \; && \
     chown -R www-data:www-data storage bootstrap/cache && \
-    chmod -R 775 storage bootstrap/cache && \
-    php artisan optimize:clear && \
-    php artisan migrate --force && \
-    php artisan optimize
+    chmod -R 775 storage bootstrap/cache
 
 # Expose port 80
 EXPOSE 80
 
 # Start Apache server
-CMD ["apachectl", "-D", "FOREGROUND"]
+CMD service php8.4-fpm start && \
+    apachectl -D FOREGROUND && \
+    cd /var/www/html/api && \
+    php artisan optimize:clear && \
+    php artisan migrate --force && \
+    php artisan optimize && \
+
