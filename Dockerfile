@@ -68,7 +68,7 @@ RUN chown -R www-data:www-data . && \
     chown -R www-data:www-data storage bootstrap/cache && \
     chmod -R 775 storage bootstrap/cache && \
     php artisan optimize:clear && \
-    php artisan migrate && \
+    php artisan migrate --force && \
     php artisan optimize
 
 # Expose port 80
