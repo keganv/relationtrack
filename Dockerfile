@@ -28,8 +28,8 @@ RUN apt-get update && apt-get install -y \
     php8.4-fileinfo \
     php8.4-ctype \
     php8.4-dom \
-    libapache2-mod-php8.4 \
     php8.4-fpm \
+    libapache2-mod-php8.4 \
     libapache2-mod-proxy-fcgi \
     libapache2-mod-ssl \
     && echo "opcache.enable=1" >> /etc/php/8.4/cli/php.ini \
