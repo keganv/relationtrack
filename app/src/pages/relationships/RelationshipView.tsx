@@ -16,7 +16,6 @@ import RelationshipForm from './components/RelationshipForm';
 
 import '../../styles/relationship.scss';
 
-
 export default function RelationshipView() {
   const {
     selectedRelationship,

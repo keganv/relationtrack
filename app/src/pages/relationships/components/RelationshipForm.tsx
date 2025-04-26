@@ -19,6 +19,7 @@ const defaultForm = { type: '', name: '', title: '', health: 6, description: '' 
 export default function RelationshipForm({ relationship, cancel }: RelationshipFormProps) {
   const { types, save, formErrors: apiErrors, convertRelationshipToFormData, setFormErrors } = useRelationshipContext();
 
+  // This is also what resets the form on a rerender, (e.g. cancel() which closes the form)
   const initialForm: RelationshipFormData = relationship ?
     { ...convertRelationshipToFormData(relationship) } :
     defaultForm;
@@ -28,7 +29,7 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
     resolver: zodResolver(relationshipFormSchema)
   });
 
-  const handleFormSubmit: SubmitHandler<RelationshipFormData> = async (data: RelationshipFormData) => {
+  const handleFormSubmit: SubmitHandler<RelationshipFormData> = async (data) => {
     const cleaned = removeUndefined<RelationshipFormData>(data);
     const response = await save(cleaned);
     if (!(response instanceof AxiosError) && !apiErrors) {
@@ -125,8 +126,10 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
               render={({field: {onChange, value, ref, ...field}, fieldState}) => (
                 <ImageUploader
                   {...field}
+                  maxFileSize={1024 * 1024}
                   ref={ref}
                   onChange={(files) => {
+                    console.log(files);
                     onChange(files);
                     setFormErrors(null); // Reset the API Errors when the images are changed
                   }}
@@ -136,7 +139,7 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                     ...(
                       Object.keys(apiErrors ?? {})
                         .filter((key: string) => key.startsWith('images.'))
-                        .flatMap((key: string) => apiErrors?.[key as keyof typeof apiErrors] ?? [])
+                        .flatMap((key: string) => apiErrors?.[key as keyof typeof apiErrors[`images.${number}`]] ?? [])
                     ),
                     fieldState.error?.message ?? ''
                   ]}
