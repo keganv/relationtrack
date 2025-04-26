@@ -1,3 +1,4 @@
+import type { AxiosError } from 'axios';
 import { type ReactNode, useCallback, useEffect, useReducer } from 'react';
 import { useNavigate } from 'react-router';
 
@@ -12,7 +13,7 @@ const defaultAuthState: AuthState = {
   authenticated: false,
   checkingAuth: true, // Default to true for initial page loads
   doAuthCheck: true,
-  errors: {}, // Used for form and API validation errors
+  errors: null, // Used for form and API validation errors
   loading: false,
   user: null
 };
@@ -39,7 +40,7 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     }
   }, [handleError]);
 
-  const saveUser = useCallback(async (userFormData: UserFormData) => {
+  const saveUser = useCallback(async (userFormData: UserFormData): Promise<User | AxiosError> => {
     try {
       const formData = new FormData();
       formData.append('_method', 'PATCH'); // Needed for Laravel API update route
@@ -57,8 +58,11 @@ const AuthProvider = ({children}: AuthProviderProps) => {
 
       dispatch({ type: 'SET_USER', payload: data });
       setStatus({ type: 'success', message: 'Successfully updated user!' });
+
+      return data;
     } catch (e) {
       handleError(e, dispatchErrors);
+      return e as AxiosError;
     }
   }, [handleError, setStatus]);
 

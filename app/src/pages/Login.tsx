@@ -65,7 +65,7 @@ export default function Login() {
             </div>
           </div>
         </div>
-        {apiErrors.email_verified_at === false &&
+        {apiErrors?.email_verified_at === false &&
           <div className="bg-red-200 px-2 py-1 text-sm text-center">
             <p>Please verify your email address to login. A link was emailed to your inbox when you registered.</p>
             <button className="text text-sm !text-sky-700" onClick={(e) => handleSendEmailVerificationLink(e)}>
