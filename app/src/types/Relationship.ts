@@ -32,7 +32,7 @@ export const relationshipFormSchema = z.object({
     .optional(),
   description: z.string().max(500, 'Maximum of 500 characters.').nullable(),
   images: z.array(z.instanceof(File))
-    .refine((files) => files.every((f) => f.size < 1048576), { message: 'Max 1MB upload size.' })
+    .refine((files) => files.every((f) => f.size < (1024 * 1024)), { message: 'Max 1MB upload size.' })
     .refine((files) => files.every(checkFileType))
     .optional()
 });

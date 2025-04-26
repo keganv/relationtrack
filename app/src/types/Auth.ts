@@ -28,7 +28,8 @@ export type AuthFormErrors = {
   username?: string[];
   terms?: string[];
   email_verified_at?: string|boolean;
-}
+  primary_image?: string[];
+} | null;
 
 export const loginFormSchema = z.object({
   email: z.string().email('Email address is not valid.'),

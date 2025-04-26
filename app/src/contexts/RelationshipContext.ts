@@ -4,7 +4,7 @@ import React, { createContext } from 'react';
 import type { Relationship, RelationshipFormData, RelationshipFormErrors } from '../types/Relationship';
 
 export type RelationshipContextValues = {
-  save: (data: RelationshipFormData) => Promise<{message: string, data: Relationship}|AxiosError>;
+  save: (data: RelationshipFormData) => Promise<Relationship|AxiosError>;
   relationships: Relationship[]|null;
   getRelationships: () => Promise<void>;
   setRelationships: React.Dispatch<React.SetStateAction<Relationship[] | null>>;
