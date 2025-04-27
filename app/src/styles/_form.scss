@@ -180,4 +180,8 @@ button,
         top: -10px;
         width: 24px;
     }
+    &[disabled] {
+        background: rgba(0, 0, 0, .5);
+        cursor: not-allowed;
+    }
 }

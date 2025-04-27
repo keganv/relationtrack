@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { AxiosError } from 'axios';
 import { useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from "react-hook-form";
 import { z } from 'zod';
@@ -6,25 +7,35 @@ import { z } from 'zod';
 import ImageUploader from '../components/ui/ImageUploader';
 import Spinner from '../components/ui/Spinner';
 import useAuthContext from '../hooks/useAuthContext';
-import { checkFileType } from '../lib/helpers';
+import { checkFileType, removeUndefined } from '../lib/helpers';
 
+const maxFileSize = 1024 * 1024; // 1MB
 const settingsFormSchema = z.object({
   id: z.string().uuid(),
   profile_image: z.instanceof(File)
     .refine(checkFileType)
-    .refine((file) => file.size < 1048576, { message: 'Max 1MB upload size.' })
+    .refine((file) => file.size < maxFileSize, { message: 'Max 1MB upload size.' })
     .optional(),
 });
 
 type SettingsFields = z.infer<typeof settingsFormSchema>;
 
 export default function Settings() {
+  const { saveUser, user, errors: apiErrors } = useAuthContext();
   const [editMode, setEditMode] = useState(false);
-  const { control, handleSubmit, register } = useForm<SettingsFields>({ resolver: zodResolver(settingsFormSchema) });
-  const { saveUser, user } = useAuthContext();
+
+  const { control, handleSubmit, register, reset, formState: { isSubmitting } } = useForm<SettingsFields>({
+    defaultValues: { id: user?.id },
+    resolver: zodResolver(settingsFormSchema)
+  });
 
   const handleFormSubmit: SubmitHandler<SettingsFields> = async (data) => {
-    await saveUser(data);
+    const cleaned = removeUndefined<SettingsFields>(data);
+    const result = await saveUser(cleaned);
+    if (!(result instanceof AxiosError) && !apiErrors) {
+      setEditMode(false);
+      reset(); // Reset the form after a successful save.
+    }
   };
 
   return user ? (
@@ -40,7 +51,7 @@ export default function Settings() {
             onSubmit={handleSubmit(handleFormSubmit)}
             noValidate
             encType="multipart/form-data">
-        <fieldset className="section" disabled={!editMode}>
+        <fieldset className="section col-span-1" disabled={!editMode}>
           <div className="flex justify-center w-full">
             {user.profile_image && 'path' in user.profile_image ? (
               <img src={`${import.meta.env.VITE_API_URL}/api/${user.profile_image.path}`} alt={user.username}
@@ -57,13 +68,12 @@ export default function Settings() {
                 <ImageUploader
                   {...field}
                   label="Update Profile Image"
+                  maxFileSize={maxFileSize}
                   ref={ref}
-                  onChange={(file) => onChange(file[0])}
+                  onChange={(files) => onChange(files[0])}
                   value={value ? [value] : undefined}
                   multiple={false}
-                  errors={[
-                    fieldState.error?.message ?? ''
-                  ]}
+                  errors={fieldState.error?.message ? [fieldState.error.message] : null}
                 />
               )}
             />
@@ -72,14 +82,18 @@ export default function Settings() {
         </fieldset>
         {editMode  && (
           <div className="flex justify-between mt-2 col-span-3">
-            <button type="submit" className="primary mt angle-right">
-              {'Save Settings'} <Spinner loading={false} className="ml-2"/>
+            <button type="submit" className="primary mt angle-right" disabled={isSubmitting}>
+              Save Settings <Spinner loading={false} className="ml-2"/>
             </button>
             <button
               id="cancel-edit-button"
               type="button"
               className="transparent angle-left text-white"
-              onClick={() => setEditMode(false)}>
+              onClick={() => {
+                setEditMode(false);
+                reset();
+              }}
+            >
               Cancel
             </button>
           </div>

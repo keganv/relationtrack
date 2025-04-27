@@ -8,7 +8,7 @@ export function authReducer(state: AuthState, action: AuthAction)
         ...state,
         authenticated: true,
         doAuthCheck: true,
-        errors: {},
+        errors: null,
         user: action.payload,
       };
     }
@@ -17,7 +17,7 @@ export function authReducer(state: AuthState, action: AuthAction)
         ...state,
         authenticated: false,
         doAuthCheck: false,
-        errors: {},
+        errors: null,
         user: null,
       };
     }
@@ -41,7 +41,8 @@ export function authReducer(state: AuthState, action: AuthAction)
         ...state,
         authenticated: hasUser,
         doAuthCheck: hasUser,
-        user: action.payload
+        user: action.payload,
+        errors: null
       };
     }
     case 'SET_ERRORS': {
