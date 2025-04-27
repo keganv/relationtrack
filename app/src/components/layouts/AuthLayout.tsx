@@ -8,7 +8,7 @@ import MainNav from '../ui/MainNav';
 import Spinner from '../ui/Spinner.tsx';
 
 export default function AuthLayout() {
-  const { authenticated, checkingAuth, doAuthCheck } = useAuthContext();
+  const { authenticated, checkingAuth, doAuthCheck, user } = useAuthContext();
   const { setStatus } = useGlobalContext();
   const [navOpen, setNavToggle] = useState(false);
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ export default function AuthLayout() {
     );
   }
 
-  return authenticated ? (
+  return authenticated && user ? (
     <RelationshipProvider>
       <div className="admin">
         <MainNav navToggled={navOpen} setNavToggle={setNavToggle} />
