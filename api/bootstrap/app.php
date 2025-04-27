@@ -1,12 +1,13 @@
 <?php
 
+use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Route;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withProviders([
@@ -91,7 +92,26 @@ return Application::configure(basePath: dirname(__DIR__))
             'password_confirmation',
         ]);
 
-        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
-            return response()->json(['message' => 'The requested resource was not found.'], Response::HTTP_NOT_FOUND);
+        // Don't report or log CSRF token mismatch exceptions
+        $exceptions->dontReport([TokenMismatchException::class]);
+
+        $exceptions->render(function (HttpException $e, Request $request) {
+            if ($e->getStatusCode() === 404) {
+                return response()->json(
+                    ['message' => 'The requested resource was not found.'],
+                    $e->getStatusCode()
+                );
+            }
+            if ($e->getStatusCode() === 419) {
+                $message = 'Your session has expired. Please refresh the page and log back in.';
+                if ($request->expectsJson()) {
+                    return response()->json(
+                        ['message' => $message],
+                        $e->getStatusCode()
+                    );
+                }
+                return redirect()->intended(config('app.frontend_url').RouteServiceProvider::LOGIN)
+                    ->with(['message' => $message]);
+            }
         });
     })->create();
