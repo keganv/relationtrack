@@ -25,11 +25,11 @@ export default function ForgotPassword() {
           name="email"
           type="email"
           autoComplete="email"
-          className={`${errors.email && 'error'}`}
+          className={`${errors?.email && 'error'}`}
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
-        {errors.email && <div className="error" role="alert">{errors.email[0]}</div>}
+        {errors?.email && <div className="error" role="alert">{errors.email[0]}</div>}
       </div>
       <div className="mt-2">
         <button type="submit" className="button primary angle-left" disabled={loading}>
