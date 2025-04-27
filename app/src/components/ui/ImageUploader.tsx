@@ -4,6 +4,7 @@ import type { RefCallBack } from 'react-hook-form';
 type ImageUploaderProps = {
   id?: string;
   label?: string;
+  maxFileSize: number;
   className?: string;
   multiple?: boolean;
   errors: string[] | null;
@@ -15,7 +16,7 @@ type ImageUploaderProps = {
 };
 
 export default function ImageUploader({
-  className, errors, multiple = true, onChange, value = [], ref, ...props
+  className, maxFileSize, errors, multiple = true, onChange, value = [], ref, ...props
 }: ImageUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
 
@@ -91,7 +92,9 @@ export default function ImageUploader({
               <p className="mb-2 text-xs text-gray-500">
                 Click to upload or drag and drop
               </p>
-              <p className="text-xs text-gray-500">Max File Size: 1MB</p>
+              <p className="text-xs text-gray-500">
+                Max {Math.floor(maxFileSize) / 1024 / 1024}MB upload size.
+              </p>
             </div>
             <input
               {...props}
