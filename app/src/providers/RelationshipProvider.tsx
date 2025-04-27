@@ -7,7 +7,6 @@ import useGlobalContext from '../hooks/useGlobalContext.ts';
 import axios from '../lib/axios';
 import type { Relationship, RelationshipFormData, RelationshipFormErrors } from '../types/Relationship';
 
-
 type RelationshipProviderProps = {
   children: ReactNode;
 }
@@ -42,7 +41,7 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
     }
   }, [handleError]);
 
-  const save = async (data: RelationshipFormData) => {
+  const save = async (data: RelationshipFormData): Promise<Relationship|AxiosError> => {
     setFormErrors(null);
     try {
       const url = data.id ? `/api/relationships/${data.id}` : '/api/relationships';
@@ -61,19 +60,19 @@ function RelationshipProvider ({ children }: RelationshipProviderProps) {
         }
       }
 
-      const response = await axios({
+      const { data: responseData } = await axios({
         url: url,
         data: formData,
         method: 'POST',
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      const updatedRelationship = response.data.data;
+      const updatedRelationship = responseData.data;
       const updatedRelationships = relationships?.map((r: Relationship) => {
           return r.id === updatedRelationship.id ? updatedRelationship : r;
       }) || [];
 
-      setStatus({type: 'success', message: response.data.message});
+      setStatus({type: 'success', message: responseData.message});
       setSelectedRelationship(updatedRelationship);
       setRelationships(updatedRelationships);
       // Update the `relationships` property on the User in the AuthProvider Context
