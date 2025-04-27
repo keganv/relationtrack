@@ -64,14 +64,13 @@ class UserController extends Controller
         $validated = $request->validated();
         $previousFile = null;
 
-        if ($upload = $validated['profile_image']) {
+        if ($upload = $validated['profile_image'] ?? false) {
             $previousFile = $user->profileImage;
             $path = $this->fileService->uploadFileToStorage($upload, '/files/users/'.$user->id);
             $file = $this->fileService->createNewFile($user, $upload, $path);
             $user->profile_image_id = $file->id; // Update the user's profile image ID
+            unset($validated['profile_image']); // profile_image is not mass assignable
         }
-
-        unset($validated['profile_image']); // profile_image is not mass assignable
 
         $user->fill($validated);
         $user->save();
@@ -81,7 +80,11 @@ class UserController extends Controller
         }
 
         $user->load([
-            'profileImage', 'relationships.actionItems', 'relationships.primaryImage', 'relationships.relationshipType'
+            'profileImage',
+            'relationships.actionItems',
+            'relationships.files',
+            'relationships.primaryImage',
+            'relationships.relationshipType'
         ])->loadCount('relationships');
 
         return response()->json(new UserResource($user), Response::HTTP_OK);
