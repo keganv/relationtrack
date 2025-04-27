@@ -19,17 +19,17 @@ class VerifyEmailController extends Controller
     public function __invoke(EmailVerificationRequest $request)
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return $this->redirectTheUserToLogin($request->user());
+            return $this->redirectTheUserToDashboard($request->user());
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
         }
 
-        return $this->redirectTheUserToLogin($request->user());
+        return $this->redirectTheUserToDashboard($request->user());
     }
 
-    private function redirectTheUserToLogin(User $user): RedirectResponse
+    private function redirectTheUserToDashboard(User $user): RedirectResponse
     {
         return redirect()->intended(
             config('app.frontend_url').RouteServiceProvider::DASHBOARD.'?verified=1'
