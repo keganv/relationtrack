@@ -19,7 +19,7 @@ final class RelationshipRequest extends FormRequest
         $relationship = $this->route('relationship');
 
         if (!$relationship) {
-            $this->user()->can('create', Relationship::class);
+            return $this->user()->can('create', Relationship::class);
         }
 
         $method = strtoupper($this->method());
