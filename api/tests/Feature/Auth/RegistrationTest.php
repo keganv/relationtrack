@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,9 +30,6 @@ class RegistrationTest extends TestCase
         $response
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson(['message' => 'Successfully registered! Check your inbox to finish signing up!']);
-        Notification::assertSentTimes(
-            \Illuminate\Auth\Notifications\VerifyEmail::class,
-            1
-        );
+        Notification::assertSentTimes(VerifyEmail::class, 1);
     }
 }

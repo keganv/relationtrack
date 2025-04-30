@@ -102,4 +102,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(File::class, 'profile_image_id');
     }
+
+    public function settings()
+    {
+        return $this->hasOne(UserSettings::class, 'user_id');
+    }
 }
