@@ -149,19 +149,6 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     }
   }, [navigate, setStatus, handleError]);
 
-  const setProfileImage = async (image: File) => {
-    setStatus(null);
-    try {
-      const formData = new FormData();
-      const url = "/api/update-profile-image";
-      formData.append('profile_image', image as File);
-      const response = await axios.post(url, formData, {headers: {'Content-Type': 'multipart/form-data'}});
-      setStatus({ type: 'success', message: response.data?.message });
-    } catch (error) {
-      handleError(error);
-    }
-  };
-
   /**
    * The API "api/authentication" route must send back the `authenticated` key with a boolean value
    */
@@ -192,7 +179,7 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     <AuthContext.Provider value={{
       ...state,
       login, register, logout, sendPasswordResetLink, newPassword,
-      sendEmailVerificationLink, setProfileImage, updateUserField, saveUser
+      sendEmailVerificationLink, updateUserField, saveUser
     }}>
       {children}
     </AuthContext.Provider>

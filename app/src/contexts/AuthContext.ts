@@ -17,7 +17,6 @@ export interface AuthContextValues {
   sendPasswordResetLink: (data: { email: string }) => Promise<void>;
   newPassword: (data: NewPasswordFields) => Promise<void>;
   sendEmailVerificationLink: () => Promise<void>;
-  setProfileImage: (image: File) => Promise<void>;
   updateUserField: <K extends keyof User>(field: K, value: User[K]) => void;
   saveUser: (data: UserFormData) => Promise<User | AxiosError>;
 }

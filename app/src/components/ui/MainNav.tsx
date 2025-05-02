@@ -17,9 +17,6 @@ export default function MainNav({ navToggled, setNavToggle }: MainNavProps) {
     await logout();
   }
 
-  // const profileImageInput = useRef<HTMLInputElement>(null);
-  // const handleProfileImage = (image: File) => setProfileImage(image);
-
   return user && (
     <>
       <header className="main !px-3 !py-0" role="banner">
@@ -35,11 +32,16 @@ export default function MainNav({ navToggled, setNavToggle }: MainNavProps) {
             <img src="/images/logo-sm.png" alt="Relation Track" className="logo h-6" />
           </Link>
           <div id="user-dropdown-container" className="flex items-center">
-            <button type="button" onClick={() => setUserDropdownOpen(!userDropdownOpen)} aria-expanded={userDropdownOpen ? 'true' : 'false'} data-dropdown-toggle="user-dropdown">
+            <button type="button"
+                    onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                    aria-expanded={userDropdownOpen ? 'true' : 'false'}
+                    data-dropdown-toggle="user-dropdown">
               <span className="sr-only">Open user menu</span>
               {user.profile_image && 'path' in user.profile_image ? (
-                <img src={`${import.meta.env.VITE_API_URL}/api/${user.profile_image.path}`} alt={user.username}
-                     className="avatar"/>
+                <img src={`${import.meta.env.VITE_API_URL}/api/${user.profile_image.path}`}
+                     alt={user.username}
+                     className="avatar"
+                />
               ) : (
                 <i className="fa-solid fa-user avatar"></i>
               )}
