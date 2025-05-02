@@ -70,4 +70,27 @@ class AuthenticatedSessionController extends Controller
     {
         return response()->json(['authenticated' => Auth::check()], Response::HTTP_OK);
     }
+
+    /**
+     * Returns the Authenticated user's information:
+     * Profile image, and user's relationships with their ActionItems, primary image, Files and Types.
+     *
+     * @return JsonResponse
+     */
+    public function user(): JsonResponse
+    {
+        if (!Auth::check()) {
+            return response()->json(['message' => 'Please log in again.'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $userModel = Auth::user()->load([
+            'profileImage',
+            'relationships.actionItems',
+            'relationships.primaryImage',
+            'relationships.files',
+            'relationships.relationshipType'
+        ])->loadCount('relationships');
+
+        return response()->json(new UserResource($userModel), Response::HTTP_OK);
+    }
 }

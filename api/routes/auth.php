@@ -44,5 +44,9 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
 Route::put('/update-password', [NewPasswordController::class, 'update'])
-    ->middleware(['auth', 'auth.session'])
+    ->middleware(['auth', 'auth:sanctum'])
     ->name('password.update');
+
+Route::get('/user', [AuthenticatedSessionController::class, 'user'])
+    ->middleware(['throttle:20,1', 'auth:sanctum'])
+    ->name('authenticated.user');

@@ -16,7 +16,6 @@ Route::middleware(['auth:sanctum', 'verified', 'throttle:api'])->group(function 
     Route::get('/relationships/{relationship}/action-items', RelationshipActionItemController::class);
 
     // USER ROUTES
-    Route::get('/user', [UserController::class, 'getUser'])->name('user.show');
     Route::apiResource('users', UserController::class)->except(['store']);
 
     // ADMIN ROUTES
