@@ -7,6 +7,14 @@ use Database\Factories\UserSettingsFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * UserSettings model represents the settings for a user.
+ * The default model is created when a user registers in the CreateUserSettings listener.
+ *
+ * @property int $user_id
+ * @property bool $notifications
+ * @property string $email_frequency
+ */
 class UserSettings extends Model
 {
     /** @use HasFactory<UserSettingsFactory> */
@@ -15,14 +23,14 @@ class UserSettings extends Model
     protected $fillable = [
         'user_id',
         'notifications', // User allows email notifications (boolean)
-        'frequency', // Frequency of email notifications (string)
+        'email_frequency', // Frequency of email notifications (string)
     ];
 
     protected function casts(): array
     {
         return [
             'notifications' => 'boolean',
-            'frequency' => EmailFrequency::class,
+            'email_frequency' => EmailFrequency::class,
         ];
     }
 
