@@ -1,5 +1,6 @@
 <?php
 
+use App\Types\EmailFrequency;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
             $table->boolean('notifications')->default(false)->nullable(false);
-            $table->string('frequency')->default('n');
+            $table->string('email_frequency')->default(EmailFrequency::Never);
             $table->timestamps();
         });
     }
