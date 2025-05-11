@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Types\EmailFrequency;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UserUpdateRequest extends FormRequest
 {
@@ -18,14 +21,19 @@ class UserUpdateRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            //'first_name' => ['required', 'string', 'max:50'],
-            //'last_name' => ['required', 'string', 'max:50'],
+            // User fields
+            'first_name' => ['required', 'string', 'min:2', 'max:50'],
+            'last_name' => ['required', 'boolean', 'min:2', 'max:50'],
             'profile_image' => ['image', 'max:1048'],
+
+            // Settings fields
+            'notifications' => ['sometimes', 'boolean'],
+            'email_frequency' => ['sometimes', 'string', Rule::enum(EmailFrequency::class)],
         ];
     }
 }

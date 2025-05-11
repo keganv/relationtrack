@@ -55,10 +55,14 @@ class UserController extends Controller
             $path = $this->fileService->uploadFileToStorage($upload, '/files/users/'.$user->id);
             $file = $this->fileService->createNewFile($user, $upload, $path);
             $user->profile_image_id = $file->id; // Update the user's profile image ID
-            unset($validated['profile_image']); // profile_image is not mass assignable
         }
 
-        $user->fill($validated);
+        $userFields = collect($validated)->except(['profile_image', 'notifications', 'email_frequency'])->toArray();
+        $settingsFields = collect($validated)->only(['notifications', 'email_frequency'])->toArray();
+
+        $user->fill($userFields);
+        $user->settings->update($settingsFields);
+
         $user->save();
 
         if ($previousFile) {
@@ -70,7 +74,8 @@ class UserController extends Controller
             'relationships.actionItems',
             'relationships.files',
             'relationships.primaryImage',
-            'relationships.relationshipType'
+            'relationships.relationshipType',
+            'settings'
         ])->loadCount('relationships');
 
         return response()->json(new UserResource($user), Response::HTTP_OK);
