@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { MouseEvent } from 'react';
-import { Controller, type SubmitHandler, useForm } from "react-hook-form";
+import { Controller, type FieldErrors, type SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router";
 
 import { Input } from "../components/form/Input";
@@ -11,9 +11,10 @@ import { type LoginFields, loginFormSchema } from "../types/Auth";
 export default function Login() {
   const {login, sendEmailVerificationLink, errors: apiErrors} = useAuthContext();
 
-  const {control, register, handleSubmit, formState: {errors, isSubmitting}} = useForm<LoginFields>({
+  const {control, register, handleSubmit, formState: {errors: formErrors, isSubmitting}} = useForm<LoginFields>({
     defaultValues: {email: '', password: '', remember: false},
     resolver: zodResolver(loginFormSchema),
+    errors: apiErrors as FieldErrors<LoginFields>,
   });
 
   const handleLogin: SubmitHandler<LoginFields> = async (data) => {
@@ -32,8 +33,14 @@ export default function Login() {
           name="email"
           control={control}
           render={({field}) => (
-            <Input id="email" type="email" fieldErrors={errors?.email} apiErrors={apiErrors?.email}
-                   className={`${apiErrors?.email && 'error'}`} required label="Email" {...field}/>
+            <Input
+                   id="email"
+                   className={`${apiErrors?.email && 'error'}`}
+                   type="email"
+                   errors={[formErrors.email?.message ?? '', ...apiErrors?.first_name ?? []]}
+                   required label="Email"
+                   {...field}
+            />
           )}
         />
         <div className="mt-4">
@@ -41,8 +48,13 @@ export default function Login() {
             name="password"
             control={control}
             render={({field}) => (
-              <Input id="password" type="password" fieldErrors={errors?.password} apiErrors={apiErrors?.password}
-                    className={`${apiErrors?.password && 'error'}`} required label="Password" {...field}/>
+              <Input id="password"
+                     type="password"
+                     label="Password"
+                     required
+                     errors={[formErrors.password?.message ?? '', ...apiErrors?.password ?? []]}
+                     {...field}
+              />
             )}
           />
         </div>

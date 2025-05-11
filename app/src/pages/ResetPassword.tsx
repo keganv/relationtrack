@@ -1,13 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, type FieldErrors, type SubmitHandler, useForm } from 'react-hook-form';
 import { useParams, useSearchParams } from 'react-router';
 import { z } from 'zod';
 
 import { Input } from '../components/form/Input';
 import Spinner from '../components/ui/Spinner';
 import useAuthContext from '../hooks/useAuthContext';
-import type { NewPasswordFields } from '../types/Auth.ts';
-
+import type { NewPasswordFields } from '../types/Auth';
 
 const schema = z.object({
   email: z.string().email('Email address is not valid.'),
@@ -26,6 +25,7 @@ export default function ResetPassword() {
   const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<Schema>({
     defaultValues: { email: searchParams.get('email') ?? '', password: '', password_confirmation: '', token },
     resolver: zodResolver(schema),
+    errors: apiErrors as FieldErrors<Schema>,
   });
 
   const handleLogin: SubmitHandler<Schema> = async (data) => {
@@ -39,8 +39,13 @@ export default function ResetPassword() {
         name="email"
         control={control}
         render={({field}) => (
-          <Input id="email" type="email" fieldErrors={errors?.email} apiErrors={apiErrors?.email}
-                 className={`${apiErrors?.email && 'error'}`} required label="Email" {...field}/>
+          <Input id="email"
+                 type="email"
+                 label="Email"
+                 errors={errors.email}
+                 required
+                 {...field}
+          />
         )}
       />
       <div className="mt-4">
@@ -48,8 +53,13 @@ export default function ResetPassword() {
           name="password"
           control={control}
           render={({field}) => (
-            <Input id="password" type="password" fieldErrors={errors?.password} apiErrors={apiErrors?.password}
-                  className={`${apiErrors?.password && 'error'}`} required label="New Password" {...field}/>
+            <Input id="password"
+                   type="password"
+                   label="New Password"
+                   errors={errors?.password}
+                   required
+                   {...field}
+            />
           )}
         />
       </div>
@@ -58,8 +68,13 @@ export default function ResetPassword() {
           name="password_confirmation"
           control={control}
           render={({field}) => (
-            <Input id="password_confirmation" type="password" fieldErrors={errors?.password}
-                   required label="Confirm Password" {...field}/>
+            <Input id="password_confirmation"
+                   type="password"
+                   label="Confirm Password"
+                   errors={errors.password}
+                   required
+                   {...field}
+            />
           )}
         />
       </div>

@@ -1,13 +1,16 @@
 import React, { useCallback, useState } from 'react';
 import type { RefCallBack } from 'react-hook-form';
 
+import type { AppInputError } from '../../types/Errors';
+import FormFieldError from '../form/FormFieldError.tsx';
+
 type ImageUploaderProps = {
   id?: string;
   label?: string;
   maxFileSize: number;
   className?: string;
   multiple?: boolean;
-  errors: string[] | null;
+  errors?: AppInputError;
   onChange: (files: File[]) => void;
   value: File[] | undefined;
   disabled?: boolean;
@@ -98,7 +101,11 @@ export default function ImageUploader({
             </div>
             <input
               {...props}
-              ref={ref} id={props.id ?? 'images'} type="file" accept="image/*" multiple={multiple} className="hidden"
+              ref={ref} id={props.id ?? 'images'}
+              type="file"
+              accept="image/*"
+              multiple={multiple}
+              className="hidden"
               onChange={handleInputChange} />
           </label>
         </div>
@@ -128,17 +135,7 @@ export default function ImageUploader({
           ))}
         </div>
       )}
-
-      {/* Error messages */}
-      {errors && errors.map((error, i) => (
-        <div
-          className="text-red-500 text-sm mt-1"
-          key={error.replace(/\s+/g, '').substring(0, 5) + i}
-          role="alert"
-        >
-          {error}
-        </div>
-      ))}
+      {errors && <FormFieldError errors={errors} />}
     </>
   );
 }

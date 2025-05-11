@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, type FieldErrors, type SubmitHandler, useForm } from 'react-hook-form';
 
 import useApi from '../../hooks/useApi.ts';
 import useGlobalContext from '../../hooks/useGlobalContext';
@@ -24,7 +24,8 @@ export default function ActionItemForm({relationship, actionItem, close, updateA
 
   const { control, handleSubmit, formState: { errors, isSubmitting } } = useForm<ActionItemFormData>({
     defaultValues: actionItem ? { ...actionItem } : defaultForm,
-    resolver: zodResolver(actionItemFormSchema)
+    resolver: zodResolver(actionItemFormSchema),
+    errors: apiErrors as FieldErrors<ActionItemFormData>,
   });
 
   const handleFormSubmit: SubmitHandler<ActionItemFormData> = async (formData: ActionItemFormData) => {
@@ -54,10 +55,9 @@ export default function ActionItemForm({relationship, actionItem, close, updateA
                 <Input
                   {...field}
                   type="text"
-                  fieldErrors={errors?.action}
+                  errors={errors?.action}
                   label="Action"
                   required
-                  apiErrors={apiErrors?.action}
                   className={`${apiErrors?.name && 'error'}`}
                 />
             )}/>
@@ -70,10 +70,9 @@ export default function ActionItemForm({relationship, actionItem, close, updateA
                   {...field}
                   defaultChecked={actionItem?.complete}
                   type="checkbox"
-                  fieldErrors={errors?.complete}
+                  errors={errors?.complete}
                   label="Completed"
                   value="complete"
-                  apiErrors={apiErrors?.name}
                   className={`${errors?.complete && 'error'}`}
                 />
             )}/>

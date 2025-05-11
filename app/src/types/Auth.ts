@@ -6,7 +6,7 @@ export type AuthState = {
   authenticated: boolean; // Defaults to false for initial page loads
   checkingAuth: boolean; // Defaults to true for initial page loads
   doAuthCheck: boolean; // Defaults to true for initial page loads
-  errors: AuthFormErrors; // Used for form and API validation errors
+  errors: AuthApiErrors; // Used for form and API validation errors
   loading: boolean; // Defaults to false
   user: User|null;
 }
@@ -14,21 +14,23 @@ export type AuthState = {
 export type AuthAction =
   | { type: 'SET_AUTHENTICATED'; payload: boolean; }
   | { type: 'SET_CHECKING_AUTH'; payload: boolean; }
-  | { type: 'SET_ERRORS'; payload: AuthFormErrors; }
+  | { type: 'SET_ERRORS'; payload: AuthApiErrors; }
   | { type: 'SET_LOADING'; payload: boolean; }
   | { type: 'SET_USER'; payload: User|null; }
   | { type: 'LOGIN_SUCCESS'; payload: User|null; }
   | { type: 'LOGOUT'; };
 
-export type AuthFormErrors = {
-  firstName?: string[];
-  lastName?: string[];
+export type AuthApiErrors = {
+  first_name?: string[];
+  last_name?: string[];
   email?: string[];
   password?: string[];
   username?: string[];
   terms?: string[];
-  email_verified_at?: string|boolean;
-  primary_image?: string[];
+  email_verified_at?: string | boolean;
+  profile_image?: string[];
+  email_frequency?: string[];
+  notifications?: string[];
 } | null;
 
 export const loginFormSchema = z.object({
@@ -40,8 +42,8 @@ export const loginFormSchema = z.object({
 export type LoginFields = z.infer<typeof loginFormSchema>;
 
 export type RegisterFields = {
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
   password_confirmation: string;

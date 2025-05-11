@@ -55,7 +55,7 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                   <>
                     <label htmlFor="type">Type <span className="red">*</span></label>
                     <select id="type" className="block w-full" autoFocus required aria-label="type" {...field}>
-                      <option>Select</option>
+                      <option value=''>Select</option>
                       {types && types.map((type) => (
                         <option key={type.id} value={type.id}>{type.type}</option>
                       ))}
@@ -71,8 +71,13 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                 name="name"
                 control={control}
                 render={({field}) => (
-                  <Input type="text" fieldErrors={errors?.name} apiErrors={apiErrors?.name}
-                         className={`${apiErrors?.name && 'error'}`} label="Name" {...field} required/>
+                  <Input type="text"
+                         className={`${apiErrors?.name && 'error'}`}
+                         label="Name"
+                         required
+                         errors={[errors.name?.message ?? '', ...apiErrors?.name ?? []]}
+                         {...field}
+                  />
                 )}/>
             </div>
             <div>
@@ -80,8 +85,13 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                 name="title"
                 control={control}
                 render={({field}) => (
-                  <Input type="text" fieldErrors={errors?.title} apiErrors={apiErrors?.title}
-                         className={`${apiErrors?.title && 'error'}`} label="Title" {...field} required/>
+                  <Input type="text"
+                         className={`${apiErrors?.title && 'error'}`}
+                         label="Title"
+                         required
+                         errors={[errors.title?.message ?? '', ...apiErrors?.title ?? []]}
+                         {...field}
+                  />
                 )}/>
             </div>
             <div>
@@ -89,8 +99,11 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                 name="birthday"
                 control={control}
                 render={({field}) => (
-                  <Input type="date" fieldErrors={errors?.birthday} apiErrors={apiErrors?.birthday}
-                         className={`${apiErrors?.birthday && 'error'}`} label="Birthday" {...field} />
+                  <Input type="date"
+                         className={`${apiErrors?.birthday && 'error'}`}
+                         label="Birthday"
+                         errors={[errors.birthday?.message ?? '', ...apiErrors?.birthday ?? []]}
+                         {...field} />
                 )}/>
             </div>
             <div>
@@ -129,7 +142,6 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                   maxFileSize={1024 * 1024}
                   ref={ref}
                   onChange={(files) => {
-                    console.log(files);
                     onChange(files);
                     setFormErrors(null); // Reset the API Errors when the images are changed
                   }}
