@@ -6,8 +6,8 @@ import useAuthContext from '../hooks/useAuthContext';
 
 export default function Register() {
   const [email, setEmail] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [first_name, setfirst_name] = useState('');
+  const [last_name, setlast_name] = useState('');
   const [password, setPassword] = useState('');
   const [password_confirmation, setPasswordConfirmation] = useState('');
   const [username, setUsername] = useState('');
@@ -16,25 +16,25 @@ export default function Register() {
 
   const handleRegister = async (e: FormEvent) => {
     e.preventDefault()
-    await register({ firstName, lastName, email, password, password_confirmation, username, terms });
+    await register({ first_name, last_name, email, password, password_confirmation, username, terms });
   }
 
   return (
     <form className="shadow-md mb-4 thick-border" method="POST" onSubmit={handleRegister}>
       <div className="form-row">
-        <label htmlFor="firstName">First Name<span className="required">*</span></label>
-        <input id="firstName" name="firstName" type="text" value={firstName}
-               className={`${errors?.firstName && 'error'}`}
-               onChange={(e) => setFirstName(e.target.value)}/>
-        {errors?.firstName && <span className="error">{errors?.firstName[0]}</span>}
+        <label htmlFor="first_name">First Name<span className="required">*</span></label>
+        <input id="first_name" name="first_name" type="text" value={first_name}
+               className={`${errors?.first_name && 'error'}`}
+               onChange={(e) => setfirst_name(e.target.value)}/>
+        {errors?.first_name && <span className="error">{errors?.first_name[0]}</span>}
       </div>
       <div className="form-row">
-        <label htmlFor="lastName">Last Name<span className="required">*</span></label>
-        <input id="lastName" name="lastName" type="text" value={lastName}
-               className={`${errors?.lastName && 'error'}`}
-               onChange={e => setLastName(e.target.value)}
+        <label htmlFor="last_name">Last Name<span className="required">*</span></label>
+        <input id="last_name" name="last_name" type="text" value={last_name}
+               className={`${errors?.last_name && 'error'}`}
+               onChange={e => setlast_name(e.target.value)}
         />
-        {errors?.lastName && <span className="error">{errors?.lastName[0]}</span>}
+        {errors?.last_name && <span className="error">{errors?.last_name[0]}</span>}
       </div>
       <div className="form-row">
         <label htmlFor="username">Username<span className="required">*</span></label>
