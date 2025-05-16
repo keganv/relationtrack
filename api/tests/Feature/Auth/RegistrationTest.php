@@ -17,8 +17,8 @@ class RegistrationTest extends TestCase
         Notification::fake();
 
         $response = $this->postJson('/api/register', [
-            'firstName' => 'Test',
-            'lastName' => 'User',
+            'first_name' => 'Test',
+            'last_name' => 'User',
             'username' => 'test',
             'email' => 'test@example.com',
             'password' => env('TEST_PASSWORD'),
