@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
-
 // use Illuminate\Support\Str;
 
 /**
@@ -15,7 +14,6 @@ class UserFactory extends Factory
 {
     // Hashing is expensive, when generating many user records for testing or seeding a database,
     // keeping the same static password repeatedly saves time and resources.
-    protected static ?string $password;
 
     /**
      * Define the model's default state.
@@ -30,7 +28,7 @@ class UserFactory extends Factory
             'username' => fake()->userName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => Hash::make(env('TEST_PASSWORD')),
             // 'remember_token' => Str::random(10),
         ];
     }

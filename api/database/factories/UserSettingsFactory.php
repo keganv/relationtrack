@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Types\EmailFrequency;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,15 @@ class UserSettingsFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'email_frequency' => EmailFrequency::Daily,
+            'notifications' => rand(0, 1),
         ];
+    }
+
+    public function withUser(string $userId)
+    {
+        return $this->state(fn (array $attributes) => [
+            'user_id' => $userId,
+        ]);
     }
 }
