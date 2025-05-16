@@ -31,7 +31,8 @@ class UserResource extends JsonResource
             'relationships' => RelationshipResource::collection($this->whenLoaded('relationships')),
             'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
             'username' => $this->username,
-            'relationship_count' => $this->whenCounted('relationships')
+            'relationship_count' => $this->whenCounted('relationships'),
+            'settings' => $this->whenLoaded('settings'),
         ];
     }
 }

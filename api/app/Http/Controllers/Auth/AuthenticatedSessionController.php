@@ -40,7 +40,8 @@ class AuthenticatedSessionController extends Controller
             'relationships.actionItems',
             'relationships.primaryImage',
             'relationships.relationshipType',
-            'relationships.files'
+            'relationships.files',
+            'settings',
         ])->loadCount('relationships');
 
         return response()->json([
@@ -88,7 +89,8 @@ class AuthenticatedSessionController extends Controller
             'relationships.actionItems',
             'relationships.primaryImage',
             'relationships.files',
-            'relationships.relationshipType'
+            'relationships.relationshipType',
+            'settings',
         ])->loadCount('relationships');
 
         return response()->json(new UserResource($userModel), Response::HTTP_OK);
