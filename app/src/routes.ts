@@ -1,21 +1,21 @@
 import { createBrowserRouter, type RouteObject } from 'react-router';
 
-import App from './App.tsx';
-import AuthLayout from './components/layouts/AuthLayout.tsx';
-import GuestLayout from './components/layouts/GuestLayout.tsx';
+import App from './App';
+import AuthLayout from './components/layouts/AuthLayout';
+import GuestLayout from './components/layouts/GuestLayout';
 import Dashboard from './pages/Dashboard';
-import ForgotPassword from './pages/ForgotPassword.tsx';
+import ForgotPassword from './pages/ForgotPassword';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import RelationshipIndex from './pages/relationships/RelationshipIndex.tsx';
-import RelationshipOutlet from './pages/relationships/RelationshipOutlet.tsx';
-import RelationshipView from './pages/relationships/RelationshipView.tsx';
-import ResetPassword from './pages/ResetPassword.tsx';
-import Settings from './pages/Settings.tsx';
-import CookiePolicy from './pages/static/CookiePolicy.tsx';
+import RelationshipIndex from './pages/relationships/RelationshipIndex';
+import RelationshipOutlet from './pages/relationships/RelationshipOutlet';
+import RelationshipView from './pages/relationships/RelationshipView';
+import ResetPassword from './pages/ResetPassword';
+import Settings from './pages/settings/Settings';
+import CookiePolicy from './pages/static/CookiePolicy';
 import Home from './pages/static/Home';
-import NotFound from './pages/static/NotFound.tsx';
-import Terms from './pages/static/Terms.tsx';
+import NotFound from './pages/static/NotFound';
+import Terms from './pages/static/Terms';
 
 const routes: RouteObject[] = [
   {
