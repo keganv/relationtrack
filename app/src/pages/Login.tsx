@@ -11,7 +11,7 @@ import { type LoginFields, loginFormSchema } from "../types/Auth";
 export default function Login() {
   const {login, sendEmailVerificationLink, errors: apiErrors} = useAuthContext();
 
-  const {control, register, handleSubmit, formState: {errors: formErrors, isSubmitting}} = useForm<LoginFields>({
+  const {control, register, handleSubmit, formState: {errors, isSubmitting}} = useForm<LoginFields>({
     defaultValues: {email: '', password: '', remember: false},
     resolver: zodResolver(loginFormSchema),
     errors: apiErrors as FieldErrors<LoginFields>,
@@ -35,9 +35,8 @@ export default function Login() {
           render={({field}) => (
             <Input
                    id="email"
-                   className={`${apiErrors?.email && 'error'}`}
                    type="email"
-                   errors={[formErrors.email?.message ?? '', ...apiErrors?.first_name ?? []]}
+                   errors={errors.email}
                    required label="Email"
                    {...field}
             />
@@ -52,7 +51,7 @@ export default function Login() {
                      type="password"
                      label="Password"
                      required
-                     errors={[formErrors.password?.message ?? '', ...apiErrors?.password ?? []]}
+                     errors={errors.password}
                      {...field}
               />
             )}

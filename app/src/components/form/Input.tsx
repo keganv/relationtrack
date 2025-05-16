@@ -24,7 +24,7 @@ function Input({ className, type, errors, id, label, required, ref, ...props }: 
         id={id}
         ref={ref}
         type={type}
-        className={cn(className,  errors ? ' error' : ' valid')}
+        className={cn(className, errors ? ' error' : ' valid')}
         required={required}
         {...props}
       />
