@@ -28,7 +28,7 @@ class UserUpdateRequest extends FormRequest
         return [
             // User fields
             'first_name' => ['required', 'string', 'min:2', 'max:50'],
-            'last_name' => ['required', 'boolean', 'min:2', 'max:50'],
+            'last_name' => ['required', 'string', 'min:2', 'max:50'],
             'profile_image' => ['image', 'max:1048'],
 
             // Settings fields
