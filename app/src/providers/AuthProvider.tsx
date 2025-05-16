@@ -6,7 +6,7 @@ import AuthContext from '../contexts/AuthContext';
 import useGlobalContext from '../hooks/useGlobalContext';
 import axios from '../lib/axios';
 import { authReducer } from '../reducers/authReducer';
-import type { AuthFormErrors, AuthState, LoginFields, NewPasswordFields } from '../types/Auth';
+import type { AuthApiErrors, AuthState, LoginFields, NewPasswordFields } from '../types/Auth';
 import type { User, UserFormData } from '../types/User';
 
 const defaultAuthState: AuthState = {
@@ -27,7 +27,7 @@ const AuthProvider = ({children}: AuthProviderProps) => {
 
   const csrf = () => axios.get('/api/sanctum/csrf-cookie');
 
-  const dispatchErrors = (errors: AuthFormErrors) => {
+  const dispatchErrors = (errors: AuthApiErrors) => {
     dispatch({ type: 'SET_ERRORS', payload: errors });
   };
 
@@ -40,17 +40,24 @@ const AuthProvider = ({children}: AuthProviderProps) => {
     }
   }, [handleError]);
 
-  const saveUser = useCallback(async (userFormData: UserFormData): Promise<User | AxiosError> => {
+  const saveUser = useCallback(async (userFormData: UserFormData): Promise<User | AxiosError | void> => {
+    if (!state.user) return;
+
     try {
       const formData = new FormData();
       formData.append('_method', 'PATCH'); // Needed for Laravel API update route
 
-      if (Object.hasOwn(userFormData, 'profile_image')) {
-        formData.append('profile_image', userFormData.profile_image as File);
+      for (const key in userFormData) {
+        if (key === 'profile_image') {
+          formData.append('profile_image', userFormData.profile_image as File);
+          continue;
+        }
+
+        formData.append(key, userFormData[key as keyof UserFormData] as string);
       }
 
       const { data } = await axios({
-        url: `/api/users/${userFormData.id}`,
+        url: `/api/users/${state.user.id}`,
         data: formData,
         method: 'POST',
         headers: { 'Content-Type': 'multipart/form-data' }
@@ -64,10 +71,10 @@ const AuthProvider = ({children}: AuthProviderProps) => {
       handleError(e, dispatchErrors);
       return e as AxiosError;
     }
-  }, [handleError, setStatus]);
+  }, [handleError, setStatus, state.user]);
 
   const updateUserField = useCallback(<K extends keyof User>(field: K, value: User[K]) => {
-    const updatedUser = { ...state.user, [field]: value };
+    const updatedUser = state.user ? { ...state.user, [field]: value } : null;
     dispatch({ type: 'SET_USER', payload: updatedUser });
   }, [state.user, dispatch]);
 
@@ -176,13 +183,13 @@ const AuthProvider = ({children}: AuthProviderProps) => {
   }, [doLogout, logout]);
 
   return (
-    <AuthContext.Provider value={{
+    <AuthContext value={{
       ...state,
       login, register, logout, sendPasswordResetLink, newPassword,
       sendEmailVerificationLink, updateUserField, saveUser
     }}>
       {children}
-    </AuthContext.Provider>
+    </AuthContext>
   );
 }
 

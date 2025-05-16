@@ -1,8 +1,8 @@
+import type { AxiosResponse } from 'axios';
 import { useCallback, useState } from 'react';
 
 import axios from '../lib/axios';
 import useGlobalContext from './useGlobalContext.ts';
-import type { AxiosResponse } from 'axios';
 
 export default function useApi() {
   const [apiErrors, setApiErrors] = useState<Record<string, string[]>>();
