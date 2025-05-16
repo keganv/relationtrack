@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { MouseEvent } from 'react';
+import { type MouseEvent, useEffect } from 'react';
 import { Controller, type FieldErrors, type SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router";
 
@@ -11,7 +11,13 @@ import { type LoginFields, loginFormSchema } from "../types/Auth";
 export default function Login() {
   const {login, sendEmailVerificationLink, errors: apiErrors} = useAuthContext();
 
-  const {control, register, handleSubmit, formState: {errors, isSubmitting}} = useForm<LoginFields>({
+  const {
+    control,
+    register,
+    handleSubmit,
+    clearErrors,
+    formState: {errors, isSubmitting}
+  } = useForm<LoginFields>({
     defaultValues: {email: '', password: '', remember: false},
     resolver: zodResolver(loginFormSchema),
     errors: apiErrors as FieldErrors<LoginFields>,
@@ -25,6 +31,8 @@ export default function Login() {
     e.preventDefault();
     await sendEmailVerificationLink();
   }
+
+  useEffect(() => clearErrors(), [clearErrors]); // Clear any existing errors on mount
 
   return (
     <>
