@@ -4,16 +4,14 @@ import Spinner from '../../components/ui/Spinner';
 import { useAuthenticatedUser } from '../../hooks/useAuthenticatedUser.ts';
 import SettingsForm from './components/SettingsForm.tsx';
 
-let renderCount = 0;
-
 export default function Settings() {
   const [editMode, setEditMode] = useState(false);
   const user = useAuthenticatedUser();
-  renderCount++;
+
   return user ? (
     <>
       <header className="page-header">
-        <h2>Settings: {user.full_name} {renderCount}</h2>
+        <h2>Settings: {user.full_name}</h2>
         <button className="primary small angle-right" onClick={() => setEditMode(!editMode)}>
           Edit Settings
         </button>
@@ -34,7 +32,6 @@ export default function Settings() {
           setEditMode={setEditMode}
         />
       </div>
-      {/* <!-- End of grid --> */}
     </>
   ) : (
     <div className="flex h-screen justify-center items-center">
