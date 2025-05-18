@@ -31,5 +31,8 @@ class RegistrationTest extends TestCase
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson(['message' => 'Successfully registered! Check your inbox to finish signing up!']);
         Notification::assertSentTimes(VerifyEmail::class, 1);
+        $this->assertDatabaseHas('users', [
+            'email' => 'test@example.com'
+        ]);
     }
 }

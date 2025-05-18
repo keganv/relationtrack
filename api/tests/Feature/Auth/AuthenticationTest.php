@@ -25,7 +25,7 @@ class AuthenticationTest extends TestCase
     {
         $response = $this->postJson('/api/login', [
             'email' => $this->user->email,
-            'password' => 'password',
+            'password' => env('TEST_PASSWORD'),
         ]);
 
         $this->assertAuthenticated();
@@ -36,7 +36,7 @@ class AuthenticationTest extends TestCase
         ]);
     }
 
-    public function test_users_can_not_login_with_invalid_password(): void
+    public function test_login_fails_with_invalid_password(): void
     {
         $response = $this->postJson('/api/login', [
             'email' => $this->user->email,

@@ -27,9 +27,11 @@ class UserUpdateRequest extends FormRequest
     {
         return [
             // User fields
-            'first_name' => ['required', 'string', 'min:2', 'max:50'],
-            'last_name' => ['required', 'string', 'min:2', 'max:50'],
-            'profile_image' => ['image', 'max:1048'],
+            'first_name' => ['sometimes', 'string', 'min:2', 'max:50'],
+            'last_name' => ['sometimes', 'string', 'min:2', 'max:50'],
+            'username' => ['sometimes', 'string', 'max:50', 'unique:users'],
+            'email' => ['sometimes', 'string', 'email', 'max:100', 'unique:users'],
+            'profile_image' => ['sometimes', 'image', 'max:1048'],
 
             // Settings fields
             'notifications' => ['sometimes', 'boolean'],
