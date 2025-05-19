@@ -34,7 +34,7 @@ class RegistrationTest extends TestCase
             ->assertJson(['message' => 'Successfully registered! Check your inbox to finish signing up!']);
         Notification::assertSentTimes(VerifyEmail::class, 1);
 
-        $user = User::firstWhere('email', 'test@example.com')->load('settings');
+        $user = User::with('settings')->firstWhere('email', 'test@example.com');
 
         $this->assertTrue($user->relationLoaded('settings'));
 
