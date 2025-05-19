@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
@@ -27,12 +28,16 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
+
         $response
             ->assertStatus(Response::HTTP_CREATED)
             ->assertJson(['message' => 'Successfully registered! Check your inbox to finish signing up!']);
         Notification::assertSentTimes(VerifyEmail::class, 1);
-        $this->assertDatabaseHas('users', [
-            'email' => 'test@example.com'
-        ]);
+
+        $user = User::firstWhere('email', 'test@example.com')->load('settings');
+
+        $this->assertTrue($user->relationLoaded('settings'));
+
+        $this->assertDatabaseHas('user_settings', ['user_id' => $user->id]);
     }
 }
