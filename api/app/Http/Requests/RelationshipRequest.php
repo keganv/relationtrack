@@ -52,9 +52,9 @@ final class RelationshipRequest extends FormRequest
     {
         return [
             'type' => 'required|exists:relationship_types,id',
-            'name' => 'required|max:50',
-            'title' => 'required|max:50',
-            'health' => 'required|numeric|min:0|max:10',
+            'name' => 'required|min:3|max:50',
+            'title' => 'required|min:3|max:50',
+            'health' => 'required|numeric|min:1|max:10',
             'birthday' => 'nullable|date|before:today',
             'description' => 'nullable|string|max:500',
             'images' => 'nullable|array|max:10',
