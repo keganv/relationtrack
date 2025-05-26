@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
-import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
+import { Controller, type FieldErrors, type SubmitHandler, useForm } from 'react-hook-form';
 
+import FormFieldError from '../../../components/form/FormFieldError.tsx';
 import { Input } from '../../../components/form/Input';
 import ImageUploader from '../../../components/ui/ImageUploader';
 import Spinner from '../../../components/ui/Spinner';
@@ -26,7 +27,8 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
 
   const { control, register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RelationshipFormData>({
     defaultValues: initialForm,
-    resolver: zodResolver(relationshipFormSchema)
+    resolver: zodResolver(relationshipFormSchema),
+    errors: apiErrors as FieldErrors<RelationshipFormData>,
   });
 
   const handleFormSubmit: SubmitHandler<RelationshipFormData> = async (data) => {
@@ -36,6 +38,7 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
       cancel(); // Close the form after a successful save.
     }
   }
+  console.log(errors);
 
   if (!types?.length) {
     return <Spinner loading={true}></Spinner>
@@ -72,10 +75,9 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                 control={control}
                 render={({field}) => (
                   <Input type="text"
-                         className={`${apiErrors?.name && 'error'}`}
                          label="Name"
                          required
-                         errors={[errors.name?.message ?? '', ...apiErrors?.name ?? []]}
+                         errors={errors.name}
                          {...field}
                   />
                 )}/>
@@ -86,10 +88,9 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                 control={control}
                 render={({field}) => (
                   <Input type="text"
-                         className={`${apiErrors?.title && 'error'}`}
                          label="Title"
                          required
-                         errors={[errors.title?.message ?? '', ...apiErrors?.title ?? []]}
+                         errors={errors.title}
                          {...field}
                   />
                 )}/>
@@ -100,26 +101,30 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
                 control={control}
                 render={({field}) => (
                   <Input type="date"
-                         className={`${apiErrors?.birthday && 'error'}`}
                          label="Birthday"
-                         errors={[errors.birthday?.message ?? '', ...apiErrors?.birthday ?? []]}
+                         errors={errors.birthday}
                          {...field} />
                 )}/>
             </div>
             <div>
-              <label htmlFor="health" title="Rate the current health of this relationship.">
-                Relationship Health <span className="required">*</span>
-              </label>
-              <input id="health" type="range" min="1" max="10" {...register('health')} className="range mt" required/>
-              <div className="flex mt-sm justify-between">
+              <Input
+                {...register('health')}
+                label="Relationship Health"
+                className="range mt"
+                title="Rate the current health of this relationship."
+                required={true}
+                type="range"
+                min="1"
+                max="10"
+              />
+              <div className="flex my-1 justify-between">
                 <i className="fa-regular fa-face-sad-tear"></i>
                 <i className="fa-regular fa-face-frown"></i>
                 <i className="fa-regular fa-face-meh"></i>
                 <i className="fa-regular fa-face-smile"></i>
                 <i className="fa-regular fa-face-laugh"></i>
               </div>
-              {errors?.health && <div className="error">{errors.health.message}</div>}
-              {apiErrors?.health && <span className="error">{apiErrors.health}</span>}
+              {errors?.health && <FormFieldError errors={errors.health} />}
             </div>
             <div>
               <label htmlFor="description">Description</label>
