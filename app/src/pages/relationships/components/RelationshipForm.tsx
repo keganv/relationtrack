@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
 import { Controller, type FieldErrors, type SubmitHandler, useForm } from 'react-hook-form';
 
-import FormFieldError from '../../../components/form/FormFieldError.tsx';
+import FormFieldError from '../../../components/form/FormFieldError';
 import { Input } from '../../../components/form/Input';
 import ImageUploader from '../../../components/ui/ImageUploader';
 import Spinner from '../../../components/ui/Spinner';
