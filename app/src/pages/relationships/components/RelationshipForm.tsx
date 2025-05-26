@@ -38,7 +38,6 @@ export default function RelationshipForm({ relationship, cancel }: RelationshipF
       cancel(); // Close the form after a successful save.
     }
   }
-  console.log(errors);
 
   if (!types?.length) {
     return <Spinner loading={true}></Spinner>
