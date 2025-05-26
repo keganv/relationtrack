@@ -16,7 +16,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 function Input({ className, type, errors, id, label, required, ref, ...props }: InputProps) {
   return (
-    <div>
+    <div title={props.title}>
       <label htmlFor={id}>
         {label}{required && <span className="required">*</span>}
       </label>
