@@ -43,13 +43,16 @@ class UserControllerTest extends TestCase
             ...self::$newValues
         ]);
 
-        $response->assertJson(fn (AssertableJson $json) =>
+        $response->assertJson(
+            fn (AssertableJson $json) =>
             $json->where('id', $this->user->id)
                 ->where('first_name', self::$newValues['first_name'])
                 ->where('last_name', self::$newValues['last_name'])
                 ->where('email', self::$newValues['email'])
                 ->where('username', self::$newValues['username'])
-                ->has('settings', fn (AssertableJson $json) =>
+                ->has(
+                    'settings',
+                    fn (AssertableJson $json) =>
                     $json->where('notifications', self::$newValues['notifications'])
                         ->where('email_frequency', self::$newValues['email_frequency'])
                         ->etc()
@@ -69,20 +72,23 @@ class UserControllerTest extends TestCase
             'email' => self::$newValues['email']
         ]);
 
-        $response->assertJson(fn (AssertableJson $json) =>
+        $response->assertJson(
+            fn (AssertableJson $json) =>
             $json->where('id', $this->user->id)
                 ->where('first_name', $this->user->first_name)
                 ->where('last_name', $this->user->last_name)
                 ->where('email', self::$newValues['email'])
                 ->where('username', $this->user->username)
-                ->has('settings', fn (AssertableJson $json) =>
+                ->has(
+                    'settings',
+                    fn (AssertableJson $json) =>
                 $json->where('notifications', $this->user->settings->notifications)
                     ->where('email_frequency', $this->user->settings->email_frequency)
                     ->etc()
                 )
                 ->missing('password')
                 ->etc()
-            );
+        );
 
         $response->assertStatus(Response::HTTP_OK);
     }
