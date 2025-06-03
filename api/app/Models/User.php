@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Types\EmailFrequency;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -106,5 +109,21 @@ class User extends Authenticatable implements MustVerifyEmail
     public function settings()
     {
         return $this->hasOne(UserSettings::class, 'user_id');
+    }
+
+    #[Scope]
+    protected function notifiable(Builder $query): void
+    {
+        $query->whereHas('settings', function (Builder $q) {
+            $q->where('notifications', true);
+        });
+    }
+
+    #[Scope]
+    protected function withEmailFrequency(Builder $query, EmailFrequency $emailFrequency): void
+    {
+        $query->whereHas('settings', function (Builder $q) use ($emailFrequency) {
+            $q->where('email_frequency', $emailFrequency);
+        });
     }
 }
