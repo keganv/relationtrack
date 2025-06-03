@@ -3,20 +3,21 @@
 namespace App\Console\Commands;
 
 use App\Mail\UserSummary;
-use App\Models\User;
+use app\Services\EmailService;
+use App\Types\EmailFrequency;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Isolatable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Mail;
 
-class SendDailyEmail extends Command implements Isolatable
+class UserSummaryEmail extends Command implements Isolatable
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'mail:send-daily';
+    protected $signature = 'mail:user-summary
+                            {frequency : EmailFrequency must be "d", "w", or "m"}';
 
     /**
      * The console command description.
@@ -33,15 +34,21 @@ class SendDailyEmail extends Command implements Isolatable
      */
     public function handle()
     {
-        $users = User::whereHas('settings', function (Builder $query) {
-            $query->where('notifications', true)
-                  ->where('email_frequency', 'd');
-        })->get();
+        $frequency = EmailFrequency::from($this->argument('frequency'));
 
-        foreach ($users as $user) {
-            Mail::to($user->email)->send(new UserSummary($user));
+        if (!$frequency) {
+            $this->fail('Invalid frequency provided.');
         }
 
-        $this->info("Daily email sent to {$users->count()} users.");
+        $emailService = new EmailService($frequency);
+        $data = $emailService->gatherUserSummaryData();
+        $count = count($data);
+
+
+        foreach ($data as $datum) {
+            Mail::to($datum['user']['email'])->send(new UserSummary($datum));
+        }
+
+        $this->info("Daily email sent to $count users.");
     }
 }
