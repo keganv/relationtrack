@@ -52,7 +52,7 @@
     </style>
 </head>
 <body style="margin: 0; padding: 0;">
-<center style="width: 100%; background-color: #f2f2f2;">
+<center style="width: 100%; background-color: #dddddd;">
     <div style="max-width: 600px; margin: 0 auto; padding-top: 20px;">
         <table class="full-width-table" align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff;">
             <tr>
@@ -73,18 +73,62 @@
                     <table class="inner-table" border="0" cellpadding="0" cellspacing="0" width="100%" style="width: 100%;">
                         <tr>
                             <td style="font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; color: #333333; padding-bottom: 15px;">
-                                <p style="margin: 0;">Hello {{ $user->first_name }},</p>
+                                <p style="margin: 0;">Hello {{ $data['user']['first_name'] }}!</p>
                             </td>
                         </tr>
                         <tr>
                             <td style="font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; color: #333333; padding-bottom: 15px;">
-                                <p style="margin: 0;">This is the main content area of your email. You can add your text, images, and other elements here. Keep paragraphs concise for readability on mobile devices.</p>
+                                <h3 style="margin: 0 0 15px;">Your {{ $data['frequency']->label() }} Relationship Summary</h3>
+                                <p style="background-color:#eaeaea;margin:0 0 10px;padding:5px;">
+                                    Relationships Updated In The Passed {{ $data['frequency']->days() }} Days:
+                                </p>
+                                <ul style="margin:0 0 5px;padding:0;">
+                                    @foreach($data['updated_within'] as $updated)
+                                        <li style="list-style:none;padding:10px;border:1px solid #eaeaea;margin:5px 0;">
+                                            <p style="margin:0 0 5px;">
+                                                {{ $updated['name'] }}
+                                                <small>Last updated: {{ $updated['updated_at'] }}</small>
+                                            </p>
+                                            @if(isset($updated['action_items']))
+                                                <div style="background:#b8d9ff;padding:10px;">
+                                                    <p style="border-bottom:1px solid #555555;margin:0 0 5px;">Recent Activities:</p>
+                                                    @foreach($updated['action_items'] as $actionItem)
+                                                        {{ $actionItem['action'] }} (<small>{{ $actionItem['complete'] ? 'completed' : 'incomplete' }}</small>)<br/>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; color: #333333; padding-bottom: 15px;">
+                                <p style="background-color:#eaeaea;margin:0 0 10px;padding:5px;">
+                                    Relationships That May Need Your Attention:
+                                </p>
+                                <ul style="margin:0 0 5px;padding:0;">
+                                    @foreach($data['updated_beyond'] as $updated)
+                                        <li style="list-style:none;padding:10px;border:1px solid #eaeaea;margin:5px 0;">
+                                            <p style="margin:0 0 5px;">{{ $updated['name'] }}</p>
+                                            @if(isset($updated['action_items']))
+                                                <div style="background:#b8d9ff;padding:10px;">
+                                                    <p style="border-bottom:1px solid #555555;margin:0 0 5px;">Recent Activities:</p>
+                                                    @foreach($updated['action_items'] as $actionItem)
+                                                        {{ $actionItem['action'] }} (<small>{{ $actionItem['complete'] ? 'completed' : 'incomplete' }}</small>)<br/>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                            <small>Last updated: {{ date('m-d-Y g:i a', strtotime($updated['updated_at'])) }}</small>
+                                        </li>
+                                    @endforeach
+                                </ul>
                             </td>
                         </tr>
                         <tr>
                             <td style="font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; color: #333333; padding-bottom: 15px;">
                                 <p style="margin: 0;">Best regards,</p>
-                                <p style="margin: 0;">Your Company Name</p>
+                                <p style="margin: 0;">RelationTrack</p>
                             </td>
                         </tr>
                     </table>
