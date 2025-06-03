@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -52,6 +54,8 @@ class Relationship extends Model
      */
     protected $appends = ['type'];
 
+    protected $hidden = ['relationshipType'];
+
     /**
      * Get the attributes that should be cast.
      *
@@ -95,5 +99,33 @@ class Relationship extends Model
             get: fn ($value, $attributes) => $this->relationshipType,
             set: fn ($value) => ['type_id' => $value],
         );
+    }
+
+
+    #[Scope]
+    protected function byUser(Builder $query, string $userId)
+    {
+        $query->where('user_id', $userId);
+    }
+
+    #[Scope]
+    protected function updatedWithinDays(Builder $query, int $period)
+    {
+        $fromDate = now()->subDays($period);
+        $query->where('updated_at', '>', $fromDate)
+            ->whereDoesntHave('actionItems')
+            ->orWhereHas('actionItems', function (Builder $q) use ($fromDate) {
+                $q->where('updated_at', '>', $fromDate);
+            });
+    }
+
+    #[Scope]
+    protected function updatedBeyondDays(Builder $query, int $period)
+    {
+        $fromDate = now()->subDays($period);
+        $query->where('updated_at', '<', $fromDate)
+            ->whereDoesntHave('actionItems', function (Builder $q) use ($fromDate) {
+                $q->where('updated_at', '>', $fromDate);
+            });
     }
 }
