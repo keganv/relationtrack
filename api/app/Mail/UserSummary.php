@@ -2,8 +2,6 @@
 
 namespace App\Mail;
 
-use App\Models\User;
-use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
@@ -12,14 +10,13 @@ use Illuminate\Queue\SerializesModels;
 
 class UserSummary extends Mailable
 {
-    use Queueable;
     use SerializesModels;
 
     /**
      * Create a new message instance.
      */
     public function __construct(
-        private readonly User $user
+        private readonly mixed $data
     ) {
     }
 
@@ -41,7 +38,7 @@ class UserSummary extends Mailable
     {
         return new Content(
             view: 'emails.user-summary',
-            with: ['user' => $this->user]
+            with: ['data' => $this->data]
         );
     }
 

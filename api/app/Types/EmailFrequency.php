@@ -18,4 +18,14 @@ enum EmailFrequency: string
             self::Never => 'Never',
         };
     }
+
+    public function days(): int
+    {
+        return match ($this) {
+            self::Daily => 1,
+            self::Weekly => 7,
+            self::Monthly => 30,
+            self::Never => 0,
+        };
+    }
 }
