@@ -6,13 +6,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "guzzlehttp/guzzle": "^7.9",
-        "laravel/framework": "^11.3",
-        "laravel/sanctum": "^4.0",
+        "guzzlehttp/guzzle": "^7.8",
+        "laravel/framework": "^12",
+        "laravel/sanctum": "^4.1",
         "laravel/tinker": "^2.9",
-        "league/flysystem-aws-s3-v3": "^3.0",
-        "symfony/http-client": "^7.2",
-        "symfony/mailgun-mailer": "^7.2"
+        "league/flysystem-aws-s3-v3": "^3.29",
+        "symfony/http-client": "^7.3",
+        "symfony/mailgun-mailer": "^7.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
