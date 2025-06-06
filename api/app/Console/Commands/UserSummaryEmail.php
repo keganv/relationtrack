@@ -3,10 +3,12 @@
 namespace App\Console\Commands;
 
 use App\Mail\UserSummary;
-use app\Services\EmailService;
+use App\Models\User;
+use App\Services\UserService;
 use App\Types\EmailFrequency;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Isolatable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class UserSummaryEmail extends Command implements Isolatable
@@ -34,21 +36,40 @@ class UserSummaryEmail extends Command implements Isolatable
      */
     public function handle()
     {
-        $frequency = EmailFrequency::from($this->argument('frequency'));
+        $frequency = EmailFrequency::tryFrom($this->argument('frequency'));
 
         if (!$frequency) {
+            Log::error("User Summary Email Failed!", [
+                'reason' => "Invalid frequency of {$this->argument('frequency')} provided."
+            ]);
             $this->fail('Invalid frequency provided.');
         }
 
-        $emailService = new EmailService($frequency);
-        $data = $emailService->gatherUserSummaryData();
-        $count = count($data);
+        // Data to hold user summaries that will be sent in the email
+        $data = [];
 
+        // Gather users who have notifications enabled and the specified email frequency
+        $users = User::select(['id', 'first_name', 'last_name', 'email'])
+            ->notifiable()
+            ->withEmailFrequency($frequency)
+            ->get();
+
+        foreach ($users as $user) {
+            $data[] = [
+                'frequency' => $frequency,
+                'user' => $user->toArray(),
+                ...UserService::gatherUserRelationshipSummaryData($user, $frequency->days()),
+            ];
+        }
+
+        $count = count($data);
 
         foreach ($data as $datum) {
             Mail::to($datum['user']['email'])->send(new UserSummary($datum));
         }
 
-        $this->info("Daily email sent to $count users.");
+        $this->info("{$frequency->name} email sent to $count users.");
+
+        return Command::SUCCESS;
     }
 }
