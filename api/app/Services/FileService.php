@@ -77,7 +77,7 @@ class FileService
         User $user,
         UploadedFile $uploadedFile,
         string $path,
-        Relationship $relationship = null
+        Relationship|null $relationship = null
     ): File {
         $file = new File([
             'name' => $uploadedFile->getClientOriginalName(),

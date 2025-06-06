@@ -13,8 +13,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * @property \DateTime $email_verified_at
+ * @property string $id
+ * @property string $first_name
+ * @property string $last_name
  * @property string $full_name
+ * @property string $username
+ * @property string $email
+ * @property \DateTime $email_verified_at
+ * @property string $password
+ * @property string $profile_image_id
+ * @property File $profileImage
+ * @property UserSettings $settings
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
