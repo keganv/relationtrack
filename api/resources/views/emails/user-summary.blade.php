@@ -87,7 +87,7 @@
                                         <li style="list-style:none;padding:10px;border:1px solid #eaeaea;margin:5px 0;">
                                             <p style="margin:0 0 5px;">
                                                 {{ $updated['name'] }}
-                                                <small>Last updated: {{ $updated['updated_at'] }}</small>
+                                                <small>Last updated: {{ date('m-d-Y g:i a', strtotime($updated['updated_at'])) }}</small>
                                             </p>
                                             @if(isset($updated['action_items']))
                                                 <div style="background:#b8d9ff;padding:10px;">
@@ -135,7 +135,7 @@
                 </td>
             </tr>
             <tr>
-                <td align="center" style="background-color: #eeeeee; padding: 20px 0;">
+                <td align="center" style="background-color: #dddddd; padding: 20px 0;">
                     <table border="0" cellpadding="0" cellspacing="0" width="100%">
                         <tr>
                             <td align="center" style="font-family: Arial, sans-serif; font-size: 12px; line-height: 18px; color: #666666;">
