@@ -13,18 +13,18 @@ describe('Home page', () => {
     beforeEach(async () => {
       // keep the axios mock implementations but clear the call tracking between tests,
       // each test should start with a clean slate
-      jest.clearAllMocks();
+      jest.resetAllMocks();
 
       const router = createBrowserRouter(routes);
       render(<RouterProvider router={router} />);
 
       // Wait for the AuthProvider Context to be called and avoid the "test was not wrapped in act(...)" errors
       // The waitFor waits for a condition to be met.
-      // expect(mockAxios.get).toHaveBeenCalled() checks if the axios.get method has been called.
-      // By using await waitFor(...), the test waits until the axios.get call is completed before proceeding.
+      // expect(mockAxios.post).toHaveBeenCalled() checks if the axios.get method has been called.
+      // By using await waitFor(...), the test waits until the axios.post call is completed before proceeding.
       // This ensures that the component's state is fully updated and stable before any assertions are made in the tests.
       // AuthLayout calls a post to /api/authenticated in the AuthProvider automatically which updates the state.
-      await waitFor(() => expect(mockAxios.post).toHaveBeenCalled());
+      await waitFor(() => expect(mockAxios.post).toHaveBeenCalledWith('/api/authenticated'));
     });
 
     it('should show the welcome screen', async () => {
@@ -40,11 +40,13 @@ describe('Home page', () => {
     });
 
     it('should navigate to the login page when the login button is clicked', async () => {
+      const user = userEvent.setup();
+
       // Get the login button element
       const loginButton = screen.getAllByRole('link', { name: /log in/i })[0];
 
       // Simulate a click on the login button
-      userEvent.click(loginButton);
+      await user.click(loginButton);
 
       // Check that the URL has changed to the login page
       await waitFor(() => {

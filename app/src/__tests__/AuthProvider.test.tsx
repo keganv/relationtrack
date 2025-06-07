@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { AxiosError, AxiosHeaders } from 'axios';
 import { MemoryRouter } from "react-router";
 
 import useGlobalContext from '../hooks/useGlobalContext';
@@ -8,7 +9,6 @@ import Login from "../pages/Login";
 import AuthProvider from "../providers/AuthProvider";
 import GlobalProvider from '../providers/GlobalProvider';
 import type { Status } from '../types/Status';
-import { AxiosError, AxiosHeaders } from 'axios';
 
 const mockNavigate = jest.fn();
 jest.mock('react-router', () => ({

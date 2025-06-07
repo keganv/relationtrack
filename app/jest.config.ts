@@ -24,7 +24,6 @@ module.exports = {
             },
           ],
         },
-        isolatedModules: true,
         useESM: true
       },
     ],

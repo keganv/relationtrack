@@ -1,29 +1,44 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 
 import useAuthContext from '../hooks/useAuthContext';
+import axios from '../lib/axios.ts';
 import Register from '../pages/Register';
 import AuthProvider from '../providers/AuthProvider';
+import GlobalProvider from '../providers/GlobalProvider';
 
-// Mock the Spinner component and useAuthContext hook
 jest.mock('../hooks/useAuthContext');
+jest.mock('../lib/axios');
+const mockAxios = axios as jest.Mocked<typeof axios>;
 
 describe('Register Component', () => {
   const mockRegister = jest.fn();
+  (useAuthContext as jest.Mock).mockReturnValue({
+    register: mockRegister,
+    errors: {},
+    loading: false,
+  });
 
-  beforeEach(() => {
-    (useAuthContext as jest.Mock).mockReturnValue({
-      register: mockRegister,
-      errors: {},
-      loading: false,
-    });
+  beforeEach(async () => {
+    // resetAllMocks clears configuration (mockReturnValue) as well as call history, so use clearAllMocks instead
+    jest.clearAllMocks();
+
     render(
       <MemoryRouter>
-        <AuthProvider>
-          <Register />
-        </AuthProvider>
+        <GlobalProvider>
+          <AuthProvider>
+            <Register />
+          </AuthProvider>
+        </GlobalProvider>
       </MemoryRouter>
     );
+
+    // Wait for initial async operations (CSRF and auth check) to complete
+    await waitFor(() => {
+      expect(mockAxios.get).toHaveBeenCalledWith('/api/sanctum/csrf-cookie');
+      expect(mockAxios.post).toHaveBeenCalledWith('/api/authenticated');
+    });
   });
 
   it('renders the form correctly', () => {
@@ -35,23 +50,24 @@ describe('Register Component', () => {
     expect(screen.getByLabelText(/Confirm Password/i, { exact: true })).toBeInTheDocument();
   });
 
-  it('submits the form data', () => {
-    fireEvent.change(screen.getByLabelText(/First Name/i), { target: { value: 'John' } });
-    fireEvent.change(screen.getByLabelText(/Last Name/i), { target: { value: 'Doe' } });
-    fireEvent.change(screen.getByLabelText(/Username/i), { target: { value: 'johndoe' } });
-    fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'john@example.com' } });
-    fireEvent.change(screen.getByLabelText('Password*', { exact: true }), { target: { value: 'password123' } });
-    fireEvent.change(screen.getByLabelText(/Confirm Password/i), { target: { value: 'password123' } });
-    fireEvent.click(screen.getByRole('checkbox', { name: /I agree with the terms/i }));
-    fireEvent.click(screen.getByRole('button', { name: /Register/i }));
+  it('submits the form data', async () => {
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText(/First Name/i), 'Test');
+    await user.type(screen.getByLabelText(/Last Name/i), 'Test');
+    await user.type(screen.getByLabelText(/Username/i), 'test@test.com');
+    await user.type(screen.getByLabelText(/Email/i), 'test@test.com');
+    await user.type(screen.getByLabelText('Password*', { exact: true }), 'Test1234!!');
+    await user.type(screen.getByLabelText(/Confirm Password/i), 'Test1234!!');
+    await user.click(screen.getByRole('checkbox', { name: /I agree with the terms/i }));
+    await user.click(screen.getByRole('button', { name: /Register/i }));
 
     expect(mockRegister).toHaveBeenCalledWith({
-      first_name: 'John',
-      last_name: 'Doe',
-      email: 'john@example.com',
-      password: 'password123',
-      password_confirmation: 'password123',
-      username: 'johndoe',
+      first_name: 'Test',
+      last_name: 'Test',
+      email: 'test@test.com',
+      password: 'Test1234!!',
+      password_confirmation: 'Test1234!!',
+      username: 'test@test.com',
       terms: true,
     });
   });

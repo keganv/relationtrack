@@ -5,7 +5,7 @@ import useAuthContext from '../../hooks/useAuthContext';
 import useGlobalContext from '../../hooks/useGlobalContext';
 import RelationshipProvider from '../../providers/RelationshipProvider';
 import MainNav from '../ui/MainNav';
-import Spinner from '../ui/Spinner.tsx';
+import Spinner from '../ui/Spinner';
 
 export default function AuthLayout() {
   const { authenticated, checkingAuth, doAuthCheck, user } = useAuthContext();
